@@ -1,0 +1,1 @@
+{"version":3,"sources":["all.js"],"names":["console","log","$","document","ready"],"mappings":";;AAAAA,OAAO,CAACC,GAAR,CAAY,QAAZ;AAEAC,CAAC,CAACC,QAAD,CAAD,CAAYC,KAAZ,CAAkB,YAAM;AACtBJ,EAAAA,OAAO,CAACC,GAAR,CAAY,kBAAZ;AACD,CAFD","file":"all.js","sourcesContent":["console.log('Hello!');\n\n$(document).ready(() => {\n  console.log('HesSchool Hello!');\n});"]}
