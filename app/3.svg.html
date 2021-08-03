@@ -1,0 +1,152 @@
+---
+title: svg
+layout: ./app/layout.ejs
+engine: ejs
+current: index
+---
+
+<style>
+
+</style>
+
+<!-- DOM -->
+<div>
+  <div class="Knowledge">
+    <h4 fw-bold>SVG 知識點</h4>
+    <ul>
+      <li>SVG 是<span style="color:red">向量圖形格式</span>，可以建立二維圖形、動畫與互動</li>
+      <li>基於XML文字檔格式，產生 <span style="color:red">DOM 樹</span> (不同於 canvas 是平面畫布)</li>
+      <li>SVG 建立的圖形元素 (形狀、文字、線條)， 可用<span style="color:red">外觀屬性</span>控制</li>
+      <li>SVG 圖形原則上是<span style="color:red">無限大，width / height 只是定義 viewport 視窗大小</span></li>
+      <li>圖形原點是<span style="color:red">左上角，由上而下、從左至右</span></li>
+      <li>SVG 可定義結構化元素(< g >)，組合其他子元素成為複合單位</li>
+      <li>SVG 可以接收使用者事件，並回應事件進行互動</li>
+    </ul>
+  </div>
+
+  <h4 fw-bold>SVG 形狀</h4>
+  <ol>
+    <li> 
+      <p>< rect > 長方形：X、Y 調整左上座標點位置</p>
+      <script src="https://gist.github.com/vezona/ba3a34374ff7f1197e9eda214a58b494.js"></script>
+      <svg width="400" height="200">
+        <rect x="20" y="20" width="300" height="100" 
+              style="fill:rgb(255, 0, 255); stroke-width:3; stroke:rgb(0,0,0)" />
+      </svg>
+    </li>
+    <li> 
+      <p>< rect > 長方形：rx、rx 調整水平/垂直邊角半徑</p>
+      <script src="https://gist.github.com/vezona/6d1f20978aa52bba7cec6654532d1229.js"></script>
+      <svg width="400" height="150">
+        <rect x="20" y="20" rx="10" ry="10" width="300" height="100" 
+              style="fill:rgb(0, 0, 255); stroke-width:3; stroke:rgb(0,0,0)" />
+      </svg>
+    </li>
+
+    <li>
+      <p>< circle > 圓形：cx, cy 水平/垂直中心座標、r 半徑 </p>
+      <script src="https://gist.github.com/vezona/f500b38e74411c556e403ec7c18c52ad.js"></script>
+      <svg width="400" height="150">
+        <circle cx="100" cy="50" r="40" stroke="black" stroke-width="3" fill="red" />
+      </svg>
+    </li>
+    <li>
+      <p>< ellipse > 橢圓形：cx, cy 水平/垂直中心座標、rx, ry 水平/垂直半徑</p>
+      <script src="https://gist.github.com/vezona/aa1a46095d37bdb231584ef428a2d402.js"></script>
+      <svg width="400" height="150">
+        <ellipse cx="200" cy="80" rx="80" ry="50" stroke="black" stroke-width="3" fill="pink"></ellipse>
+      </svg>
+    </li>
+  </ol>
+
+  <hr>
+  <h4 fw-bold>SVG 線條</h4>
+  <ol>
+    <li>
+      <p>< line > 線條：x1 / y1 座標開始點、x2 / y2 座標結束點</p>
+      <script src="https://gist.github.com/vezona/f9ea1f67521cae612287cd40742d9d57.js"></script>
+      <svg width="400" height="200">
+        <line x1="0" y1="0" x2="200" y2="200" style="stroke:rgb(0,0,255); stroke-width:2" />
+      </svg>
+    </li>
+    <li>
+      <p>< polyline > 折線：points 來表示每個點之間的 X、Y 座標</p>
+      <svg width="400" height="200">
+        <polyline points="20,50 40,25 60,40 80,120 120,140 160,180 "
+        style="fill:none;stroke:orangered;stroke-width:3" />
+      </svg>
+    </li>
+    <li>
+      <p>< polygon > 多邊形：數值與折線相同，只是 polygon 會產生閉合折線並填滿區塊</p>
+      <svg width="400" height="200">
+        <polygon points="200,10 250,190 160,180" style="fill:lime; stroke:purple;stroke-width:1" />
+      </svg>
+    </li>
+  </ol>
+
+  <hr>
+  <h4 fw-bold>SVG 路徑與文字</h4>
+  <ol>
+    <li>
+      <p>< path > 路徑：只有d參數，</p>
+      <p>透過命令語言（海龜繪圖形式）繪製任意形狀</p>
+      <p>因為SVG是向量圖，所有的物件和元素其實都是由 Path (路徑) 所組成</p>
+      <p>path 只有一個特定元素< d >，是由空白間隔的指令＋座標組合</p>
+      <p>path 的指令如下：
+        <a href="https://www.oxxostudio.tw/articles/201406/svg-04-path-1.html">再參考這篇</a>
+      </p>
+      <svg width="400" height="200">
+        <path d="M50 20 C80 90,40 200,250,100" stroke="black" fill="none" stroke-width="2"/>
+      </svg>
+    </li>
+    <li>
+      <p>< text > 文字：顏色用fill、</p>
+      <p>
+        <a href="https://www.oxxostudio.tw/articles/201406/svg-08-text.html">OXXO 很詳細</a>
+        <a href="https://ithelp.ithome.com.tw/articles/10200726">這篇也不錯</a>
+      </p>
+      <svg width="400" height="200">
+        <text x="50,60,80" y="80,120,40" fill="blue" text-anchor="start"> SVG 真有趣!</text>
+        <!-- <text x="50" y="80" fill="blue" transform="rotate(30 20,40)"> SVG 真有趣!</text> -->
+      </svg>
+    </li>
+    <li>
+      <p>text on Path 路徑文字</p>
+      <svg width="400" height="200">
+        <defs>
+          <path id="path" d="M100 100  Q150 150 ,200 100 T300 100"/>
+          </defs>
+          <text x="20" y="20">
+            <textPath xlink:href="#path" fill="orangered">鐵人快要寫不完啦～～崩潰！！
+          </textPath>
+          </text>
+      </svg>
+    </li>
+  </ol>
+
+  <div class="Knowledge my-3 p-3">
+    <h4 fw-bold>SVG 屬性</h4>
+    <ol>
+      <li>表現屬性：常用的有 stroke、stroke-width、fill、font-size、opacity、visibility</li>
+      <li>移動屬性：常用的有 rotate、transform</li>
+    </ol>
+  </div>
+  <ol>
+    <li></li>
+    <li></li>
+  </ol>
+
+  <div class="Knowledge">
+    <h4 fw-bold>SVG 結構元素</h4>
+    <ol>
+      <li>常用的有 < svg >、< g >、< defs >、< use ></li>
+      <li>沒有形狀，負責組裝複雜圖形物件為一共同集合，並可一次移動與操作這個圖形集合</li>
+      <li>套用到結構元素上的轉換（移動、換色）會同步套用到子項目</li>
+    </ol>
+  </div>
+
+</div>
+
+<script src="https://d3js.org/d3.v6.min.js"></script>
+<script>
+</script>

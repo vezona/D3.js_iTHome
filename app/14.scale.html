@@ -1,0 +1,39 @@
+---
+title: svg
+layout: ./app/layout.ejs
+engine: ejs
+current: index
+---
+
+<style>
+  svg {
+    outline: 1px solid red;
+  }
+  p {
+    margin-top: 1rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+</style>
+
+<!-- DOM -->
+<div>
+  <p>svg 視窗範圍：高100 X 寬500</p>
+  <div class="">
+    <p>長度300的線</p>
+    <svg width="500" height="100">
+      <line x1="10" x2="310" y1="50" y2="50" 
+      stroke="black" stroke-width="5">
+    </svg>
+  </div>
+  <div class="">
+    <p>長度600的線：超出視圖範圍，因此需要比例尺，將整個圖形換算成符合視圖範圍的比例</p>
+    <svg width="500" height="100">
+      <line x1="10" x2="610" y1="50" y2="50" 
+      stroke="black" stroke-width="5">
+    </svg>
+  </div>
+</div>
+
+<script src="https://d3js.org/d3.v6.min.js"></script>
+<script>
+</script>
