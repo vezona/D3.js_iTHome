@@ -14,4 +14,51 @@ current: Helper Functions
 
 <script src="https://d3js.org/d3.v6.min.js"></script>
 <script>
+    // 要取資料要把data.json檔放到dist資料夾內，不然抓不到
+    async function getData() {
+        dataGet = await d3.json('./data.json');
+        console.log(dataGet)
+      }
+      getData()
+
+   // svg
+   const svg = d3.select('.container').append('svg');
+        svg.attr('width', 500)
+            .attr('height', 500);
+
+        //data
+        const data = [{
+            x: 100,
+            y: 30,
+        }, {
+            x: 180,
+            y: 30,
+        }, {
+            x: 250,
+            y: 30,
+        }];
+
+        // map 資料集
+        xData = data.map(i => i.x);
+        yData = data.map(i => i.y);
+
+        // X軸
+        const xScale = d3.scaleLinear()
+            .domain([0, d3.max(xData)])
+            .range([50, 450])
+
+        //使用xScale的設定，繪製tick朝下的軸線
+        const xAxis = d3.axisBottom(xScale)
+            .tickFormat(function (d) { //調整標籤樣式
+                return `${d} 元`;
+            })
+            .tickPadding(15) //調整tick與標籤距離
+            .ticks(6) //調整tick數量
+            .tickSize(20) //調整ticks長短
+        // .tickValues([50, 100]) //指定想呈現的value
+
+        //呼叫繪製x軸
+        const xAxisGroup = svg.append('g').call(xAxis)
+        //調整x軸位置
+        xAxisGroup.attr('transform', 'translate(0,400)');
 </script>
