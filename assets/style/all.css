@@ -56,6 +56,31 @@ nav {
 .container {
   min-height: 100vh; }
 
+.Knowledge {
+  border: 2px solid black;
+  padding: 1rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem; }
+
+svg {
+  border: 1px solid red;
+  margin-top: 1rem;
+  margin-bottom: 1rem; }
+
+p {
+  margin-top: 1rem !important;
+  margin-bottom: 0.5rem !important; }
+
+ol {
+  list-style: auto; }
+
+.Knowledge ul {
+  margin-top: 1rem !important;
+  list-style: disc; }
+
+ul li {
+  margin-top: 0.5rem; }
+
 .footer {
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
