@@ -18,15 +18,53 @@ current: Selection
     </ul>
   </div>
 
-  <p>d3.select</p>
-  <p>d3.selectAll</p>
+  <h4 class="fw-bold">d3.select : 只選取第一個</h4>
+    <div class="box1">
+      <p>select 1</p>
+      <p>select 2</p>
+      <p>select 3</p>
+      <p>select 4</p>
+    </div>
+  <br>
+  <h4 class="fw-bold">d3.selectAll : 選取全部</h4>
+    <div class="box2">
+      <p>selectAll 1</p>
+      <p>selectAll 2</p>
+      <p>selectAll 3</p>
+      <p>selectAll 4</p>
+    </div>
 
   <hr />
-  <h4 class="fw-bold">Selection 元素上的操作</h4>
+  <h4 class="fw-bold">對元素的樣式進行調整</h4>
+  <svg class="svg1" width="500" height="300">
+    <circle></circle>
+  </svg>
 
   <hr />
-  <h4 class="fw-bold">Selection 本身的操作</h4>
+  <h4 class="fw-bold">增減元素</h4>
+  <div class="append">
+    <p>a</p>
+    <p>b</p>
+    <p>c</p>
+    <p>d</p>
+  </div>
 </div>
 
 <script src="https://d3js.org/d3.v7.min.js"></script>
-<script></script>
+<script>
+
+  d3.select('.box1 p').style('color', 'red');
+
+  d3.selectAll('.box2 p').style('color', 'red');
+
+  d3.select('.svg1 circle')
+      .attr("r", 10)
+      .attr("fill", "blue")
+      .attr("cx", 50)
+      .attr("cy", 50)
+      .attr("transform", "translate(200,100)");
+
+  d3.select('.append')
+  .append('p')
+  .text('e');
+</script>
