@@ -1,0 +1,81 @@
+---
+title: 滑鼠事件
+layout: ./app/layout.ejs
+engine: ejs
+current: index
+---
+
+<style>
+  .chartContainer {
+    margin: auto;
+    width: 80%;
+    min-width: 200px;
+    height: 500px;
+    margin: auto;
+}
+</style>
+
+<h2 class="text-center fw-bold">滑鼠事件</h2>
+<div class="chartContainer">
+    <div class="box1">
+        <p>aa</p>
+        <p>aa</p>
+        <p>aa</p>
+        <p>aa</p>
+    </div>
+</div>
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+    // data 
+    const data = [
+        {
+            x: 100,
+            y: 30,
+            fill: 'red'
+        },
+        {
+            x: 180,
+            y: 30,
+            fill: 'pink'
+        },
+        {
+            x: 250,
+            y: 30,
+            fill: 'blue'
+        },
+    ];
+
+
+    // mouseover
+    d3.selectAll('p')
+        .on('mouseover', function () {
+            d3.select(this).style("color", "red")
+                .transition().style("transform", "translate(50px)");
+        })
+        .on("mouseleave", function () {
+            d3.select(this).style("color", "black")
+                .transition().style("transform", "translate(0)");
+        });
+
+    // =======================
+    // svg
+    const svg = d3.select('.chartContainer').append('svg');
+    svg.attr('width', 500)
+        .attr('height', 500);
+
+    //pointer()、tooltip
+    let txt = svg.append("text");
+    svg.attr('cursor', 'pointer')
+        .on('mousemove', function () {
+            //d3.pointer會回傳陣列[X,Y]
+            let pt = d3.pointer(event, svg.node())
+            txt.attr('x', pt[0]) //取[x]
+                .attr('y', pt[1]) //取[Y]
+                // .text(`X：${pt[0]} | Y：${pt[1]}`)
+                .text(`X：${parseInt(pt[0])} | Y：${parseInt(pt[1])}`)
+            console.log(pt)
+        });
+
+
+</script>
