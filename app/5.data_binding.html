@@ -10,4 +10,14 @@ current: Data Binding
 <div></div>
 
 <script src="https://d3js.org/d3.v7.min.js"></script>
-<script></script>
+<script>
+
+  // 台北市橋梁資料
+  async function getData() {
+    dataGet = await d3.json('./TPBridges.json');
+    console.log(dataGet);
+  }
+  // getData();
+
+
+</script>

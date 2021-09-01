@@ -1,0 +1,69 @@
+---
+title: tooltips
+layout: ./app/layout.ejs
+engine: ejs
+current: index
+---
+
+<style>
+  .chartContainer {
+    margin: auto;
+    width: 80%;
+    min-width: 200px;
+    height: 500px;
+    margin: auto;
+}
+</style>
+
+<div class="chartContainer"></div>
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+  const svg = d3.select('.chartContainer')
+                .append('svg')
+                .attr('width', 300)
+                .attr('height', 300);
+
+  // 加個圓點點
+  svg.append('circle')
+     .attr("id", "dot")
+     .attr("cx", 150)
+     .attr("cy", 150)
+     .attr("r", 40)
+     .attr("fill", "#69b3a2");
+  
+  // 創建tooltip
+    // const tooltip = d3.select('.chartContainer')
+    //         .append("div")
+    //         .style("position", "absolute")
+    //         .style("visibility", "hidden")
+    //         .text("I'm a circle!")
+
+const tooltip = d3.select(".chartContainer")
+    .append("div")
+    .style("position", "absolute")
+    .style("visibility", "hidden")
+    .style("background-color", "white")
+    .style("border", "solid")
+    .style("border-width", "1px")
+    .style("border-radius", "5px")
+    .style("padding", "10px")
+    .html("<p>I'm a tooltip written in HTML</p>"+
+          "<img src='https://github.com/holtzy/D3-graph-gallery/blob/master/img/section/ArcSmal.png?raw=true'>"+
+           "</img><br>Fancy<br><span style='font-size: 40px;'>Isn't it?</span>");
+    
+
+  // 加上滑鼠事件
+  d3.select('#dot')
+    .style('cursor', 'pointer')
+    .on('mouseover', function() {
+        return tooltip.style("visibility", "visible")
+      })
+    .on("mousemove", function() {
+        return tooltip.style("top", "250px").style("left","280px")
+      })
+    .on('mouseleave', function(){
+        return tooltip.style("visibility", "hidden")
+       });
+
+</script>

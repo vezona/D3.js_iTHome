@@ -5,9 +5,107 @@ engine: ejs
 current: Helper Functions
 ---
 
-<style></style>
+<style>
 
-<div></div>
+.chartContainer {
+    margin: auto;
+    width: 80%;
+    min-width: 200px;
+    height: 500px;
+    margin: auto;
+}
+</style>
+<h2 class="text-center fw-bold">圓餅圖</h2>
+<div class="chartContainer"></div>
 
 <script src="https://d3js.org/d3.v7.min.js"></script>
-<script></script>
+<script>
+  // Data
+  const data = [{city:'台北', data:30},{city:'新北', data:45},
+            {city:'台中', data:9},{city:'嘉義', data:67},{city:'台南', data:22}]; 
+
+  // 開始畫圓餅圖 
+  const drawPie = () => {
+    // RWD 清除原本的圖型
+    d3.select('svg').remove()
+
+    // svg圖形區大小、邊界
+    const svgWidth = parseInt(d3.select(".chartContainer").style("width")),
+          svgHeight = svgWidth*0.6,
+          margin = 40;
+
+    // 先設定 svg 大小
+    const svg = d3.select(".chartContainer")
+                    .append("svg")
+                    .attr("width", svgWidth)
+                    .attr("height", svgHeight)
+                    .append('g')
+                    .attr('transform', `translate(${svgWidth / 2}, ${svgHeight / 2})`);
+
+    // 圓餅圖的圓弧大小是區域的一半
+    const radius = Math.min(svgWidth, svgHeight) / 2 - margin;
+
+    // 設定顏色
+    const color = d3.scaleOrdinal()
+        .range(["#4BEFCF","#2c9af7","#F96262", '#910842', '#b054e5']); // 設定顏色
+
+    // 換算每個資料在圓餅圖上的大小:
+    const piechart = d3.pie().value(d => d.data),
+            arc = d3.arc().innerRadius(0).outerRadius(radius)
+            data_ready = piechart(data)
+
+    // 建立pie
+   const cutePie = svg.selectAll('g')
+        .data(data_ready)
+        .enter()
+        .append('g')
+        .attr('class', 'arc')
+
+    cutePie.append('path')
+        .attr('d', arc)
+        .attr('fill', color)
+        .attr("stroke", "black")
+        .style("stroke-width", "2px")
+        .style("opacity", 1);
+    
+    // 加上每個區塊的標示
+    // 控制文字的位置
+    const arcText = d3.arc()
+                      .innerRadius(radius-60)
+                      .outerRadius(radius)
+
+    cutePie.append('text')
+       .attr('transform', d => `translate(${arcText.centroid(d)})`)
+       .text(d => d.data.city)
+       .style('text-anchor', 'middle')
+       .attr('z-index', 2)
+       .style('font-size', 16)
+       .style('fill', 'white')
+    
+    // 滑鼠互動 mouseover、mouseleave
+    d3.selectAll('.arc path')
+      .style('cursor', 'pointer')
+      .on('mouseover', function(){
+         d3.select(this)
+           .transition()
+           .duration(500)
+           .style("opacity", "0.5")
+           .style('transform', 'scale(1.1)')
+      })
+      .on('mouseleave', function(){
+        d3.select(this)
+          .transition()
+          .duration(500)
+          .style('opacity', '1')
+          .style('transform', 'scale(1)')
+      })
+  };
+
+
+  drawPie()
+
+  // RWD
+  d3.select(window).on("resize", drawPie);
+     
+
+</script>

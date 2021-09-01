@@ -1,0 +1,38 @@
+---
+title: 圖表RWD
+layout: ./app/layout.ejs
+engine: ejs
+current: index
+---
+
+<style>
+
+.chartContainer{
+    width: 80%;
+    height: 200px;
+    margin: auto;
+}
+</style>
+
+<div class="chartContainer"></div>
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+
+  const rwd = ()=>{
+    // 先刪除原本的svg.charts，再重新渲染計算過寬度的svg
+    d3.select("svg").remove();
+
+    // RWD 的svg 
+    const svgWidth = d3.select('.chartContainer').style('width'),
+        svgHeight = d3.select('.chartContainer').style('height')
+    d3.select('.chartContainer')
+        .append('svg')
+        .attr('width', svgWidth)
+        .attr('height', svgHeight);
+    }
+  
+  rwd()
+  d3.select(window).on('resize', rwd);
+
+</script>

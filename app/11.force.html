@@ -1,0 +1,84 @@
+---
+title: 拖曳
+layout: ./app/layout.ejs
+engine: ejs
+current: index
+---
+
+<style>
+  .chartContainer {
+    margin: auto;
+    width: 80%;
+    min-width: 200px;
+    height: 500px;
+    margin: auto;
+}
+</style>
+
+<h2 class="text-center fw-bold">Force 原力</h2>
+<div class="chartContainer"></div>
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+    // 假資料
+    const data = [{name:'A'},{name:'B'},{name:'C'},{name:'D'},{name:'E'},{name:'F'},{name:'G'}]
+
+    const svg = d3.select('.chartContainer')
+                  .append('svg')
+                  .attr('width', 500)
+                  .attr('height', 500);
+    
+    // 建立原點，目前全部都在同個位置
+    const dots = svg.append('g')
+                    .selectAll('circle')
+                    .data(data)
+                    .enter()
+                    .append('circle')
+                    .attr('r', 25)
+                    .attr('cx', 50)
+                    .attr('cy', 50)
+                    .style("fill", "#19d3a2")
+                    .style("fill-opacity", 0.3)
+                    .attr("stroke", "#b3a2c8")
+                    .style("stroke-width", 4);
+    
+    // 使用原力讓點點分開
+    // Features of the forces applied to the nodes:
+    const simulation = d3.forceSimulation()
+                        .force("center", d3.forceCenter().x(250).y(250)) // Attraction to the center of the svg area
+                        .force("charge", d3.forceManyBody().strength(1)) // Nodes are attracted one each other of value is > 0
+                        .force("collide", d3.forceCollide().strength(.1).radius(30).iterations(1)); // Force that avoids circle overlapping
+
+    // 原力綁定到個別原點node節點，讓他們拉開距離
+    // Apply these forces to the nodes and update their positions.
+    // Once the force algorithm is happy with positions ('alpha' value is low enough), simulations will stop.
+    simulation
+        .nodes(data)
+        .on("tick", function(d){
+            dots.attr("cx", function(d){ return d.x; })
+                .attr("cy", function(d){ return d.y; })
+        });
+    
+    // 拖曳單個點點 (不成功，還要研究一下)
+    // What happens when a circle is dragged?
+    function dragstarted(d) {
+        console.log('start')
+        if (!event.active) simulation.alphaTarget(.03).restart();
+        d.fx = d.x;
+        d.fy = d.y;
+    }
+    function dragged(d) {
+        d.fx = event.x;
+        d.fy = event.y;
+    }
+    function dragended(d) {
+        if (!event.active) simulation.alphaTarget(.03);
+        d.fx = null;
+        d.fy = null;
+    }
+
+    dots.call(d3.drag() // call specific function when circle is dragged
+         .on("start", dragstarted)
+         .on("drag", dragged)
+         .on("end", dragended));
+</script>

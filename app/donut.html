@@ -1,0 +1,74 @@
+---
+title: donut
+layout: ./app/layout.ejs
+engine: ejs
+current: index
+---
+
+<style>
+.chartContainer {
+    margin: auto;
+    width: 80%;
+    min-width: 200px;
+    height: 500px;
+    margin: auto;
+}
+</style>
+<h2 class="text-center fw-bold">甜甜圈圖</h2>
+<div class="chartContainer"></div>
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+    // Data to be added in the pie chart
+    const data = [
+        { "value": 1, "property": "p1" },
+        { "value": 2, "property": "p2" },
+        { "value": 3, "property": "p3" },
+        { "value": 4, "property": "p4" },
+        { "value": 5, "property": "p5" },
+        { "value": 6, "property": "p6" }
+    ]
+
+    // Selecting SVG using d3.select()
+    const svg = d3.select(".chartContainer")
+                .append('svg')
+                .attr('width', 500)
+                .attr('height', 500);
+
+    // Creating Pie generator
+    const pie = d3.pie()
+        // Use of pie.value() Function
+        .value((d) => { return d.value })
+        (data);
+
+    // Creating arc
+    const arc = d3.arc()
+        .innerRadius(50)
+        .outerRadius(100);
+
+    const g = svg.append("g")
+        .attr("transform", "translate(150, 120)");
+
+    // Grouping different arcs
+    const arcs = g.selectAll("arc")
+        .data(pie)
+        .enter()
+        .append("g");
+
+    // Appending path 
+    arcs.append("path")
+        .attr("fill", (data, i) => {
+            return d3.schemeSet2[i];
+        })
+        .attr("d", arc);
+
+    arcs.append("text")
+        .attr("transform", (d) => {
+            return "translate(" +
+                arc.centroid(d) + ")";
+        })
+        .text(function (d) {
+            return d.value;
+        });
+
+</script>

@@ -5,9 +5,29 @@ engine: ejs
 current: index
 ---
 
-<style></style>
+<style>
+  .chartContainer {
+    margin: auto;
+    width: 80%;
+    min-width: 200px;
+    height: 500px;
+    margin: auto;
+}
+</style>
 
-<div></div>
+<h2 class="text-center fw-bold">圖表名稱</h2>
+<div class="chartContainer"></div>
 
 <script src="https://d3js.org/d3.v7.min.js"></script>
-<script></script>
+<script>
+  // const cors = 'https://secret-ocean-49799.herokuapp.com/'; // use cors-anywhere to fetch api data
+  const cors="https://cors-anywhere.herokuapp.com/"
+  const url = ''
+
+  // 要取資料要把data.json檔放到dist資料夾內
+  async function getData() {
+    dataGet = await d3.json(`${cors}${url}`);
+    console.log(dataGet);
+  };
+//   getData();
+</script>

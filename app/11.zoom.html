@@ -1,0 +1,75 @@
+---
+title: 縮放
+layout: ./app/layout.ejs
+engine: ejs
+current: index
+---
+
+<style>
+  .chartContainer {
+    margin: auto;
+    width: 80%;
+    min-width: 200px;
+    height: 500px;
+    margin: auto;
+}
+</style>
+
+<h2 class="text-center fw-bold">縮放Zoom</h2>
+<div class="chartContainer"></div>
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+  const width = 500, height = 500
+  const svg = d3.select('.chartContainer')
+                .append('svg')
+                .attr('width', width)
+                .attr('height', height)
+  
+  // 加個圓點點
+  const circle = svg.append('circle')
+                    .attr("id", "dot")
+                    .attr("cx", 150)
+                    .attr("cy", 150)
+                    .attr("r", 40)
+                    .attr("fill", "#69b3a2");
+
+  // Zoom 事件
+  const zoom = d3.zoom()
+                 .scaleExtent([-5, 5])
+                 .on('zoom', function(event) {
+                  circle.attr('transform', event.transform); //這邊決定要放大誰，如果寫svg就是整個svg放大
+                 });
+  
+  svg.call(zoom);
+
+  // 加上一個reset button 
+  const resetBtn = d3.select('.chartContainer')
+                      .append('button')
+                      .attr('id', 'reset')
+                      .text('reset');
+  
+  // reset button 觸發
+  resetBtn.on('click', function(){
+    const transform = d3.zoomIdentity.scale(1)
+    svg.call(zoom.transform, transform);
+  });
+
+  // 設定 Zoom 的值
+  const zoomScaleInput = d3.select('.chartContainer')
+                      .append('input')
+                      .attr('id', 'zoomscale')
+
+  const zoomScaleBtn = d3.select('.chartContainer')
+                      .append('button')
+                      .text('改變');
+  
+  // 設定取value 的值，套用 zoom 的倍數
+  zoomScaleBtn.on('click', function(){
+    const scaleValue = document.getElementById('zoomscale').value;
+    const transform = d3.zoomIdentity.scale(`${scaleValue}`)
+    svg.call(zoom.transform, transform);
+  });
+
+
+</script>
