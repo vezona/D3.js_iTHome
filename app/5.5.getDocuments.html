@@ -12,13 +12,20 @@ current: index
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script>
   // const cors = 'https://secret-ocean-49799.herokuapp.com/'; // use cors-anywhere to fetch api data
-  const cors="https://cors-anywhere.herokuapp.com/"
-  const url = ''
+  const cors = "https://cors-anywhere.herokuapp.com/";
+  const url = "";
 
   // 要取資料要把data.json檔放到dist資料夾內
   async function getData() {
     dataGet = await d3.json(`${cors}${url}`);
     console.log(dataGet);
-  };
-//   getData();
+  }
+  //   getData();
+
+  // 台北市橋梁資料
+  async function getBridgeData() {
+    dataGet = await d3.json("./TPBridges.json");
+    console.log(dataGet);
+  }
+  // getBridgeData();
 </script>

@@ -12,12 +12,14 @@ current: Data Binding
     min-width: 200px;
     height: 500px;
     margin: auto;
-}
+  }
 </style>
 
 <h2 class="text-center fw-bold">資料綁定</h2>
 
 <p></p>
+
+<p class="unmatchData"></p>
 
 <p class="multiData"></p>
 <p class="multiData"></p>
@@ -28,71 +30,79 @@ current: Data Binding
 
 <div class="chartContainer">
   <svg>
-    <rect/>
-    <rect/>
-    <rect/>
-    <rect/>
-    <rect/>
+    <rect />
+    <rect />
+    <rect />
+    <rect />
+    <rect />
   </svg>
 </div>
 
 <p></p>
 
+<!-- enter 跟 exit 資料 -->
+<p class="enterData"></p>
+<p class="enterData"></p>
+
+<p class="exitData"></p>
+<p class="exitData"></p>
+<p class="exitData"></p>
+<p class="exitData"></p>
+<p class="exitData"></p>
 
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script>
   // data 綁定一個資料
-  const bindData = d3.select('p')
-        bindData.data(['綁定資料'])
-  console.log(bindData)
-  console.log(bindData['_groups'][0][0]['__data__'])
+  const bindData = d3.select("p").data(["綁定資料"]);
+  console.log(bindData);
+  console.log(bindData["_groups"][0][0]["__data__"]);
 
-  console.log('---data 綁定多個資料----')
+  console.log("---data 綁定多個資料----");
 
   // data 綁定多個資料
-  const multiData = ['綁', '定', '資', '料']
-  const bindMultiData = d3.selectAll('.multiData')
-  bindMultiData.data(multiData)
+  const multiData = ["綁", "定", "資", "料"];
+  const bindMultiData = d3.selectAll(".multiData").data(multiData);
 
-  console.log(bindMultiData)
-  console.log(bindMultiData['_groups'][0])
+  console.log(bindMultiData);
+  console.log(bindMultiData["_groups"][0]);
 
-  console.log('--- data 跟 datum 的差異比較 ----')
+  console.log("--- data 綁定資料數量不匹配 ----");
+  const bindUnmatchData = d3.select(".unmatchData").data(multiData);
+  console.log("bindUnmatchData", bindUnmatchData);
+
+  console.log("--- data 跟 datum 的差異比較 ----");
 
   // data 跟 datum 的差異比較
-  const data = [10, 20, 30, 40]
-  const d3Datum = d3.select('.chartContainer')
-                 .selectAll('rect')
-                 .datum(data)
+  const data = [10, 20, 30, 40];
+  const d3Data = d3.select(".chartContainer").selectAll("rect").data(data);
+
+  const d3Datum = d3.select(".chartContainer").selectAll("rect").datum(data);
+  console.log("d3Data", d3Data);
+  console.log("d3Datum", d3Datum);
+
+  console.log("--- data 跟 datum 的join比較 ----");
+  const joinData = [{ name: "jin" }, { name: "JIN" }];
+  const jData = d3.select(".join").data(joinData);
+  console.log("jData", jData);
+
+  // const joinData = [{ name: "jin" }, { name: "JIN" }];
+  // const jData = d3.select(".join").data([joinData]);
+  // console.log("jData", jData);
+
+  const joinDatum = [{ name: "jin" }, { name: "JIN" }];
+  const jDatum = d3.select(".join").datum(joinDatum);
+  console.log("joinDatum", joinDatum);
+
+  console.log("--- enter 資料 ----");
+  // enter 資料
+  const enterData = ["資", "料", "比", "較", "多"];
+  const eData = d3.selectAll('.enterData').data(enterData)
+  console.log('eData', eData)
   
-  const d3Data = d3.select('.chartContainer')
-                 .selectAll('rect')
-                 .data(data)
-  console.log('d3Data',d3Data)
-  console.log('d3Datum',d3Datum)
-
-  console.log('--- data 跟 datum 的join比較 ----')
-  const joinData = [{name:'jin'}, {name:'JIN'}]
-  const jData = d3.select('.join').data([joinData])
-  console.log('jData',jData)
-
-  const joinDatum = [{name:'jin'}, {name:'JIN'}]
-  const jDatum = d3.select('.join').data(joinDatum)
-  console.log('joinDatum',joinDatum)
-
-
-
-
-
-
-
-
-  // 台北市橋梁資料
-  async function getData() {
-    dataGet = await d3.json('./TPBridges.json');
-    console.log(dataGet);
-  }
-  // getData();
-
-
+  
+  console.log("--- exit 資料 ----");
+  // exit 資料
+  const exitData = ["資", "料", "少"];
+  const exData = d3.selectAll('.exitData').data(exitData)
+  console.log('exData', exData);
 </script>
