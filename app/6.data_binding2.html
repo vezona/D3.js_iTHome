@@ -1,0 +1,63 @@
+---
+title: 資料綁定2
+layout: ./app/layout.ejs
+engine: ejs
+current: Data Binding
+---
+
+<style>
+  .chartContainer {
+    margin: auto;
+    width: 80%;
+    min-width: 200px;
+    height: 500px;
+    margin: auto;
+  }
+</style>
+
+<h2 class="text-center fw-bold">資料綁定：enter / update / exit</h2>
+
+<div class="chartContainer">
+</div>
+
+<!-- update 資料 -->
+<p class="updateData"></p>
+<p class="updateData"></p>
+<p class="updateData"></p>
+<p class="updateData"></p>
+
+<!-- enter 資料 -->
+
+<p class="enterData"></p>
+<p class="enterData"></p>
+
+
+<!-- exit 資料 -->
+<p class="exitData"></p>
+<p class="exitData"></p>
+<p class="exitData"></p>
+<p class="exitData"></p>
+<p class="exitData"></p>
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+  console.log("--- update 資料 ----");
+    // update 資料
+  const updateData = ["資", "料", "剛", "好"];
+  const upData = d3.selectAll('.updateData').data(updateData)
+  console.log('upData', upData)
+
+
+  console.log("--- enter 資料 ----");
+  // enter 資料
+  const enterData = ["資", "料", "比", "較", "多"];
+  const eData = d3.selectAll('.enterData').data(enterData)
+  console.log('eData', eData)
+  
+  
+  console.log("--- exit 資料 ----");
+  // exit 資料
+  const exitData = ["資", "料", "少"];
+  const exData = d3.selectAll('.exitData').data(exitData)
+  console.log('exData', exData);
+</script>
