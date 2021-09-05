@@ -1,0 +1,42 @@
+---
+title: 抓取檔案資料
+layout: ./app/layout.ejs
+engine: ejs
+current: index
+---
+
+<div class="chartContainer">
+</div>
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+
+
+  // 取得檔案內的台北市橋梁資料
+  async function getBridgeData() {
+    dataGet = await d3.json("./TPBridges.json");
+    console.log(dataGet);
+  }
+  // getBridgeData();
+
+  // 跨網域存取 API 資料
+  // 使用 cors-anywhere 
+  const cors = 'https://secret-ocean-49799.herokuapp.com/'; 
+  // const cors = "https://cors-anywhere.herokuapp.com/";
+  const url = "https://ws.hsinchu.gov.tw/001/Upload/1/opendata/8774/1380/af80d954-d968-42a0-bc97-a2f801840b65.json";
+
+  async function getCorsData() {
+    dataGet = await d3.json(`${cors}${url}`);
+    console.log('dataGet', dataGet);
+  }
+    getCorsData();
+
+  // 拿取csv資料
+  const getCsvData = async () => {
+    const csvData = await d3.csv('./covid19_global_cases_and_deaths.csv', d=>{
+      return d.country_ch // 只取country_ch
+    })
+    console.log('csvData',csvData)
+  };
+  // getCsvData()
+</script>
