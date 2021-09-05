@@ -17,9 +17,6 @@ current: Data Binding
 
 <h2 class="text-center fw-bold">資料綁定：enter / update / exit</h2>
 
-<div class="chartContainer">
-</div>
-
 <!-- update 資料 -->
 <p class="updateData"></p>
 <p class="updateData"></p>
@@ -38,6 +35,18 @@ current: Data Binding
 <p class="exitData"></p>
 <p class="exitData"></p>
 <p class="exitData"></p>
+
+<!-- join 資料 -->
+<p class="joinData"></p>
+<p class="joinData"></p>
+
+<div>
+  <input class="dataChange" type="range" style="width:100% ; cursor:pointer" name="dataChange" min="0" max="10" value="0">
+  <p> data：<span class="showData"></span></p>
+
+  <div class="example">
+  </div>
+</div>
 
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script>
@@ -60,4 +69,81 @@ current: Data Binding
   const exitData = ["資", "料", "少"];
   const exData = d3.selectAll('.exitData').data(exitData)
   console.log('exData', exData);
+
+  console.log("--- selection enter  ----");
+  eData.enter().append('p').attr('class','enterData')
+
+  console.log("--- selection exit  ----");
+  exData.exit().remove();
+
+  console.log("--- join 資料  ----");
+  // const joinData = ['j', 'o', 'i', 'n']
+  // d3.selectAll('.joinData')
+  //   .data(joinData)
+  //   .join()
+  //   .append('p')
+  //   .attr('class','.joinData')
+  //   .text(d => d);
+
+  // 實際應用
+  const dataChange = document.querySelector('.dataChange')
+  const showData = document.querySelector('.showData')
+  let randomData = [] // 先建立空資料陣列
+  dataChange.addEventListener('change', function(){
+    randomData = []  // 每次重選range就清空陣列
+    for(i= 0; i< event.target.value; i++){
+      let random = Math.floor(Math.random() * 5)
+      randomData.push(random) // 塞入隨機亂數資料
+    }
+    showData.innerHTML = randomData
+    
+    drawDiagram()
+
+  });
+  
+  // 建立 svg 畫布
+  const rangeSelect =  d3.select('.example')
+        .append('svg')
+        .attr('width', 500)
+        .attr('height', 500)
+
+  // 製作圖表
+  const drawDiagram =()=>{
+  // 綁定 update 資料
+  let rects = rangeSelect.selectAll('rect')
+             .data(randomData)
+
+  // update 更新綁定的資料
+  rects.attr('width', d => d * 60)
+  
+  // 用 enter 加上少的DOM元素
+  rects.enter()
+        .append('rect')
+        .attr('width', d => d * 60)
+        .attr('height', 50)
+        .style('fill', 'blue')
+        .attr('x', (d, index) => 0 ) // 設定x位置
+        .attr('y', (d, index) => index * 60) // 設定y軸位置
+    
+  // 用 exit 移除多的 DOM 元素
+  rects.exit().remove()
+
+  // 使用join
+  // let rects = rangeSelect.selectAll('rect')
+  //            .data(randomData)
+  //            .join(
+  //             enter => enter.append("rect")
+  //                           .attr('width', d => d * 60)
+  //                           .attr('height', 50)
+  //                           .style('fill', 'blue')
+  //                           .attr('x', (d, index) => 0 ) // 設定x位置
+  //                           .attr('y', (d, index) => index * 60), // 設定y軸位置,
+  //             update => update.attr('width', d => d * 60),
+  //             exit => exit.remove()
+  //            )
+  };
+
+
+  
+
 </script>
