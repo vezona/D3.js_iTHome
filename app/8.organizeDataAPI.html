@@ -44,4 +44,22 @@ current: Data Binding
     const sort = d3.sort(data)
     console.log('sort',sort);
 
+    // Time Formats
+    const timeData = '2021-09-07'
+    const timeParse = d3.timeParse('%Y-%m-%d')
+    const parsedData = timeParse(timeData)
+    console.log(parsedData);
+
+    // Time Formate
+    const timeFormat = d3.timeFormat('%Y/%m/%d')
+    console.log(timeFormat(parsedData))
+
+    // Number Formate
+    const originNumber = 100.369
+    const numberFormat = d3.format('d')(10.3)
+    console.log(numberFormat);
+
+    // Random 
+    console.log(d3.randomInt(50,100)())
+
 </script>
