@@ -5,9 +5,103 @@ engine: ejs
 current: Helper Functions
 ---
 
-<style></style>
+<style>
+  ul{
+    list-style-type: disc;
+  }
+</style>
 
-<div></div>
+<h2 class="text-center fw-bold my-3">繪製形狀的 Helper Functions</h2>
+<h4 class="fw-bold mt-4" style="color:#ec9c39">Generator</h4>
+<ul>
+    <li>
+        <h4>line( )</h4>
+        <svg class="line"></svg>
+    </li>
+    <li>
+        <h4>area( )</h4>
+        <svg class="area"></svg>
+    </li>
+    <li>
+        <h4>arc( )</h4>
+        <svg class="arc"></svg>
+    </li>
+</ul>
+
+<h4 class="fw-bold mt-4" style="color:#ec9c39">Component</h4>
+<ul>
+    <li>
+        <h4>axis( )</h4>
+        <svg class="axis"></svg>
+    </li>
+    <li>
+        <h4>zoom( )</h4>
+        <svg class="zoom"></svg>
+    </li>
+    <li>
+        <h4>brush( )</h4>
+        <svg class="brush"></svg>
+    </li>
+</ul>
+
+<h4 class="fw-bold mt-4" style="color:#ec9c39">Layout</h4>
+<ul>
+    <li>
+        <h4>pie( )</h4>
+        <svg class="pie"></svg>
+    </li>
+    <li>
+        <h4>stack( )</h4>
+        <svg class="stack"></svg>
+    </li>
+    <li>
+        <h4>chord( )</h4>
+        <svg class="chord"></svg>
+    </li>
+</ul>
 
 <script src="https://d3js.org/d3.v7.min.js"></script>
-<script></script>
+<script>
+    // Generator
+    // line
+    const data1 = [{x:10,y:100},{x:20,y:100},{x:30,y:100},{x:90,y:20},{x:220,y:10}]
+    const line = d3.line()
+                   .x(d=>d.x)
+                   .y(d=>d.y)
+
+    d3.select('.line')
+      .append('path')
+      .attr('d', line(data1))
+      .attr('stroke', 'black')
+      .attr('stroke-width', '2')
+      .attr('fill', 'none')
+    
+    // area
+    const area = d3.area()
+                   .x(d=>d.x)
+                   .y1(d=>d.y)
+                   .y0(10)
+    console.log(area(data1))
+    d3.select('.area')
+      .append('path')
+      .attr('d', area(data1))
+      .attr('stroke', 'blue')
+      .attr('fill', 'blue')
+    
+    // arc
+    const arc = d3.arc()
+                  .innerRadius(40)
+                  .outerRadius(50)
+                  .startAngle(0)
+                  .endAngle(10)
+    console.log(arc())
+    d3.select('.arc')
+      .append("g")
+      .attr("transform", "translate(100,100)")
+      .append('path')
+      .attr('d', arc())
+      .attr('stroke', 'blue')
+      .attr('fill', 'blue')
+                  
+
+</script>
