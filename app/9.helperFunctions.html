@@ -34,29 +34,13 @@ current: Helper Functions
         <h4>axis( )</h4>
         <svg class="axis"></svg>
     </li>
-    <li>
-        <h4>zoom( )</h4>
-        <svg class="zoom"></svg>
-    </li>
-    <li>
-        <h4>brush( )</h4>
-        <svg class="brush"></svg>
-    </li>
 </ul>
 
 <h4 class="fw-bold mt-4" style="color:#ec9c39">Layout</h4>
 <ul>
     <li>
-        <h4>pie( )</h4>
-        <svg class="pie"></svg>
-    </li>
-    <li>
         <h4>stack( )</h4>
         <svg class="stack"></svg>
-    </li>
-    <li>
-        <h4>chord( )</h4>
-        <svg class="chord"></svg>
     </li>
 </ul>
 
@@ -90,18 +74,54 @@ current: Helper Functions
     
     // arc
     const arc = d3.arc()
-                  .innerRadius(40)
-                  .outerRadius(50)
-                  .startAngle(0)
-                  .endAngle(10)
+                  .innerRadius(60)
+                  .outerRadius(65)
+                  .startAngle(Math.PI*1.2)
+                  .endAngle(Math.PI*2.8)
+
     console.log(arc())
     d3.select('.arc')
       .append("g")
-      .attr("transform", "translate(100,100)")
+      .attr("transform", "translate(150,80)")
       .append('path')
       .attr('d', arc())
       .attr('stroke', 'blue')
       .attr('fill', 'blue')
-                  
+    
+    // Components
+    // axis
+    // 先抓出 x 軸要使用的值
+    const xData = data1.map((i) => i.x);
+
+    // X軸
+    const xScale = d3.scaleLinear()
+                     .domain([0, d3.max(xData)])
+                     .range([10, 290]);
+    
+    //使用 xScale 的設定，繪製 tick 朝下的軸線
+    const xAxis = d3
+        .axisBottom(xScale)
+
+    d3.select('.axis')
+      .append("g")
+      .call(xAxis)
+      .attr("transform", "translate(0,130)")
+
+    // stack
+    const dataStack = [
+      {month: new Date(2020, 0, 1), China: 2, America: 4920, Taiwan: 30},
+      {month: new Date(2020, 1, 1), China: 1, America: 3920, Taiwan: 10},
+      {month: new Date(2020, 2, 1), China: 3, America: 12020, Taiwan: 18},
+      {month: new Date(2020, 3, 1), China: 6, America: 6920, Taiwan: 20}
+    ];
+
+    const stack = d3.stack()
+                    .keys(["China", "America", "Taiwan"])
+                    .order(d3.stackOrderNone)
+                    .offset(d3.stackOffsetNone);
+
+    const series = stack(dataStack);
+    console.log(series)
+
 
 </script>

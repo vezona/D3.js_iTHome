@@ -1,0 +1,108 @@
+---
+title: 名稱
+layout: ./app/layout.ejs
+engine: ejs
+current: index
+---
+
+<style>
+  .chartContainer {
+    margin: auto;
+    width: 80%;
+    margin: auto;
+}
+</style>
+
+<h2 class="text-center fw-bold">長條堆疊圖</h2>
+<div class="chartContainer"></div>
+<!--  -->
+<svg id="demo1" width= "500" height="500"></svg>
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+    // http://using-d3js.com/05_06_stacks.html 棒透的教學文章
+    // https://www.d3-graph-gallery.com/graph/barplot_stacked_basicWide.html
+    // https://juejin.cn/post/6844903681939210253
+    const svg = d3.select('.chartContainer')
+                  .append('svg')
+                  .attr('height', 500)
+                  .attr('width', 500)
+
+    const data = [
+      {month: new Date(2021, 5, 1), China: 2, America: 20, Taiwan: 30},
+      {month: new Date(2021, 6, 1), China: 89, America: 120, Taiwan: 10},
+      {month: new Date(2021, 7, 1), China: 32, America: 1, Taiwan: 50},
+      {month: new Date(2021, 8, 1), China: 16, America: 50, Taiwan: 20}
+    ];
+
+    const stackGen = d3.stack()
+                       .keys(['China', 'America', 'Taiwan'])
+    const stackedSeries = stackGen(data)
+
+    // scale
+    const xScale = d3.scaleTime()
+                     .domain([data[0].month, data[3].month])
+                     .range([50, 450])
+    
+    const yScale = d3.scaleLinear()
+                     .domain([0,300])
+                     .range([450,50])
+
+    const colorScale = d3.scaleOrdinal()
+                         .domain(['China', 'America', 'Taiwan'])
+                         .range(["red", "blue", "orange"])
+    const areaGen = d3.area()
+                   .x(d=>{
+                    //    console.log(d)
+                       return xScale(d.data.month)
+                   })
+                   .y0(d=>yScale(d[0]))
+                   .y1(d=>yScale(d[1]))
+    
+    svg.selectAll('.area')
+       .data(stackedSeries)
+       .join('path')
+       .attr('d', areaGen)
+       .attr('fill', d => colorScale(d.key))
+
+    // ===================================
+
+    // var data = [
+    //     {month: new Date(2018, 1, 1), apples: 10, bananas: 20, oranges: 15},
+    //     {month: new Date(2018, 2, 1), apples: 15, bananas: 15, oranges: 15},
+    //     {month: new Date(2018, 3, 1), apples: 20, bananas: 25, oranges: 15}
+    // ];
+
+    // var stackGen = d3.stack()
+    //                  .keys(["apples", "bananas", "oranges"]);
+    
+    // var stackedSeries = stackGen(data);
+
+    // var xScale = d3.scaleTime()
+    //                .domain([data[0].month, data[2].month])
+    //                .range([50, 275]);
+
+    // var yScale = d3.scaleLinear()
+    //                .domain([0,60])
+    //                .range([275, 25]);
+
+    // var colorScale = d3.scaleOrdinal()
+    //                    .domain(["apples", "bananas", "oranges"])
+    //                    .range(["red", "yellow", "orange"]);
+
+    // var areaGen = d3.area()
+    //                 .x((d) => {
+    //                     console.log(d.data.month)
+    //                     return xScale(d.data.month)
+    //                 })
+    //                 .y0((d) => yScale(d[0]))
+    //                 .y1((d) => yScale(d[1]));
+    
+    
+    // d3.select("#demo1")
+    //   .selectAll(".areas")
+    //   .data(stackedSeries)
+    //   .join("path")
+    //   .attr("d", areaGen)
+    //   .attr("fill", (d) => colorScale(d.key));
+</script>
