@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>名稱</title>
+  <link rel="stylesheet" href="./assets/style/all.css">
+  <!-- BS 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous">
+  <!-- axios -->
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-NRH8BJ3');</script>
+    <!-- End Google Tag Manager -->
+</head>
+
+<body>
+    <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NRH8BJ3"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    
+  <header class="header">
+    <nav class="navbar navbar-expand-lg navbar-light">
+      <div class="container-fluid">
+        <a class="navbar-brand ms-3 pt-lg-2 active" href="./#">D3.js v7</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-around" id="navbarNav">
+          <ul class="navbar-nav w-100 justify-content-around">
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                基礎觀念
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="./2.d3_intro.html">D3介紹</a></li>
+                <li><a class="dropdown-item" href="./3.svg.html">svg</a></li>
+              </ul>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                D3繪圖原理
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="./4.selection.html">Selection</a></li>
+                <li><a class="dropdown-item" href="./5.data_binding1.html">Data-Binding：data & datum</a></li>
+                <li><a class="dropdown-item" href="./6.data_binding2.html">Data-Binding：enter/update/exit</a></li>
+                <li><a class="dropdown-item" href="./7.fetches.html">不同格式檔資料匯入的 API </a></li>
+                <li><a class="dropdown-item" href="./8.organizeDataAPI.html">資料整理常用 API</a></li>
+                <li><a class="dropdown-item" href="./9.helperFunctions.html">繪製形狀的 Helper Functions</a></li>
+              </ul>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                動畫與互動事件
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="./10.transition.html">動畫</a></li>
+                <li><a class="dropdown-item" href="./11.mouseEvent.html">滑鼠事件</a></li>
+                <li><a class="dropdown-item" href="./12.toolTips.html">Tooltips</a></li>
+                <li><a class="dropdown-item" href="./13.drag.html">拖曳 drag</a></li>
+                <li><a class="dropdown-item" href="./14.force.html">原力 Force</a></li>
+                <li><a class="dropdown-item" href="./15.zoom.html">縮放 Zoom</a></li>
+                <li><a class="dropdown-item" href="./16.brush.html">刷子 Brush</a></li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" href="./19.RWD.html">圖表RWD</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                基礎圖表與互動
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="./17.scale.html">比例尺與範圍 Scale & Domain/Range</a></li>
+                <li><a class="dropdown-item" href="./18.Axis&Ticks.html">軸線與刻度 Axis & Ticks</a></li>
+                <li><a class="dropdown-item" href="./pie.html">圓餅圖</a></li>
+                <li><a class="dropdown-item" href="./scatter.html">散點圖</a></li>
+                <li><a class="dropdown-item" href="#">長條圖</a></li>
+                <li><a class="dropdown-item" href="#">複數長條圖</a></li>
+                <li><a class="dropdown-item" href="./stack.html">長條堆疊圖</a></li>
+                <li><a class="dropdown-item" href="#">折線圖</a></li>
+                <li><a class="dropdown-item" href="#">多線折線圖</a></li>
+              </ul>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                進階圖表與互動
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="./donut.html">甜甜圈圖</a></li>
+                <li><a class="dropdown-item" href="#">氣泡圖</a></li>
+                <li><a class="dropdown-item" href="#">熱圖</a></li>
+                <li><a class="dropdown-item" href="#">文字雲</a></li>
+                <li><a class="dropdown-item" href="#">合併圖表(長條+折線)</a></li>
+                <li><a class="dropdown-item" href="#">階層圖</a></li>
+                <li><a class="dropdown-item" href="#">甘特圖</a></li>
+                <li><a class="dropdown-item" href="#">樹狀圖</a></li>
+                <li><a class="dropdown-item" href="#">地圖</a></li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" href="#">推薦資源</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <div class="container py-3">
+    
+<style>
+  .chartContainer {
+    margin: auto;
+    width: 80%;
+    margin: auto;
+}
+</style>
+
+<h2 class="text-center fw-bold">長條堆疊圖</h2>
+<div class="chartContainer"></div>
+<!--  -->
+<svg id="demo1" width= "500" height="500"></svg>
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+    // http://using-d3js.com/05_06_stacks.html 棒透的教學文章
+    // https://www.d3-graph-gallery.com/graph/barplot_stacked_basicWide.html
+    // https://juejin.cn/post/6844903681939210253
+    const svg = d3.select('.chartContainer')
+                  .append('svg')
+                  .attr('height', 500)
+                  .attr('width', 500)
+
+    const data = [
+      {month: new Date(2021, 5, 1), China: 2, America: 20, Taiwan: 30},
+      {month: new Date(2021, 6, 1), China: 89, America: 120, Taiwan: 10},
+      {month: new Date(2021, 7, 1), China: 32, America: 1, Taiwan: 50},
+      {month: new Date(2021, 8, 1), China: 16, America: 50, Taiwan: 20}
+    ];
+
+    const stackGen = d3.stack()
+                       .keys(['China', 'America', 'Taiwan'])
+    const stackedSeries = stackGen(data)
+
+    // scale
+    const xScale = d3.scaleTime()
+                     .domain([data[0].month, data[3].month])
+                     .range([50, 450])
+    
+    const yScale = d3.scaleLinear()
+                     .domain([0,300])
+                     .range([450,50])
+
+    const colorScale = d3.scaleOrdinal()
+                         .domain(['China', 'America', 'Taiwan'])
+                         .range(["red", "blue", "orange"])
+    const areaGen = d3.area()
+                   .x(d=>{
+                    //    console.log(d)
+                       return xScale(d.data.month)
+                   })
+                   .y0(d=>yScale(d[0]))
+                   .y1(d=>yScale(d[1]))
+    
+    svg.selectAll('.area')
+       .data(stackedSeries)
+       .join('path')
+       .attr('d', areaGen)
+       .attr('fill', d => colorScale(d.key))
+
+    // ===================================
+
+    // var data = [
+    //     {month: new Date(2018, 1, 1), apples: 10, bananas: 20, oranges: 15},
+    //     {month: new Date(2018, 2, 1), apples: 15, bananas: 15, oranges: 15},
+    //     {month: new Date(2018, 3, 1), apples: 20, bananas: 25, oranges: 15}
+    // ];
+
+    // var stackGen = d3.stack()
+    //                  .keys(["apples", "bananas", "oranges"]);
+    
+    // var stackedSeries = stackGen(data);
+
+    // var xScale = d3.scaleTime()
+    //                .domain([data[0].month, data[2].month])
+    //                .range([50, 275]);
+
+    // var yScale = d3.scaleLinear()
+    //                .domain([0,60])
+    //                .range([275, 25]);
+
+    // var colorScale = d3.scaleOrdinal()
+    //                    .domain(["apples", "bananas", "oranges"])
+    //                    .range(["red", "yellow", "orange"]);
+
+    // var areaGen = d3.area()
+    //                 .x((d) => {
+    //                     console.log(d.data.month)
+    //                     return xScale(d.data.month)
+    //                 })
+    //                 .y0((d) => yScale(d[0]))
+    //                 .y1((d) => yScale(d[1]));
+    
+    
+    // d3.select("#demo1")
+    //   .selectAll(".areas")
+    //   .data(stackedSeries)
+    //   .join("path")
+    //   .attr("d", areaGen)
+    //   .attr("fill", (d) => colorScale(d.key));
+</script>
+
+  </div>
+
+  <footer class="footer">&copy 2021.09 金筠婷 D3作品集
+  </footer>
+  <script src="./assets/js/vendors.js"></script>
+  <script src="./assets/js/all.js"></script>
+  <!-- BS 5 -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8" crossorigin="anonymous"></script>
+
+</body>
+
+</html>
