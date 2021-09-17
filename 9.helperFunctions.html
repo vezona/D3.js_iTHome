@@ -222,20 +222,40 @@
 
     // stack
     const dataStack = [
-      {month: new Date(2020, 0, 1), China: 2, America: 4920, Taiwan: 30},
-      {month: new Date(2020, 1, 1), China: 1, America: 3920, Taiwan: 10},
-      {month: new Date(2020, 2, 1), China: 3, America: 12020, Taiwan: 18},
-      {month: new Date(2020, 3, 1), China: 6, America: 6920, Taiwan: 20}
+      {month: new Date(2021, 0, 1), China: 132, America: 80, Taiwan: 30},
+      {month: new Date(2021, 1, 1), China: 67, America: 27, Taiwan: 188},
+      {month: new Date(2021, 2, 1), China: 123, America: 153, Taiwan: 18},
+      {month: new Date(2021, 3, 1), China: 27, America: 112, Taiwan: 20}
     ];
 
     const stack = d3.stack()
-                    .keys(["China", "America", "Taiwan"])
-                    .order(d3.stackOrderNone)
-                    .offset(d3.stackOffsetNone);
+                    .keys(['China', 'America', 'Taiwan'])
 
-    const series = stack(dataStack);
-    console.log(series)
+    const stackedSeries = stack(dataStack);
+    console.log(stackedSeries)
 
+    // 顏色
+    const colorScale = d3.scaleOrdinal()
+                         .domain(['China', 'America', 'Taiwan'])
+                         .range(["red", "blue", "orange"])
+
+    // 建立集合元素g、設定顏色
+    const g = d3.select('.stack')
+                .attr('width', 300)
+                .selectAll('g')
+                .data(stackedSeries)
+                .enter()
+                .append('g')
+                .attr('fill', d => colorScale(d.key));
+    
+    // 繪製長條圖
+    g.selectAll('rect')
+      .data(d=>d)
+      .join('rect')
+      .attr('width', d => d[1] - d[0]) // 長度為終點值減掉起始值
+      .attr('x', d => d[0]) // x 座標設定為起始值
+      .attr('y', (d, i) => i *30) // y 座標用 index 來處理，乘上每條bar想拉開的距離
+      .attr('height', 20);
 
 </script>
 
