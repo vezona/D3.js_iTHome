@@ -109,10 +109,10 @@ current: Helper Functions
 
     // stack
     const dataStack = [
-      {month: new Date(2021, 0, 1), China: 32, America: 20, Taiwan: 30},
-      {month: new Date(2021, 1, 1), China: 7, America: 27, Taiwan: 18},
-      {month: new Date(2021, 2, 1), China: 13, America: 33, Taiwan: 18},
-      {month: new Date(2021, 3, 1), China: 27, America: 12, Taiwan: 20}
+      {month: new Date(2021, 0, 1), China: 132, America: 80, Taiwan: 30},
+      {month: new Date(2021, 1, 1), China: 67, America: 27, Taiwan: 188},
+      {month: new Date(2021, 2, 1), China: 123, America: 153, Taiwan: 18},
+      {month: new Date(2021, 3, 1), China: 27, America: 112, Taiwan: 20}
     ];
 
     const stack = d3.stack()
@@ -121,30 +121,27 @@ current: Helper Functions
     const stackedSeries = stack(dataStack);
     console.log(stackedSeries)
 
-    // scale
-    const xStackScale = d3.scaleTime()
-                     .domain([dataStack[0].month, dataStack[3].month])
-                     .range([50, 250])
-    
-    const yStackScale = d3.scaleLinear()
-                     .domain([0,80])
-                     .range([250,50])
-
+    // 顏色
     const colorScale = d3.scaleOrdinal()
                          .domain(['China', 'America', 'Taiwan'])
                          .range(["red", "blue", "orange"])
 
-    const stackArea = d3.area()
-                        .x(d => xStackScale(d.data.month))
-                        .y0(d => yStackScale(d[0]))
-                        .y1(d => yStackScale(d[1]))
-    d3.select('.stack')
-      .attr('width', 300)
-      .attr('height', 300)
-      .selectAll('.area')
-       .data(stackedSeries)
-       .join('path')
-       .attr('d', stackArea)
-       .attr('fill', d => colorScale(d.key));
+    // 建立集合元素g、設定顏色
+    const g = d3.select('.stack')
+                .attr('width', 300)
+                .selectAll('g')
+                .data(stackedSeries)
+                .enter()
+                .append('g')
+                .attr('fill', d => colorScale(d.key));
+    
+    // 繪製長條圖
+    g.selectAll('rect')
+      .data(d=>d)
+      .join('rect')
+      .attr('width', d => d[1] - d[0]) // 長度為終點值減掉起始值
+      .attr('x', d => d[0]) // x 座標設定為起始值
+      .attr('y', (d, i) => i *30) // y 座標用 index 來處理，乘上每條bar想拉開的距離
+      .attr('height', 20);
 
 </script>
