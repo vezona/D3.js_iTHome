@@ -13,8 +13,12 @@ current: index
     margin: auto;
 }
 </style>
+<h2 class="text-center fw-bold">D3.js 事件</h2>
+<h5 class="mt-3">1. selection.on(事件)：click</h5>
+<svg class="event"></svg>
 
-<h2 class="text-center fw-bold">滑鼠事件</h2>
+
+<h5 class="mt-3">2.Hover：改變顏色與位置 (mouseover / mouseleave)</h5>
 <div class="chartContainer">
     <div class="box1">
         <p>aa</p>
@@ -24,57 +28,88 @@ current: index
     </div>
 </div>
 
+<h5 class="mt-5">3. pointer()找出目前滑鼠所在 X Y 軸座標</h5>
+<div class="position"></div>
+
+<h5 class="mt-5">4.結合範例</h5>
+<div class="combined"></div>
+
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script>
-    // data 
-    const data = [
-        {
-            x: 100,
-            y: 30,
-            fill: 'red'
-        },
-        {
-            x: 180,
-            y: 30,
-            fill: 'pink'
-        },
-        {
-            x: 250,
-            y: 30,
-            fill: 'blue'
-        },
-    ];
+    // rect 
+    d3.select('.event')
+      .append('rect')
+      .attr('class', 'rect')
+      .attr('width', 30)
+      .attr('height', 30)
+      .attr('fill', 'blue')
+      .attr('cursor', 'pointer')
+    
+    // 加上事件
+    d3.select('.rect')
+      .on('click', function(){
+          d3.select(this)
+            .transition()
+            .attr('fill', 'green')
+            .attr('transform', 'translate(250, 0)')
+    })
 
 
-    // mouseover
+    // hover (mouseover / mouseleave)
     d3.selectAll('p')
         .on('mouseover', function () {
-            d3.select(this).style("color", "red")
-                .transition().style("transform", "translate(50px)");
+            d3.select(this)
+              .style("color", "red")
+              .transition()
+              .style('cursor', 'pointer')
+              .style("transform", "translate(50px)");
         })
         .on("mouseleave", function () {
             d3.select(this).style("color", "black")
                 .transition().style("transform", "translate(0)");
         });
 
-    // =======================
-    // svg
-    const svg = d3.select('.chartContainer').append('svg');
+
+    // pointer()、XY 軸座標
+    const svg = d3.select('.position').append('svg');
     svg.attr('width', 500)
-        .attr('height', 500);
+        .attr('height', 300);
 
     //pointer()、tooltip
     let txt = svg.append("text");
-    svg.attr('cursor', 'pointer')
-        .on('mousemove', function () {
-            //d3.pointer會回傳陣列[X,Y]
+    svg.on('mousemove', function () {
+            //d3.pointer 會回傳陣列[X,Y]
             let pt = d3.pointer(event, svg.node())
             txt.attr('x', pt[0]) //取[x]
                 .attr('y', pt[1]) //取[Y]
-                // .text(`X：${pt[0]} | Y：${pt[1]}`)
                 .text(`X：${parseInt(pt[0])} | Y：${parseInt(pt[1])}`)
             console.log(pt)
         });
+
+    // 結合畫面、事件、座標軸
+    const data = [130, 210, 90, 250]
+    const combined = d3.select('.combined')
+                      .append('svg')
+                      .attr('width', 500)
+                      .attr('height', 300);
+    const dots = combined.selectAll('circle')
+                         .data(data)
+                         .enter()
+                         .append('circle')
+                         .attr('cx', d=>d)
+                         .attr('cy', (d,i)=>(i+1)*60)
+                         .attr('r', '15')
+                         .attr('fill', 'blue')
+                         .attr('cursor', 'pointer')
+    dots.on('mouseover', function(){
+        let pt = d3.pointer(event, event.target)
+        d3.select(this)
+          .attr('fill', 'red')
+          .transition()
+          .attr('cx', pt[0]+100)
+
+    });
+    
 
 
 </script>
