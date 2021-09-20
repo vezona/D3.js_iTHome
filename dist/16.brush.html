@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>brush</title>
+  <link rel="stylesheet" href="./assets/style/all.css">
+  <!-- BS 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous">
+  <!-- axios -->
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-NRH8BJ3');</script>
+    <!-- End Google Tag Manager -->
+</head>
+
+<body>
+    <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NRH8BJ3"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    
+  <header class="header">
+    <nav class="navbar navbar-expand-lg navbar-light">
+      <div class="container-fluid">
+        <a class="navbar-brand ms-3 pt-lg-2 active" href="./#">D3.js v7</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-around" id="navbarNav">
+          <ul class="navbar-nav w-100 justify-content-around">
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                基礎觀念
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="./2.d3_intro.html">D3介紹</a></li>
+                <li><a class="dropdown-item" href="./3.svg.html">svg</a></li>
+              </ul>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                D3繪圖原理
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="./4.selection.html">Selection</a></li>
+                <li><a class="dropdown-item" href="./5.data_binding1.html">Data-Binding：data & datum</a></li>
+                <li><a class="dropdown-item" href="./6.data_binding2.html">Data-Binding：enter/update/exit</a></li>
+                <li><a class="dropdown-item" href="./7.fetches.html">不同格式檔資料匯入的 API </a></li>
+                <li><a class="dropdown-item" href="./8.organizeDataAPI.html">資料整理常用 API</a></li>
+                <li><a class="dropdown-item" href="./9.helperFunctions.html">繪製形狀的 Helper Functions</a></li>
+              </ul>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                動畫與互動事件
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="./10.transition.html">動畫</a></li>
+                <li><a class="dropdown-item" href="./11.mouseEvent.html">滑鼠事件</a></li>
+                <li><a class="dropdown-item" href="./12.toolTips.html">Tooltips</a></li>
+                <li><a class="dropdown-item" href="./13.drag.html">拖曳 drag</a></li>
+                <li><a class="dropdown-item" href="./14.force.html">原力 Force</a></li>
+                <li><a class="dropdown-item" href="./15.zoom.html">縮放 Zoom</a></li>
+                <li><a class="dropdown-item" href="./16.brush.html">刷子 Brush</a></li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" href="./19.RWD.html">圖表RWD</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                基礎圖表與互動
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="./17.scale.html">比例尺與範圍 Scale & Domain/Range</a></li>
+                <li><a class="dropdown-item" href="./18.Axis&Ticks.html">軸線與刻度 Axis & Ticks</a></li>
+                <li><a class="dropdown-item" href="./pie.html">圓餅圖</a></li>
+                <li><a class="dropdown-item" href="./scatter.html">散點圖</a></li>
+                <li><a class="dropdown-item" href="#">長條圖</a></li>
+                <li><a class="dropdown-item" href="#">複數長條圖</a></li>
+                <li><a class="dropdown-item" href="#">長條堆疊圖</a></li>
+                <li><a class="dropdown-item" href="#">折線圖</a></li>
+                <li><a class="dropdown-item" href="#">多線折線圖</a></li>
+              </ul>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                進階圖表與互動
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="./donut.html">甜甜圈圖</a></li>
+                <li><a class="dropdown-item" href="#">氣泡圖</a></li>
+                <li><a class="dropdown-item" href="#">熱圖</a></li>
+                <li><a class="dropdown-item" href="#">文字雲</a></li>
+                <li><a class="dropdown-item" href="#">合併圖表(長條+折線)</a></li>
+                <li><a class="dropdown-item" href="#">階層圖</a></li>
+                <li><a class="dropdown-item" href="#">甘特圖</a></li>
+                <li><a class="dropdown-item" href="#">樹狀圖</a></li>
+                <li><a class="dropdown-item" href="#">地圖</a></li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" href="#">推薦資源</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <div class="container py-3">
+    
+<style>
+.chartContainer {
+    margin: auto;
+    width: 80%;
+    min-width: 200px;
+    height: 500px;
+    margin: auto;
+}
+
+.selected{
+  fill: blue !important
+}
+</style>
+
+<h2 class="text-center fw-bold">Brush 選取區間</h2>
+<div class="chartContainer"></div>
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+    const data = [{r:20, x:200, y:120},{r:35, x:350, y:280}]
+
+    // svg
+    const svg = d3.select('.chartContainer')
+            .append('svg')
+            .attr('width', 500)
+            .attr('height', 500);
+
+    // 放上點點
+    const dots = svg.selectAll('circle')
+                    .data(data)
+                    .enter()
+                    .append('circle')
+                    .attr('r', d => d.r)
+                    .attr('cx', d => d.x)
+                    .attr('cy', d => d.y)
+                    .style("fill", "#19d3a2")
+    
+    // 加上brush
+    svg.append("g")
+    .attr("class", "brush")
+    .call(d3.brush()
+            .extent( [ [0,0], [600,600] ]) // extent限制刷子的活動區塊，理想是比畫布稍大
+            .on("start brush", brushed)); // brush 事件
+    
+    // brush 的功能
+    // 加上event參數，就能用event.selection
+    // selection會產出一個二維陣列，分別代表`x0`, `x1`, `y0`, `y1`，左上到右下的位置，讓你有辦法重新計算目前位置的extent，進而進行其他操作。
+    function brushed(event){
+        // console.log(event.selection)
+        const extent = event.selection
+        dots.classed('selected', d => {return isBrushed(extent, d.x, d.y)})
+
+    }
+
+    // 設定原點是否在brush選到的區塊內
+    function isBrushed(brush_coors, cx, cy){
+      let x0 = brush_coors[0][0],
+          x1 = brush_coors[1][0],
+          y0 = brush_coors[0][1],
+          y1 = brush_coors[1][1]
+
+        // This return TRUE or FALSE depending on if the points is in the selected area 
+        return x0 <= cx && cx <= x1 && y0 <= cy && cy <= y1; 
+    }
+      
+
+
+</script>
+
+  </div>
+
+  <footer class="footer">&copy 2021.09 金筠婷 D3作品集
+  </footer>
+  <script src="./assets/js/vendors.js"></script>
+  <script src="./assets/js/all.js"></script>
+  <!-- BS 5 -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8" crossorigin="anonymous"></script>
+
+</body>
+
+</html>

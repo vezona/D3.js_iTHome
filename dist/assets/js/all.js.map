@@ -1,0 +1,1 @@
+{"version":3,"sources":["all.js"],"names":["$","document","ready"],"mappings":";;AAAAA,CAAC,CAACC,QAAD,CAAD,CAAYC,KAAZ,CAAkB,YAAM,CACtB;AACD,CAFD","file":"all.js","sourcesContent":["$(document).ready(() => {\n  // console.log('HesSchool Hello!');\n});"]}

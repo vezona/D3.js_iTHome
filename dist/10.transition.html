@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Transition 動畫</title>
+  <link rel="stylesheet" href="./assets/style/all.css">
+  <!-- BS 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous">
+  <!-- axios -->
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-NRH8BJ3');</script>
+    <!-- End Google Tag Manager -->
+</head>
+
+<body>
+    <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NRH8BJ3"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    
+  <header class="header">
+    <nav class="navbar navbar-expand-lg navbar-light">
+      <div class="container-fluid">
+        <a class="navbar-brand ms-3 pt-lg-2 active" href="./#">D3.js v7</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-around" id="navbarNav">
+          <ul class="navbar-nav w-100 justify-content-around">
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                基礎觀念
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="./2.d3_intro.html">D3介紹</a></li>
+                <li><a class="dropdown-item" href="./3.svg.html">svg</a></li>
+              </ul>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                D3繪圖原理
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="./4.selection.html">Selection</a></li>
+                <li><a class="dropdown-item" href="./5.data_binding1.html">Data-Binding：data & datum</a></li>
+                <li><a class="dropdown-item" href="./6.data_binding2.html">Data-Binding：enter/update/exit</a></li>
+                <li><a class="dropdown-item" href="./7.fetches.html">不同格式檔資料匯入的 API </a></li>
+                <li><a class="dropdown-item" href="./8.organizeDataAPI.html">資料整理常用 API</a></li>
+                <li><a class="dropdown-item" href="./9.helperFunctions.html">繪製形狀的 Helper Functions</a></li>
+              </ul>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                動畫與互動事件
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="./10.transition.html">動畫</a></li>
+                <li><a class="dropdown-item" href="./11.mouseEvent.html">滑鼠事件</a></li>
+                <li><a class="dropdown-item" href="./12.toolTips.html">Tooltips</a></li>
+                <li><a class="dropdown-item" href="./13.drag.html">拖曳 drag</a></li>
+                <li><a class="dropdown-item" href="./14.force.html">原力 Force</a></li>
+                <li><a class="dropdown-item" href="./15.zoom.html">縮放 Zoom</a></li>
+                <li><a class="dropdown-item" href="./16.brush.html">刷子 Brush</a></li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" href="./19.RWD.html">圖表RWD</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                基礎圖表與互動
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="./17.scale.html">比例尺與範圍 Scale & Domain/Range</a></li>
+                <li><a class="dropdown-item" href="./18.Axis&Ticks.html">軸線與刻度 Axis & Ticks</a></li>
+                <li><a class="dropdown-item" href="./pie.html">圓餅圖</a></li>
+                <li><a class="dropdown-item" href="./scatter.html">散點圖</a></li>
+                <li><a class="dropdown-item" href="#">長條圖</a></li>
+                <li><a class="dropdown-item" href="#">複數長條圖</a></li>
+                <li><a class="dropdown-item" href="#">長條堆疊圖</a></li>
+                <li><a class="dropdown-item" href="#">折線圖</a></li>
+                <li><a class="dropdown-item" href="#">多線折線圖</a></li>
+              </ul>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                進階圖表與互動
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="./donut.html">甜甜圈圖</a></li>
+                <li><a class="dropdown-item" href="#">氣泡圖</a></li>
+                <li><a class="dropdown-item" href="#">熱圖</a></li>
+                <li><a class="dropdown-item" href="#">文字雲</a></li>
+                <li><a class="dropdown-item" href="#">合併圖表(長條+折線)</a></li>
+                <li><a class="dropdown-item" href="#">階層圖</a></li>
+                <li><a class="dropdown-item" href="#">甘特圖</a></li>
+                <li><a class="dropdown-item" href="#">樹狀圖</a></li>
+                <li><a class="dropdown-item" href="#">地圖</a></li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" href="#">推薦資源</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <div class="container py-3">
+    
+<style>
+    .chartContainer {
+      margin: auto;
+  }
+</style>
+  <h2 class="text-center fw-bold">transition 動畫</h2>
+  <h5>1.簡單動畫：移動</h5>
+  <svg class="animate1"></svg>
+  <h5>2.簡單動畫：漸變色</h5>
+
+  <h5>3.完整圖表動畫</h5>
+  <div class="chartContainer"></div>
+  <button type="button" id="start" class="btn btn-primary">開始</button>
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+    d3.select('.animate1')
+      .append('rect')
+      .attr('width', 40)
+      .attr('height', 40)
+      .attr('stroke', 'black')
+
+
+
+    // data 
+    //定義兩個資料，都是Y值，x值就用陣列索引即可
+    let data1 = [5, 2, 3, 6, 1, 3, 3, 5, 3, 7, 2, 1];
+    let data2 = [8, 6, 10, 4, 5, 2, 6, 3, 1, 12, 3, 7];
+    let n = data1.length, //資料點的數量
+        mx = d3.max(d3.merge([data1, data2])) //抓兩個陣列的最大值
+
+    // svg
+    const svg = d3.select('.chartContainer').append('svg');
+    svg.attr('width', 500)
+        .attr('height', 500);
+
+    // 繪製XY圖表範圍
+    const scX = d3.scaleLinear()
+        .domain([0, n]) //x軸的值
+        .range([30, 500])
+    const scY = d3.scaleLinear()
+        .domain([0, mx]) //Y軸的值
+        .range([500, 0])
+
+    svg.selectAll('line')
+        .data(data1)
+        .enter()
+        .append('line')
+        .attr('stroke', 'orange')
+        .attr('stroke-width', 20)
+        .attr('x1', (d, i) => scX(i))
+        .attr('y1', scY(0))
+        .attr('x2', (d, i) => scX(i))
+        .attr('y2', (d, i) => scY(d))
+
+    // 動畫開始
+    d3.select('#start')
+      .on('click', function () {
+        svg.selectAll('line')
+            .data(data2)
+            .transition()
+            .duration(1000) //點擊之後每個bar會在1秒內到達更新位置
+            .delay((d, i) => 200 * i) //每個bar在分別delay後才開始動畫，
+            // delay時間承上X軸index，做出從左至右更新的動畫效果
+            .attr('y2', (d, i) => scY(d))
+            // transition串接
+            // 會繼承先前transition的duration 跟delay
+            .transition().attr('stroke', 'blue')
+    });
+
+
+</script>
+
+  </div>
+
+  <footer class="footer">&copy 2021.09 金筠婷 D3作品集
+  </footer>
+  <script src="./assets/js/vendors.js"></script>
+  <script src="./assets/js/all.js"></script>
+  <!-- BS 5 -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8" crossorigin="anonymous"></script>
+
+</body>
+
+</html>

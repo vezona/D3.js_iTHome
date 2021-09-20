@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>svg</title>
+  <link rel="stylesheet" href="./assets/style/all.css">
+  <!-- BS 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous">
+  <!-- axios -->
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-NRH8BJ3');</script>
+    <!-- End Google Tag Manager -->
+</head>
+
+<body>
+    <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NRH8BJ3"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    
+  <header class="header">
+    <nav class="navbar navbar-expand-lg navbar-light">
+      <div class="container-fluid">
+        <a class="navbar-brand ms-3 pt-lg-2 active" href="./#">D3.js v7</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-around" id="navbarNav">
+          <ul class="navbar-nav w-100 justify-content-around">
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                基礎觀念
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="./2.d3_intro.html">D3介紹</a></li>
+                <li><a class="dropdown-item" href="./3.svg.html">svg</a></li>
+              </ul>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                D3繪圖原理
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="./4.selection.html">Selection</a></li>
+                <li><a class="dropdown-item" href="./5.data_binding1.html">Data-Binding：data & datum</a></li>
+                <li><a class="dropdown-item" href="./6.data_binding2.html">Data-Binding：enter/update/exit</a></li>
+                <li><a class="dropdown-item" href="./7.fetches.html">不同格式檔資料匯入的 API </a></li>
+                <li><a class="dropdown-item" href="./8.organizeDataAPI.html">資料整理常用 API</a></li>
+                <li><a class="dropdown-item" href="./9.helperFunctions.html">繪製形狀的 Helper Functions</a></li>
+              </ul>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                動畫與互動事件
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="./10.transition.html">動畫</a></li>
+                <li><a class="dropdown-item" href="./11.mouseEvent.html">滑鼠事件</a></li>
+                <li><a class="dropdown-item" href="./12.toolTips.html">Tooltips</a></li>
+                <li><a class="dropdown-item" href="./13.drag.html">拖曳 drag</a></li>
+                <li><a class="dropdown-item" href="./14.force.html">原力 Force</a></li>
+                <li><a class="dropdown-item" href="./15.zoom.html">縮放 Zoom</a></li>
+                <li><a class="dropdown-item" href="./16.brush.html">刷子 Brush</a></li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" href="./19.RWD.html">圖表RWD</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                基礎圖表與互動
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="./17.scale.html">比例尺與範圍 Scale & Domain/Range</a></li>
+                <li><a class="dropdown-item" href="./18.Axis&Ticks.html">軸線與刻度 Axis & Ticks</a></li>
+                <li><a class="dropdown-item" href="./pie.html">圓餅圖</a></li>
+                <li><a class="dropdown-item" href="./scatter.html">散點圖</a></li>
+                <li><a class="dropdown-item" href="#">長條圖</a></li>
+                <li><a class="dropdown-item" href="#">複數長條圖</a></li>
+                <li><a class="dropdown-item" href="#">長條堆疊圖</a></li>
+                <li><a class="dropdown-item" href="#">折線圖</a></li>
+                <li><a class="dropdown-item" href="#">多線折線圖</a></li>
+              </ul>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                進階圖表與互動
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="./donut.html">甜甜圈圖</a></li>
+                <li><a class="dropdown-item" href="#">氣泡圖</a></li>
+                <li><a class="dropdown-item" href="#">熱圖</a></li>
+                <li><a class="dropdown-item" href="#">文字雲</a></li>
+                <li><a class="dropdown-item" href="#">合併圖表(長條+折線)</a></li>
+                <li><a class="dropdown-item" href="#">階層圖</a></li>
+                <li><a class="dropdown-item" href="#">甘特圖</a></li>
+                <li><a class="dropdown-item" href="#">樹狀圖</a></li>
+                <li><a class="dropdown-item" href="#">地圖</a></li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" href="#">推薦資源</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <div class="container py-3">
+    
+<!-- DOM -->
+<div>
+  <div class="Knowledge">
+    <h4 fw-bold>SVG 知識點</h4>
+    <ul>
+      <li>
+        SVG 是<span style="color: red">向量圖形格式</span
+        >，可以建立二維圖形、動畫與互動
+      </li>
+      <li>
+        基於XML文字檔格式，產生 <span style="color: red">DOM 樹</span> (不同於
+        canvas 是平面畫布)
+      </li>
+      <li>
+        SVG 建立的圖形元素 (形狀、文字、線條)， 可用<span style="color: red"
+          >外觀屬性</span
+        >控制
+      </li>
+      <li>
+        SVG 圖形原則上是<span style="color: red"
+          >無限大，width / height 只是定義 viewport 視窗大小</span
+        >
+      </li>
+      <li>
+        圖形原點是<span style="color: red">左上角，由上而下、從左至右</span>
+      </li>
+      <li>SVG 可定義結構化元素(< g >)，組合其他子元素成為複合單位</li>
+      <li>SVG 可以接收使用者事件，並回應事件進行互動</li>
+    </ul>
+  </div>
+
+  <h4 fw-bold>SVG 形狀</h4>
+  <ol>
+    <li>
+      <p>< rect > 長方形：X、Y 調整左上座標點位置</p>
+      <script src="https://gist.github.com/vezona/ba3a34374ff7f1197e9eda214a58b494.js"></script>
+      <svg width="400" height="200">
+        <rect
+          x="20"
+          y="20"
+          width="300"
+          height="100"
+          style="fill: rgb(255, 0, 255); stroke-width: 3; stroke: rgb(0, 0, 0)"
+        />
+      </svg>
+    </li>
+    <li>
+      <p>< rect > 長方形：rx、rx 調整水平/垂直邊角半徑</p>
+      <script src="https://gist.github.com/vezona/6d1f20978aa52bba7cec6654532d1229.js"></script>
+      <svg width="400" height="150">
+        <rect
+          x="20"
+          y="20"
+          rx="10"
+          ry="10"
+          width="300"
+          height="100"
+          style="fill: rgb(0, 0, 255); stroke-width: 3; stroke: rgb(0, 0, 0)"
+        />
+      </svg>
+    </li>
+
+    <li>
+      <p>< circle > 圓形：cx, cy 水平/垂直中心座標、r 半徑</p>
+      <script src="https://gist.github.com/vezona/f500b38e74411c556e403ec7c18c52ad.js"></script>
+      <svg width="400" height="150">
+        <circle
+          cx="100"
+          cy="50"
+          r="40"
+          stroke="black"
+          stroke-width="3"
+          fill="red"
+        />
+      </svg>
+    </li>
+    <li>
+      <p>< ellipse > 橢圓形：cx, cy 水平/垂直中心座標、rx, ry 水平/垂直半徑</p>
+      <script src="https://gist.github.com/vezona/aa1a46095d37bdb231584ef428a2d402.js"></script>
+      <svg width="400" height="150">
+        <ellipse
+          cx="200"
+          cy="80"
+          rx="80"
+          ry="50"
+          stroke="black"
+          stroke-width="3"
+          fill="pink"
+        ></ellipse>
+      </svg>
+    </li>
+  </ol>
+
+  <hr />
+  <h4 fw-bold>SVG 線條</h4>
+  <ol>
+    <li>
+      <p>< line > 線條：x1 / y1 座標開始點、x2 / y2 座標結束點</p>
+      <script src="https://gist.github.com/vezona/f9ea1f67521cae612287cd40742d9d57.js"></script>
+      <svg width="400" height="200">
+        <line
+          x1="0"
+          y1="0"
+          x2="200"
+          y2="200"
+          style="stroke: rgb(0, 0, 255); stroke-width: 2"
+        />
+      </svg>
+    </li>
+    <li>
+      <p>< polyline > 折線：points 來表示每個點之間的 X、Y 座標</p>
+      <svg width="400" height="200">
+        <polyline
+          points="20,50 40,25 60,40 80,120 120,140 160,180 "
+          style="fill: none; stroke: orangered; stroke-width: 3"
+        />
+      </svg>
+    </li>
+    <li>
+      <p>
+        < polygon > 多邊形：數值與折線相同，只是 polygon
+        會產生閉合折線並填滿區塊
+      </p>
+      <svg width="400" height="200">
+        <polygon
+          points="200,10 250,190 160,180"
+          style="fill: lime; stroke: purple; stroke-width: 1"
+        />
+      </svg>
+    </li>
+  </ol>
+
+  <hr />
+  <h4 fw-bold>SVG 路徑與文字</h4>
+  <ol>
+    <li>
+      <p>< path > 路徑：只有d參數，</p>
+      <p>透過命令語言（海龜繪圖形式）繪製任意形狀</p>
+      <p>因為SVG是向量圖，所有的物件和元素其實都是由 Path (路徑) 所組成</p>
+      <p>path 只有一個特定元素< d >，是由空白間隔的指令＋座標組合</p>
+      <p>
+        path 的指令如下：
+        <a href="https://www.oxxostudio.tw/articles/201406/svg-04-path-1.html"
+          >再參考這篇</a
+        >
+      </p>
+      <svg width="400" height="200">
+        <path
+          d="M50 20 C80 90,40 200,250,100"
+          stroke="black"
+          fill="none"
+          stroke-width="2"
+        />
+      </svg>
+      <br>
+      <svg width="100" height="100">
+        <path
+          d="M25,15 L25,30
+             M75,15 L75,30
+             M15,50 C20,80 80,80 85,50"
+          stroke="black"
+          fill="none"
+          stroke-width="2"
+        />
+      </svg>
+    </li>
+    <li>
+      <p>< text > 文字：顏色用fill、</p>
+      <p>
+        <a href="https://www.oxxostudio.tw/articles/201406/svg-08-text.html"
+          >OXXO 很詳細</a
+        >
+        <a href="https://ithelp.ithome.com.tw/articles/10200726">這篇也不錯</a>
+      </p>
+      <svg width="400" height="200">
+        <text x="50,60,80" y="80,120,40" fill="blue" text-anchor="start">
+          SVG 真有趣!
+        </text>
+        <!-- <text x="50" y="80" fill="blue" transform="rotate(30 20,40)"> SVG 真有趣!</text> -->
+      </svg>
+    </li>
+    <li>
+      <p>text on Path 路徑文字</p>
+      <svg width="400" height="200">
+        <defs>
+          <path id="path" d="M100 100  Q150 150 ,200 100 T300 100" />
+        </defs>
+        <text x="20" y="20">
+          <textPath xlink:href="#path" fill="orangered">
+            鐵人快要寫不完啦～～崩潰！！
+          </textPath>
+        </text>
+      </svg>
+    </li>
+  </ol>
+
+  <div class="Knowledge my-3 p-3">
+    <h4 fw-bold>SVG 屬性</h4>
+    <ol>
+      <li>
+        表現屬性：常用的有
+        stroke、stroke-width、fill、font-size、opacity、visibility
+      </li>
+      <li>移動屬性：常用的有 rotate、transform</li>
+    </ol>
+  </div>
+  <ol>
+    <li></li>
+    <li></li>
+  </ol>
+
+  <div class="Knowledge">
+    <h4 fw-bold>SVG 結構元素</h4>
+    <ol>
+      <li>常用的有 < svg >、< g >、< defs >、< use ></li>
+      <li>
+        沒有形狀，負責組裝複雜圖形物件為一共同集合，並可一次移動與操作這個圖形集合
+      </li>
+      <li>套用到結構元素上的轉換（移動、換色）會同步套用到子項目</li>
+    </ol>
+  </div>
+</div>
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script></script>
+
+  </div>
+
+  <footer class="footer">&copy 2021.09 金筠婷 D3作品集
+  </footer>
+  <script src="./assets/js/vendors.js"></script>
+  <script src="./assets/js/all.js"></script>
+  <!-- BS 5 -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8" crossorigin="anonymous"></script>
+
+</body>
+
+</html>
