@@ -86,7 +86,7 @@
                 <li><a class="dropdown-item" href="./scatter.html">散點圖</a></li>
                 <li><a class="dropdown-item" href="#">長條圖</a></li>
                 <li><a class="dropdown-item" href="#">複數長條圖</a></li>
-                <li><a class="dropdown-item" href="#">長條堆疊圖</a></li>
+                <li><a class="dropdown-item" href="./stack.html">長條堆疊圖</a></li>
                 <li><a class="dropdown-item" href="#">折線圖</a></li>
                 <li><a class="dropdown-item" href="#">多線折線圖</a></li>
               </ul>
@@ -283,14 +283,14 @@
         console.log(d.x, d.y)
 
         // 加上hover過去的text
-        svg.append("text")
-            .attr('class', 'hoverTextInfo')
-            // .attr('id', "t" + d.x + "-" + d.y) //這邊要加is是為了等等mouseLeave選定誰的text要消失(不成功)
-            .attr('x', d.x + 20)
-            .attr('y', d.y - 20)
-            .text(function () {
-                return [d.x, d.y]; // Value of the text
-            })
+        // svg.append("text")
+        //     .attr('class', 'hoverTextInfo')
+        //     // .attr('id', "t" + d.x + "-" + d.y) //這邊要加is是為了等等mouseLeave選定誰的text要消失(不成功)
+        //     .attr('x', d.x + 20)
+        //     .attr('y', d.y - 20)
+        //     .text(function () {
+        //         return [d.x, d.y]; // Value of the text
+        //     })
 
     }
 

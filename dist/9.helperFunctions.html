@@ -86,7 +86,7 @@
                 <li><a class="dropdown-item" href="./scatter.html">散點圖</a></li>
                 <li><a class="dropdown-item" href="#">長條圖</a></li>
                 <li><a class="dropdown-item" href="#">複數長條圖</a></li>
-                <li><a class="dropdown-item" href="#">長條堆疊圖</a></li>
+                <li><a class="dropdown-item" href="./stack.html">長條堆疊圖</a></li>
                 <li><a class="dropdown-item" href="#">折線圖</a></li>
                 <li><a class="dropdown-item" href="#">多線折線圖</a></li>
               </ul>
@@ -118,12 +118,146 @@
 
   <div class="container py-3">
     
-<style></style>
+<style>
+  ul{
+    list-style-type: disc;
+  }
+</style>
 
-<div></div>
+<h2 class="text-center fw-bold my-3">繪製形狀的 Helper Functions</h2>
+<h4 class="fw-bold mt-4" style="color:#ec9c39">Generator</h4>
+<ul>
+    <li>
+        <h4>line( )</h4>
+        <svg class="line"></svg>
+    </li>
+    <li>
+        <h4>area( )</h4>
+        <svg class="area"></svg>
+    </li>
+    <li>
+        <h4>arc( )</h4>
+        <svg class="arc"></svg>
+    </li>
+</ul>
+
+<h4 class="fw-bold mt-4" style="color:#ec9c39">Component</h4>
+<ul>
+    <li>
+        <h4>axis( )</h4>
+        <svg class="axis"></svg>
+    </li>
+</ul>
+
+<h4 class="fw-bold mt-4" style="color:#ec9c39">Layout</h4>
+<ul>
+    <li>
+        <h4>stack( )</h4>
+        <svg class="stack"></svg>
+    </li>
+</ul>
 
 <script src="https://d3js.org/d3.v7.min.js"></script>
-<script></script>
+<script>
+    // Generator
+    // line
+    const data1 = [{x:10,y:100},{x:20,y:100},{x:30,y:100},{x:90,y:20},{x:220,y:10}]
+    const line = d3.line()
+                   .x(d=>d.x)
+                   .y(d=>d.y)
+
+    d3.select('.line')
+      .append('path')
+      .attr('d', line(data1))
+      .attr('stroke', 'black')
+      .attr('stroke-width', '2')
+      .attr('fill', 'none')
+    
+    // area
+    const area = d3.area()
+                   .x(d=>d.x)
+                   .y1(d=>d.y)
+                   .y0(10)
+    console.log(area(data1))
+    d3.select('.area')
+      .append('path')
+      .attr('d', area(data1))
+      .attr('stroke', 'blue')
+      .attr('fill', 'blue')
+    
+    // arc
+    const arc = d3.arc()
+                  .innerRadius(60)
+                  .outerRadius(65)
+                  .startAngle(Math.PI*1.2)
+                  .endAngle(Math.PI*2.8)
+
+    console.log(arc())
+    d3.select('.arc')
+      .append("g")
+      .attr("transform", "translate(150,80)")
+      .append('path')
+      .attr('d', arc())
+      .attr('stroke', 'blue')
+      .attr('fill', 'blue')
+    
+    // Components
+    // axis
+    // 先抓出 x 軸要使用的值
+    const xData = data1.map((i) => i.x);
+
+    // X軸
+    const xScale = d3.scaleLinear()
+                     .domain([0, d3.max(xData)])
+                     .range([10, 290]);
+    
+    //使用 xScale 的設定，繪製 tick 朝下的軸線
+    const xAxis = d3
+        .axisBottom(xScale)
+
+    d3.select('.axis')
+      .append("g")
+      .call(xAxis)
+      .attr("transform", "translate(0,130)")
+
+    // stack
+    const dataStack = [
+      {month: new Date(2021, 0, 1), China: 132, America: 80, Taiwan: 30},
+      {month: new Date(2021, 1, 1), China: 67, America: 27, Taiwan: 188},
+      {month: new Date(2021, 2, 1), China: 123, America: 153, Taiwan: 18},
+      {month: new Date(2021, 3, 1), China: 27, America: 112, Taiwan: 20}
+    ];
+
+    const stack = d3.stack()
+                    .keys(['China', 'America', 'Taiwan'])
+
+    const stackedSeries = stack(dataStack);
+    console.log(stackedSeries)
+
+    // 顏色
+    const colorScale = d3.scaleOrdinal()
+                         .domain(['China', 'America', 'Taiwan'])
+                         .range(["red", "blue", "orange"])
+
+    // 建立集合元素g、設定顏色
+    const g = d3.select('.stack')
+                .attr('width', 300)
+                .selectAll('g')
+                .data(stackedSeries)
+                .enter()
+                .append('g')
+                .attr('fill', d => colorScale(d.key));
+    
+    // 繪製長條圖
+    g.selectAll('rect')
+      .data(d=>d)
+      .join('rect')
+      .attr('width', d => d[1] - d[0]) // 長度為終點值減掉起始值
+      .attr('x', d => d[0]) // x 座標設定為起始值
+      .attr('y', (d, i) => i *30) // y 座標用 index 來處理，乘上每條bar想拉開的距離
+      .attr('height', 20);
+
+</script>
 
   </div>
 

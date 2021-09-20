@@ -86,7 +86,7 @@
                 <li><a class="dropdown-item" href="./scatter.html">散點圖</a></li>
                 <li><a class="dropdown-item" href="#">長條圖</a></li>
                 <li><a class="dropdown-item" href="#">複數長條圖</a></li>
-                <li><a class="dropdown-item" href="#">長條堆疊圖</a></li>
+                <li><a class="dropdown-item" href="./stack.html">長條堆疊圖</a></li>
                 <li><a class="dropdown-item" href="#">折線圖</a></li>
                 <li><a class="dropdown-item" href="#">多線折線圖</a></li>
               </ul>
@@ -192,7 +192,7 @@
   const dataChange = document.querySelector('.dataChange')
   const showData = document.querySelector('.showData')
   let randomData = [] // 先建立空資料陣列
-  dataChange.addEventListener('change', function(){
+  dataChange.addEventListener('input', function(){
     randomData = []  // 每次重選range就清空陣列
     for(i= 0; i< event.target.value; i++){
       let random = Math.floor(Math.random() * 5)
@@ -208,7 +208,7 @@
   const rangeSelect =  d3.select('.example')
         .append('svg')
         .attr('width', 500)
-        .attr('height', 500)
+        .attr('height', 300)
 
   // 製作圖表
   const drawDiagram =()=>{

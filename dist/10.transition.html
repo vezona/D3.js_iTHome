@@ -86,7 +86,7 @@
                 <li><a class="dropdown-item" href="./scatter.html">散點圖</a></li>
                 <li><a class="dropdown-item" href="#">長條圖</a></li>
                 <li><a class="dropdown-item" href="#">複數長條圖</a></li>
-                <li><a class="dropdown-item" href="#">長條堆疊圖</a></li>
+                <li><a class="dropdown-item" href="./stack.html">長條堆疊圖</a></li>
                 <li><a class="dropdown-item" href="#">折線圖</a></li>
                 <li><a class="dropdown-item" href="#">多線折線圖</a></li>
               </ul>
@@ -124,68 +124,187 @@
   }
 </style>
   <h2 class="text-center fw-bold">transition 動畫</h2>
-  <h5>1.簡單動畫：移動</h5>
-  <svg class="animate1"></svg>
-  <h5>2.簡單動畫：漸變色</h5>
+  <h5>1.簡單動畫：平滑改變位置</h5>
+  <svg class="move"></svg>
+  <br>
+  <button type="button" class="btn btn-primary mt-3 moveBtn">移動</button>
 
-  <h5>3.完整圖表動畫</h5>
+  <h5 class="mt-5">2.簡單動畫：漸變色</h5>
+  <svg class="changeColor"></svg>
+  <br>
+  <button type="button" class="btn btn-primary mt-3 changeBtn">改變顏色</button>
+
+  <h5 class="mt-5">3.動畫延遲</h5>
+  <svg class="delay"></svg>
+  <br>
+  <button type="button" class="btn btn-primary mt-3 delayBtn">delay開始</button>
+
+  <h5 class="mt-5">4.Ease 動畫效果</h5>
+  <svg class="ease"></svg>
+  <br>
+  <select name="ease" id="ease">
+      <option value=""></option>
+  </select>
+  <button type="button" class="btn btn-primary mt-3 easeBtn" onClick="updateEast();">Ease開始</button>
+
+  <h5 class="mt-5">5.無限循環動畫</h5>
+  <svg class="loopAnimation"></svg>
+
+  <h5  class="mt-5">6.完整圖表動畫</h5>
   <div class="chartContainer"></div>
-  <button type="button" id="start" class="btn btn-primary">開始</button>
+  <button type="button" id="start" class="btn btn-primary">動畫開始</button>
 
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script>
-    d3.select('.animate1')
-      .append('rect')
-      .attr('width', 40)
-      .attr('height', 40)
-      .attr('stroke', 'black')
+    // 移動
+    const rect = d3.select('.move')
+                    .append('rect')
+                    .attr('width', 40)
+                    .attr('height', 40)
+                    .attr('stroke', 'black')
+    
+    document.querySelector('.moveBtn').addEventListener('click', function(){
+        console.log('move')
+        rect.transition()
+            // .duration(5000)
+            .attr('transform', 'translate(140, 60)')
+    })
+
+    // 改變顏色
+    const round = d3.select('.changeColor')
+                    .append('circle')
+                    .attr('cx', 100)
+                    .attr('cy', 50)
+                    .attr('r', 25)
+                    .attr('fill', 'blue')
+                    .attr('stroke-width', '0.5px')
+                    .attr('stroke', 'black')
+
+    document.querySelector('.changeBtn').addEventListener('click', function(){
+        round.transition()
+             .duration(1000)
+             .attr('fill', 'green')
+             .attr('stroke-width', '6px')
+             .attr('stroke', 'red')
+    })
+
+
+    // delay()
+    const dataDelay = [160, 140, 120, 100, 80, 60 ,40 ,20]
+    const delay = d3.select('.delay')
+                    .selectAll('circle')
+                    .data(dataDelay)
+                    .enter()
+                    .append('circle')
+                    .attr('cx', d => d)
+                    .attr('cy', 30)
+                    .attr('r', 15)
+                    .attr('fill', 'blue')
+                    .attr('opacity', '0.5')
+
+
+    document.querySelector('.delayBtn').addEventListener('click', function(){
+        delay.transition()
+             .delay((d,i)=> i*200)
+             .attr('cx', d => d+120)
+    
+    })
+
+    // ease()
+    // 設定options的方法
+    const easeNames = Object.keys(d3).filter(d=>{
+        return d.slice(0,4) === 'ease' // 抓出所有方法中，名稱內有ease的方法
+    })
+
+    console.log(easeNames)
+    
+    d3.select('#ease')
+      .selectAll('option')
+      .data(easeNames)
+      .join('option')
+      .attr('value', function(d) { return d; })
+	  .text(function(d) { return 'd3.' + d; });
+
+    // 加上圓點
+    const easeDot = d3.select('.ease')
+                      .append('circle')
+                      .attr('cx', 40)
+                      .attr('cy', 40)
+                      .attr('r', 30)
+                      .attr('fill', 'blue')
+
+    function updateEast(){
+        let easeName = d3.select('#ease').node().value;
+        console.log(easeName)
+        easeDot.attr('cx', 40) // 回原點
+               .transition()
+               .ease(d3[easeName])
+               .attr('cx', 200)
+    }
+
+    // 無限循環動畫
+    const loop = d3.select('.loopAnimation')
+                    .append('circle')
+                    .attr('cx', 50)
+                    .attr('cy', 50)
+                    .attr('r', 25)
+                    .attr('fill', 'blue')
+                    .transition()
+                    .duration(2000)
+                    .on('start', goRight)
+
+    function goRight(){
+        // console.log(this)
+        // console.log('start')
+        d3.active(this).attr('cx', 200)
+          .transition()
+          .on("start", goLeft);
+    }
+
+    function goLeft (){
+        // console.log(this)
+        // console.log('end')
+        d3.active(this)
+          .attr('cx', 50)
+          .transition()
+          .on("start", goRight)
+    }
 
 
 
     // data 
-    //定義兩個資料，都是Y值，x值就用陣列索引即可
-    let data1 = [5, 2, 3, 6, 1, 3, 3, 5, 3, 7, 2, 1];
-    let data2 = [8, 6, 10, 4, 5, 2, 6, 3, 1, 12, 3, 7];
+    //定義兩個資料
+    let data1 = [150, 122, 133, 161, 116, 139, 143, 115, 193, 137, 122, 141];
+    let data2 = [180, 146, 180, 172, 133, 149, 152, 138, 188, 192, 117, 146];
     let n = data1.length, //資料點的數量
         mx = d3.max(d3.merge([data1, data2])) //抓兩個陣列的最大值
 
     // svg
     const svg = d3.select('.chartContainer').append('svg');
     svg.attr('width', 500)
-        .attr('height', 500);
+        .attr('height', 300);
 
-    // 繪製XY圖表範圍
-    const scX = d3.scaleLinear()
-        .domain([0, n]) //x軸的值
-        .range([30, 500])
-    const scY = d3.scaleLinear()
-        .domain([0, mx]) //Y軸的值
-        .range([500, 0])
-
-    svg.selectAll('line')
+    svg.selectAll('rect')
         .data(data1)
         .enter()
-        .append('line')
-        .attr('stroke', 'orange')
-        .attr('stroke-width', 20)
-        .attr('x1', (d, i) => scX(i))
-        .attr('y1', scY(0))
-        .attr('x2', (d, i) => scX(i))
-        .attr('y2', (d, i) => scY(d))
+        .append('rect')
+        .attr('x', 0)
+        .attr('y', (d, i) => i * 30)
+        .attr('width', (d, i) => d)
+        .attr('height', 20)
+        .attr('fill', 'orange')
 
     // 動畫開始
     d3.select('#start')
       .on('click', function () {
-        svg.selectAll('line')
-            .data(data2)
-            .transition()
-            .duration(1000) //點擊之後每個bar會在1秒內到達更新位置
+        svg.selectAll('rect')
+            .data(data2) // 資料變化
+            .transition() // 加上動畫
+            .duration(1000) //點擊之後每個 bar 會在1秒內到達更新位置
             .delay((d, i) => 200 * i) //每個bar在分別delay後才開始動畫，
-            // delay時間承上X軸index，做出從左至右更新的動畫效果
-            .attr('y2', (d, i) => scY(d))
-            // transition串接
-            // 會繼承先前transition的duration 跟delay
-            .transition().attr('stroke', 'blue')
+            // delay 時間乘上index，做出從上至下更新的動畫效果
+            .attr('width', (d, i) => d)
+            .attr('fill', '#66f9ff')
     });
 
 

@@ -86,7 +86,7 @@
                 <li><a class="dropdown-item" href="./scatter.html">散點圖</a></li>
                 <li><a class="dropdown-item" href="#">長條圖</a></li>
                 <li><a class="dropdown-item" href="#">複數長條圖</a></li>
-                <li><a class="dropdown-item" href="#">長條堆疊圖</a></li>
+                <li><a class="dropdown-item" href="./stack.html">長條堆疊圖</a></li>
                 <li><a class="dropdown-item" href="#">折線圖</a></li>
                 <li><a class="dropdown-item" href="#">多線折線圖</a></li>
               </ul>
@@ -147,8 +147,60 @@
   </div>
 </div>
 
+<div class="chartContainer"></div>
+<button type="button" id="start" class="btn btn-primary">動畫開始</button>
+
 <script src="https://d3js.org/d3.v7.min.js"></script>
+
 <script>
+//現在我有兩筆資料
+let data1 = [5, 2, 3, 6, 1, 3, 3, 5, 3, 7, 2, 1];
+let data2 = [8, 6, 10, 4, 5, 2, 6, 3, 1, 12, 3, 7];
+
+
+let n = data1.length, //資料點的數量
+    mx = d3.max(d3.merge([data1, data2])) //抓兩個陣列的最大值
+
+// svg
+const svg = d3.select('.chartContainer').append('svg');
+svg.attr('width', 500)
+    .attr('height', 500);
+
+// 繪製XY圖表範圍
+const scX = d3.scaleLinear()
+    .domain([0, n]) //x軸的值
+    .range([30, 500])
+const scY = d3.scaleLinear()
+    .domain([0, mx]) //Y軸的值
+    .range([500, 0])
+
+svg.selectAll('line')
+    .data(data1)
+    .enter()
+    .append('line')
+    .attr('stroke', 'orange')
+    .attr('stroke-width', 20)
+    .attr('x1', (d, i) => scX(i))
+    .attr('y1', scY(0))
+    .attr('x2', (d, i) => scX(i))
+    .attr('y2', (d, i) => scY(d))
+
+// 動畫開始
+d3.select('#start')
+  .on('click', function () {
+    svg.selectAll('line')
+        .data(data2)
+        .transition()
+        .duration(1000) //點擊之後每個bar會在1秒內到達更新位置
+        .delay((d, i) => 200 * i) //每個bar在分別delay後才開始動畫，
+        // delay時間承上X軸index，做出從左至右更新的動畫效果
+        .attr('y2', (d, i) => scY(d))
+        // transition串接
+        // 會繼承先前transition的duration 跟delay
+        .transition().attr('stroke', '#66f9ff')
+});
+
+
 </script>
   </div>
 
