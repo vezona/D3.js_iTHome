@@ -9,8 +9,6 @@ current: index
   .chartContainer {
     margin: auto;
     width: 80%;
-    min-width: 200px;
-    height: 500px;
     margin: auto;
 }
 </style>
@@ -20,7 +18,7 @@ current: index
 
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script>
-    // 假資料
+    // 資料
     const data = [{name:'A', x:200, y:340},
                   {name:'B', x:220, y:300},
                   {name:'C', x:250, y:198},
@@ -34,7 +32,7 @@ current: index
                   .attr('width', 500)
                   .attr('height', 500);
     
-    // 建立原點，目前全部都在同個位置
+    // 建立圓點
     const dots = svg.append('g')
                     .selectAll('circle')
                     .data(data)
@@ -47,21 +45,25 @@ current: index
                     .style("fill-opacity", 0.3)
                     .attr("stroke", "#b3a2c8")
                     .style("stroke-width", 4)
-                    .style('cursor', 'pointer');
+                    .style('cursor', 'pointer')
 
-    // 拖曳的方法
-    let singleDot = undefined
+    // 建立拖曳方法
     const drag = d3.drag()
                    .on('start', function(){
-                       singleDot = d3.select(this)
-                    })
+                      d3.select(this)
+                        .style('stroke', 'blue')
+                     })
                    .on('drag', function(){
-                       let pt = d3.pointer(event, svg.node()) //v6以後都是改成 pointer 了
-                       singleDot.attr('cx', pt[0]).attr('cy', pt[1])
-                    })
-                   .on('end', function(){
-                      singleDot = undefined
-                    });
-    
-    drag(svg.selectAll('circle'));
+                      let pt = d3.pointer(event, this)
+                      d3.select(this)
+                        .attr('cx', pt[0])
+                        .attr('cy', pt[1])
+                     })
+                    .on('end', function(){
+                      d3.select(this)
+                        .style('stroke', '#b3a2c8')
+                     });
+
+    dots.call(drag);
+    // 或是drag(svg.selectAll('circle'));
 </script>

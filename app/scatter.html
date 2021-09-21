@@ -129,20 +129,21 @@ current: index
         .on("mouseout", handleMouseOut);
 
     // 滑鼠click的時候增加一個點
-    // On Click, we want to add data to the array and chart
     svg.on("click", function () {
         let coords = d3.pointer(event, this);
 
         // Normally we go from data to pixels, but here we're doing pixels to data
         let newData = {
-            x: Math.round(xScale.invert(coords[0])), // Takes the pixel number to convert to number
+          // Takes the pixel number to convert to number
+            x: Math.round(xScale.invert(coords[0])),
             y: Math.round(yScale.invert(coords[1]))
         };
-        // console.log(newData)
 
-        dataset.push(newData); // Push data to our array
+        // Push data to our array
+        dataset.push(newData);
 
-        svg.selectAll("circle") // For new circle, go through the update process
+        // For new circle, go through the update process
+        svg.selectAll("circle")
             .data(dataset)
             .enter()
             .append("circle")
@@ -158,39 +159,29 @@ current: index
             .on("mouseout", handleMouseOut);
     })
 
-    // Create Event Handlers for mouse
-    function handleMouseOver(d, i) { // 加上mouseOver時的動作
-        console.log(d)
-
+    // 建立 mouseover 事件
+    function handleMouseOver(d, i) {
         // 選定this的元素，改變hover過去的顏色跟形狀
         d3.select(this)
             .attr('fill', 'orange')
             .attr('r', radius * 2);
-        // console.log(this.getAttribute('cx'), this.getAttribute('cy'))
         console.log(d.x, d.y)
 
-        // 加上hover過去的text
-        // svg.append("text")
-        //     .attr('class', 'hoverTextInfo')
-        //     // .attr('id', "t" + d.x + "-" + d.y) //這邊要加is是為了等等mouseLeave選定誰的text要消失(不成功)
-        //     .attr('x', d.x + 20)
-        //     .attr('y', d.y - 20)
-        //     .text(function () {
-        //         return [d.x, d.y]; // Value of the text
-        //     })
-
+        // 加上tooltips
+        let pt = d3.pointer(event, this)
+        svg.append("text")
+            .attr('class', 'hoverTextInfo')
+            .attr('x', pt[0] + 10)
+            .attr('y', pt[1] - 10)
+            .style('fill', 'red')
+            .text([`x:${d.x}, y:${d.y}`])
     }
 
+      // 建立 mouseleave 事件
     function handleMouseOut(d, i) {
-
         d3.selectAll('.hoverTextInfo').remove()
-        // Use D3 to select element, change color back to normal
         d3.select(this)
             .attr('fill', 'black')
-            .attr('r', radius);
-
-        // 選定誰要消失 不成功，因為我每次進出的dx,dy都不一樣!!!
-        // d3.select("#t" + d.x + "-" + d.y).remove(); // Remove text location
-        // console.log(d.x, d.x)
+            .attr('r', radius)
     }
 </script>

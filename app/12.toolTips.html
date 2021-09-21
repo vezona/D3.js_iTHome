@@ -14,17 +14,22 @@ current: index
     margin: auto;
 }
 </style>
+<h2 class="text-center fw-bold">tooltips</h2>
+<h5 class="mt-3">1. hover 時呈現資訊</h5>
+<div class="tooltip1"></div>
 
-<div class="chartContainer"></div>
+<h5 class="mt-3">2. tooltips 呈現座標、圓點直徑</h5>
+<div class="tooltip2"></div>
 
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script>
-  const svg = d3.select('.chartContainer')
+  // hover
+  const svg = d3.select('.tooltip1')
                 .append('svg')
                 .attr('width', 300)
                 .attr('height', 300);
 
-  // 加個圓點點
+  // 圓點點
   svg.append('circle')
      .attr("id", "dot")
      .attr("cx", 150)
@@ -33,26 +38,20 @@ current: index
      .attr("fill", "#69b3a2");
   
   // 創建tooltip
-    // const tooltip = d3.select('.chartContainer')
-    //         .append("div")
-    //         .style("position", "absolute")
-    //         .style("visibility", "hidden")
-    //         .text("I'm a circle!")
-
-const tooltip = d3.select(".chartContainer")
-    .append("div")
-    .style("position", "absolute")
-    .style("visibility", "hidden")
-    .style("background-color", "white")
-    .style("border", "solid")
-    .style("border-width", "1px")
-    .style("border-radius", "5px")
-    .style("padding", "10px")
-    .html("<p>I'm a tooltip written in HTML</p>"+
-          "<img src='https://github.com/holtzy/D3-graph-gallery/blob/master/img/section/ArcSmal.png?raw=true'>"+
-           "</img><br>Fancy<br><span style='font-size: 40px;'>Isn't it?</span>");
+  const tooltip = d3.select(".tooltip1")
+      .append("div")
+      .style("position", "absolute")
+      .style("visibility", "hidden")
+      .style("background-color", "white")
+      .style("border", "solid")
+      .style("border-width", "1px")
+      .style("border-radius", "5px")
+      .style("padding", "10px")
+      .html("<p>我是tooltip！</p>"+
+             "<p>這邊可以隨意放入任何想放的資料</p>"+
+            "<img src='https://github.com/holtzy/D3-graph-gallery/blob/master/img/section/ArcSmal.png?raw=true'></img>"+
+            "<p>甚至圖片也可以唷</p>");
     
-
   // 加上滑鼠事件
   d3.select('#dot')
     .style('cursor', 'pointer')
@@ -60,10 +59,61 @@ const tooltip = d3.select(".chartContainer")
         return tooltip.style("visibility", "visible")
       })
     .on("mousemove", function() {
+        // 設定 tooptip位置
         return tooltip.style("top", "250px").style("left","280px")
       })
     .on('mouseleave', function(){
         return tooltip.style("visibility", "hidden")
+       });
+
+  // 進階tooltips
+  const tooltipsData =[
+      {'r': 17 , 'x': 134, y: 181, 'color':'red'},
+      {'r': 23 , 'x': 294, y: 131, 'color':'yellow'},
+      {'r': 14 , 'x': 84, y: 273, 'color':'orange'},
+      {'r': 9 , 'x': 323, y: 59, 'color':'blue'},
+      {'r': 18 , 'x': 172, y: 251, 'color':'green'},
+      {'r': 26 , 'x': 404, y: 154, 'color':'pink'}
+    ]
+  d3.select('.tooltip2').style('position', 'relative')
+  const dots = d3.select('.tooltip2')
+                    .append('svg')
+                    .attr('width', 500)
+                    .attr('height', 300)
+                    .selectAll('circle')
+                    .data(tooltipsData)
+                    .enter()
+                    .append('circle')
+                    .attr('r', d => d.r)
+                    .attr('cx', d => d.x)
+                    .attr('cy', d => d.y)
+                    .attr('fill', d => d.color)
+                    .style('cursor', 'pointer');
+
+  // 建立tooltips
+  const tooltips = d3.select(".tooltip2")
+                    .append("div")
+                    .style("opacity", 0)
+                    .style('position', 'absolute')
+                    .attr("class", "tooltip")
+                    .style("background-color", "white")
+                    .style("border", "solid")
+                    .style("border-width", "2px")
+                    .style("border-radius", "5px")
+                    .style("padding", "5px")
+
+  dots.on('mouseover', function(){
+         tooltips.style("opacity", 1)
+       })
+       .on('mousemove', function(d){
+        let pt = d3.pointer(event, this)
+        tooltips.style("opacity", 1)
+                .html('圓半徑：' + d.target.__data__.r)
+                .style('left', pt[0]+30+'px')
+                .style('top', pt[1]+'px')
+       })
+       .on('mouseleave', function(){
+        tooltips.style("opacity", 0)
        });
 
 </script>
