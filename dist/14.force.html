@@ -148,6 +148,9 @@
 <h5 class="mt-4">5. Force Drag</h5>
 <svg class="forceDrag" style="width:500; height:300"></svg>
 
+<h5 class="mt-4">6. Force Drag+Link</h5>
+<svg class="forceDragLink" style="width:500; height:300"></svg>
+
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script>
 // 原力Element
@@ -235,7 +238,7 @@ function forceGroup(){
                         .force("y", d3.forceY().strength(0.1).y( 150 ))
                         .force("center", d3.forceCenter().x(250).y(150)) 
                         .force("charge", d3.forceManyBody().strength(1)) 
-                        .force("collide", d3.forceCollide().strength(.1).radius(20).iterations(1))
+                        .force("collide", d3.forceCollide(10).strength(.1).radius(20).iterations(1))
     
     // 將設定好的力模擬器綁到節點上
     simulation.nodes(data)
@@ -358,6 +361,7 @@ function forceLink(){
                         .force("charge", d3.forceManyBody().strength(-300))
                         .force("center", d3.forceCenter(250, 150))
                         .on('tick', ticked)
+                        
 
     // 綁定節點
     function ticked(d){
@@ -370,7 +374,6 @@ function forceLink(){
         dots.attr("cx", d=> d.x)
             .attr("cy", d => d.y);
      }
-
 
 }
 forceLink()
@@ -460,7 +463,8 @@ function forceDrag (){
                     .style("fill", "#19d3a2")
                     .style("fill-opacity", 0.3)
                     .attr("stroke", "#b3a2c8")
-                    .style("stroke-width", 4);
+                    .style("stroke-width", 4)
+                    .style('cursor', 'pointer')
     
     // 建立力模擬圖
     const simulation = d3.forceSimulation()
@@ -479,7 +483,6 @@ function forceDrag (){
         // console.log(d)
         d3.select(this)
           .style('fill-opacity', 0.6)
-          .style('cursor', 'pointer')
         d.fx = d.x;
         d.fy = d.y;
         simulation.alphaTarget(.03).restart();
@@ -498,12 +501,170 @@ function forceDrag (){
         d.fy = null;
     }
 
+    // 綁定拖曳事件
     dots.call(d3.drag() 
                 .on("start", dragstarted)
                 .on("drag", dragged)
                 .on("end", dragended));
 }
 forceDrag()
+
+// 原力Drag+Link
+function forceDragLink(){
+    const data = {
+        "nodes": [
+        {
+        "id": 1,
+        "name": "A"
+        },
+        {
+        "id": 2,
+        "name": "B"
+        },
+        {
+        "id": 3,
+        "name": "C"
+        },
+        {
+        "id": 4,
+        "name": "D"
+        },
+        {
+        "id": 5,
+        "name": "E"
+        },
+        {
+        "id": 6,
+        "name": "F"
+        },
+        {
+        "id": 7,
+        "name": "G"
+        },
+        {
+        "id": 8,
+        "name": "H"
+        },
+        {
+        "id": 9,
+        "name": "I"
+        },
+        {
+        "id": 10,
+        "name": "J"
+        }
+    ],
+    "links": [
+        {
+        "source": 1,
+        "target": 2
+        },
+        {
+        "source": 1,
+        "target": 3
+        },
+        {
+        "source": 1,
+        "target": 6
+        },
+        {
+        "source": 2,
+        "target": 3
+        },
+        {
+        "source": 2,
+        "target": 7
+        },
+        {
+        "source": 3,
+        "target": 4
+        },
+        {
+        "source": 8,
+        "target": 3
+        },
+        {
+        "source": 4,
+        "target": 5
+        },
+        {
+        "source": 4,
+        "target": 9
+        },
+        {
+        "source": 5,
+        "target": 10
+        }
+      ]
+    }
+
+    const dots =  d3.select('.forceDragLink')
+                    .append('g')
+                    .selectAll('circle')
+                    .data(data.nodes)
+                    .enter()
+                    .append('circle')
+                    .attr('r', 15)
+                    .style('fill', 'green')
+                    .style('opacity', 0.6)
+                    .style('cursor', 'pointer')
+
+    const link = d3.select('.forceDragLink')
+                    .selectAll("line")
+                    .data(data.links)
+                    .join("line")
+                    .style("stroke", "#aaa")
+    
+    // 設定力模擬器
+    const simulation = d3.forceSimulation(data.nodes)
+                        .force("link",  d3.forceLink().id(d=> d.id).links(data.links))
+                        .force("charge", d3.forceManyBody().strength(-300))
+                        .force("center", d3.forceCenter(250, 150))
+                        .on('tick', ticked)
+                        
+
+    // 綁定節點
+    function ticked(d){
+        link
+        .attr("x1", function(d) { return d.source.x; })
+        .attr("y1", function(d) { return d.source.y; })
+        .attr("x2", function(d) { return d.target.x; })
+        .attr("y2", function(d) { return d.target.y; });
+
+        dots.attr("cx", d=> d.x)
+            .attr("cy", d => d.y);
+     }
+    
+    // 綁定拖曳事件
+    dots.call(d3.drag() 
+                .on("start", dragstarted)
+                .on("drag", dragged)
+                .on("end", dragended));
+    
+    function dragstarted(event, d){
+        d3.select(this)
+          .style('fill', 'pink')
+        d.fx = d.x;
+        d.fy = d.y;
+        simulation.alphaTarget(.03).restart(); // 停止後需要重新開始
+    }
+
+    function dragged(event, d){
+        d.fx = event.x;
+        d.fy = event.y;
+    }
+
+    function dragended(event, d){
+        d3.select(this)
+          .style('fill', 'green')
+          .style('opacity', 0.6)
+        d.fx = null
+        d.fy = null
+    }
+
+
+}
+forceDragLink()
     
 </script>
 
