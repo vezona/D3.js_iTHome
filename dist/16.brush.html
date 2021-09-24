@@ -160,30 +160,31 @@
     .attr("class", "brush")
     .call(d3.brush()
             .extent( [ [0,0], [600,600] ]) // extent限制刷子的活動區塊，理想是比畫布稍大
-            .on("start brush", brushed)); // brush 事件
+            .on("start brush", brushed) // brush 事件
+          )
     
     // brush 的功能
     // 加上event參數，就能用event.selection
     // selection會產出一個二維陣列，分別代表`x0`, `x1`, `y0`, `y1`，左上到右下的位置，讓你有辦法重新計算目前位置的extent，進而進行其他操作。
     function brushed(event){
-        // console.log(event.selection)
+        console.log(event)
         const extent = event.selection
         dots.classed('selected', d => {return isBrushed(extent, d.x, d.y)})
+        // dots.style('fill', 'blue')
 
     }
 
-    // 設定原點是否在brush選到的區塊內
+    // 設定圓點是否在brush選到的區塊內
     function isBrushed(brush_coors, cx, cy){
       let x0 = brush_coors[0][0],
           x1 = brush_coors[1][0],
           y0 = brush_coors[0][1],
           y1 = brush_coors[1][1]
 
-        // This return TRUE or FALSE depending on if the points is in the selected area 
+        // 如果圓點在brush的範圍內，就會傳true；反之則回傳false
+        console.log(x0 <= cx && cx <= x1 && y0 <= cy && cy <= y1)
         return x0 <= cx && cx <= x1 && y0 <= cy && cy <= y1; 
     }
-      
-
 
 </script>
 
