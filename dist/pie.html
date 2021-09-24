@@ -124,7 +124,7 @@
     margin: auto;
     width: 80%;
     min-width: 200px;
-    height: 500px;
+    /* height: 600px; */
     margin: auto;
 }
 </style>
@@ -133,9 +133,21 @@
 
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script>
+
   // Data
-  const data = [{city:'台北', data:30},{city:'新北', data:45},
-            {city:'台中', data:9},{city:'嘉義', data:67},{city:'台南', data:22}]; 
+  // const data = [{city:'台北', data:30},{city:'新北', data:45},
+  //           {city:'台中', data:9},{city:'嘉義', data:67},{city:'台南', data:22}]; 
+
+  // 台灣各縣市用電資料  https://www.taipower.com.tw/tc/page.aspx?mid=5554
+  let data = []
+  async function getData() {
+    dataGet = await d3.csv('./data/202107_Electric.csv');
+    console.log(dataGet);
+    data = dataGet
+    drawPie()
+  };
+  getData();
+
 
   // 開始畫圓餅圖 
   const drawPie = () => {
@@ -144,7 +156,7 @@
 
     // svg圖形區大小、邊界
     const svgWidth = parseInt(d3.select(".chartContainer").style("width")),
-          svgHeight = svgWidth*0.6,
+          svgHeight = svgWidth,
           margin = 40;
 
     // 先設定 svg 大小
@@ -163,9 +175,10 @@
         .range(["#4BEFCF","#2c9af7","#F96262", '#910842', '#b054e5']); // 設定顏色
 
     // 換算每個資料在圓餅圖上的大小:
-    const piechart = d3.pie().value(d => d.data),
-            arc = d3.arc().innerRadius(0).outerRadius(radius)
-            data_ready = piechart(data)
+    const piechart = d3.pie().value(d => {
+      return parseInt(d['A.售電量(度)'].split(',').join(''))}),
+          arc = d3.arc().innerRadius(0).outerRadius(radius)
+          data_ready = piechart(data)
 
     // 建立pie
    const cutePie = svg.selectAll('g')
@@ -184,16 +197,16 @@
     // 加上每個區塊的標示
     // 控制文字的位置
     const arcText = d3.arc()
-                      .innerRadius(radius-60)
+                      .innerRadius(radius)
                       .outerRadius(radius)
 
-    cutePie.append('text')
-       .attr('transform', d => `translate(${arcText.centroid(d)})`)
-       .text(d => d.data.city)
-       .style('text-anchor', 'middle')
-       .attr('z-index', 2)
-       .style('font-size', 16)
-       .style('fill', 'white')
+    const cityText = cutePie.append('text')
+                            .attr('transform', d => `translate(${arcText.centroid(d)})`)
+                            .text(d => d.data['縣市'])
+                            .style('text-anchor', 'middle')
+                            .attr('z-index', 2)
+                            .style('font-size', 16)
+                            .style('fill', 'black')
     
     // 滑鼠互動 mouseover、mouseleave
     d3.selectAll('.arc path')
@@ -214,8 +227,7 @@
       })
   };
 
-
-  drawPie()
+  // drawPie()
 
   // RWD
   d3.select(window).on("resize", drawPie);
