@@ -127,6 +127,13 @@
     /* height: 600px; */
     margin: auto;
 }
+
+polyline{
+    opacity: .3;
+    stroke: black;
+    stroke-width: 2px;
+    fill: none;
+}
 </style>
 <h2 class="text-center fw-bold">圓餅圖</h2>
 <div class="chartContainer"></div>
@@ -156,32 +163,46 @@
 
     // svg圖形區大小、邊界
     const svgWidth = parseInt(d3.select(".chartContainer").style("width")),
-          svgHeight = svgWidth,
+          svgHeight = svgWidth*0.8,
           margin = 40;
 
     // 先設定 svg 大小
     const svg = d3.select(".chartContainer")
                     .append("svg")
                     .attr("width", svgWidth)
-                    .attr("height", svgHeight)
-                    .append('g')
-                    .attr('transform', `translate(${svgWidth / 2}, ${svgHeight / 2})`);
+                    .attr("height", svgHeight);
+
+    // 圖表與線條、標籤
+    svg.append("g")
+			.attr("class", "slices")
+      .attr('transform', `translate(${svgWidth / 2}, ${svgHeight / 2})`);
+    svg.append("g")
+      .attr("class", "labels");
+    svg.append("g")
+      .attr("class", "lines");
 
     // 圓餅圖的圓弧大小是區域的一半
     const radius = Math.min(svgWidth, svgHeight) / 2 - margin;
 
     // 設定顏色
     const color = d3.scaleOrdinal()
-        .range(["#4BEFCF","#2c9af7","#F96262", '#910842', '#b054e5']); // 設定顏色
+        .range(["#4BEFCF","#2c9af7","#F96262", '#910842', '#b054e5']);
 
     // 換算每個資料在圓餅圖上的大小:
     const piechart = d3.pie().value(d => {
-      return parseInt(d['A.售電量(度)'].split(',').join(''))}),
-          arc = d3.arc().innerRadius(0).outerRadius(radius)
+              return parseInt(d['A.售電量(度)'].split(',').join('')) > 200000000
+              });
+
+    // innerRadius 跟 outerRadius 決定圓餅內圈外圈的大小 radius
+    const arc = d3.arc().innerRadius(0).outerRadius(radius),
+          outerArc = d3.arc()
+                       .outerRadius(radius * 0.9)
+                       .innerRadius(radius * 0.9),
           data_ready = piechart(data)
 
     // 建立pie
-   const cutePie = svg.selectAll('g')
+   const cutePie = svg.select('.slices')
+        .selectAll('g')
         .data(data_ready)
         .enter()
         .append('g')
@@ -202,7 +223,11 @@
 
     const cityText = cutePie.append('text')
                             .attr('transform', d => `translate(${arcText.centroid(d)})`)
-                            .text(d => d.data['縣市'])
+                            .text(d => {
+                              if(parseInt(d.data['A.售電量(度)'].split(',').join('')) > 200000000){
+                                return d.data['縣市']
+                              }
+                            })
                             .style('text-anchor', 'middle')
                             .attr('z-index', 2)
                             .style('font-size', 16)

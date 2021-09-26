@@ -40,6 +40,12 @@ current: index
 <script src="https://d3js.org/d3.v7.min.js"></script>
 
 <script>
+// 輸入與輸出比例換算範例
+const convert = d3.scaleLinear()
+                  .domain([0, 100])
+                  .range([0, 10])
+console.log(convert(50)); // 5，換算輸出比例完成
+
 //現在我有兩筆資料
 let data1 = [5, 2, 3, 6, 1, 3, 3, 5, 3, 7, 2, 1];
 let data2 = [8, 6, 10, 4, 5, 2, 6, 3, 1, 12, 3, 7];

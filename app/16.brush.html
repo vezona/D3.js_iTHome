@@ -51,14 +51,12 @@ current: index
           )
     
     // brush 的功能
-    // 加上event參數，就能用event.selection
+    // 加上event參數，就能用 event.selection
     // selection會產出一個二維陣列，分別代表`x0`, `x1`, `y0`, `y1`，左上到右下的位置，讓你有辦法重新計算目前位置的extent，進而進行其他操作。
     function brushed(event){
         console.log(event)
         const extent = event.selection
         dots.classed('selected', d => {return isBrushed(extent, d.x, d.y)})
-        // dots.style('fill', 'blue')
-
     }
 
     // 設定圓點是否在brush選到的區塊內
