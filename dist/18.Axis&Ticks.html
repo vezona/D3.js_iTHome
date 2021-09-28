@@ -118,26 +118,68 @@
 
   <div class="container py-3">
     
-<style></style>
+<style>
+g.dashed path {
+	display: none;
+}
+
+g.dashed line {
+	stroke-dasharray: 1 1;
+}
+
+
+</style>
+<h1 class="text-center fw-bold">軸線與刻度</h1>
+
+<h4 class="mt-3">1. 建立 X 軸</h4>
 <div class="demo1"></div>
 
-<div class="demo2"></div>
+<h4 class="mt-5">2. axisTop、axisBottom、axisRight、axisLeft</h4>
+<div class="demo2">
+  <svg width="500" height="500">
+    <g id="left" transform="translate(30, 40)"></g>
+    <g id="right" transform="translate(450, 40)"></g>
+    <g id="top" transform="translate(40, 30)"></g>
+    <g id="bottom" transform="translate(40, 450)"></g>
+  </svg>
+</div>
 
+<h4 class="mt-5">3. ticks 刻度數量設定</h4>
 <div class="demo3"></div>
+
+<h4 class="mt-5">4. ticks value</h4>
+<div class="demo4"></div>
+
+<h4 class="mt-5">5. ticks formate label</h4>
+<div class="demo5"></div>
+
+<h4 class="mt-5">6. ticks size</h4>
+<div class="demo6"></div>
+<div class="demoDashed"></div>
+
+<h4 class="mt-5">7. ticks padding</h4>
+<div class="demo7"></div>
+
+<h4 class="mt-5">8. 完整 X Y軸範例</h4>
+<div class="XY_Axis"></div>
 
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script>
   function axisDemo1(){
+    let width = 500, 
+        height = 200,
+        margin = 10;
     // 軸線建立
     d3.select('.demo1')
       .append('svg')
-      .attr("width", 500)
-      .attr("height", 200)
+      .attr("width", width)
+      .attr("height", height)
       .append('g')
+      .attr('transform', `translate(${margin}, ${height-(margin*2)})`)
 
     const scale = d3.scaleLinear()
                     .domain([0, 100])
-                    .range([0, 500]);
+                    .range([0, `${width-(margin*2)}`]);
 
     let axis = d3.axisBottom(scale);
     d3.select('svg g')
@@ -146,64 +188,175 @@
   }
   axisDemo1()
 
+  // axis * 4
+  function axisDemo2(){
+    let scale = d3.scaleLinear().domain([0, 100]).range([0, 400]);
 
+    let axisLeft = d3.axisLeft(scale);
+    let axisRight = d3.axisRight(scale);
+    let axisTop = d3.axisTop(scale);
+    let axisBottom = d3.axisBottom(scale);
 
-
-
-
-  // 要取資料要把data.json檔放到dist資料夾內，不然抓不到
-  async function getData() {
-    dataGet = await d3.json("./data.json");
-    console.log(dataGet);
+    d3.select('#left').call(axisLeft);
+    d3.select('#right').call(axisRight);
+    d3.select('#top').call(axisTop);
+    d3.select('#bottom').call(axisBottom);
   }
-  getData();
+  axisDemo2()
 
-  // svg
-  const svg = d3.select(".demo3").append("svg");
-  svg.attr("width", 500).attr("height", 500);
+ // ticks
+ function ticks(){
+  let scale = d3.scaleLinear().domain([0, 100]).range([0, 450]);
+  let axis = d3.axisBottom(scale);
+
+  axis.ticks(27)
+
+  d3.select('.demo3')
+    .append('svg')
+    .attr('width', '500')
+    .attr('height', '200')
+    .append('g')
+    .attr('transform', 'translate(20, 20)')
+    .call(axis);
+ }
+ ticks()
+
+  // value
+  function tickValues(){
+    let scale = d3.scaleLinear().domain([0, 100]).range([0, 450]);
+    let axis = d3.axisBottom(scale);
+
+    axis.tickValues([0, 25, 53, 77, 81, 95]);
+
+    d3.select('.demo4')
+      .append('svg')
+      .attr('width', '500')
+      .attr('height', '200')
+      .append('g')
+      .attr('transform', 'translate(20, 20)')
+      .call(axis);
+  }
+ tickValues()
+
+ // format
+ function ticksFormate(){
+  let scale = d3.scaleLinear().domain([0, 100]).range([0, 450]);
+    let axis = d3.axisBottom(scale)
+                 .tickFormat(function(d) {
+                    return d + "元";
+                  });
+
+
+    d3.select('.demo5')
+      .append('svg')
+      .attr('width', '500')
+      .attr('height', '200')
+      .append('g')
+      .attr('transform', 'translate(20, 20)')
+      .call(axis);
+
+ }
+
+ ticksFormate()
+
+ // size
+ function ticksSize(){
+  let scale = d3.scaleLinear().domain([0, 100]).range([0, 450]);
+  let axis = d3.axisBottom(scale)
+               .tickSize(60);
+
+
+  d3.select('.demo6')
+    .append('svg')
+    .attr('width', '500')
+    .attr('height', '200')
+    .append('g')
+    .attr('transform', 'translate(20, 20)')
+    .call(axis);
+ }
+ ticksSize()
+
+  // Dashed
+  function ticksDashed(){
+  let scale = d3.scaleLinear().domain([0, 100]).range([0, 400]);
+  let axis = d3.axisRight(scale)
+               .tickSize(400);
+
+
+  d3.select('.demoDashed')
+    .append('svg')
+    .attr('width', '500')
+    .attr('height', '400')
+    .append('g')
+    .attr('class', 'dashed')
+    .attr('transform', 'translate(20, 20)')
+    .call(axis);
+  }
+  ticksDashed()
+
+  // padding
+  function ticksPadding(){
+    let scale = d3.scaleLinear().domain([0, 100]).range([0, 450]);
+    let axis = d3.axisBottom(scale)
+                .tickPadding(60);
+
+
+    d3.select('.demo7')
+      .append('svg')
+      .attr('width', '500')
+      .attr('height', '200')
+      .append('g')
+      .attr('transform', 'translate(20, 20)')
+      .call(axis);
+ }
+ ticksPadding()
+
+  function XYAxis(){
+    const svg = d3.select(".XY_Axis")
+                .append("svg")
+                .attr("width", 500)
+                .attr("height", 200);
 
   //data
-  const data = [
-    {
-      x: 100,
-      y: 30,
-    },
-    {
-      x: 180,
-      y: 30,
-    },
-    {
-      x: 250,
-      y: 30,
-    },
-  ];
+  const data = [{x:100, y:20}, {x:18, y:30}, {x:90, Y:250}]
 
   // map 資料集
   xData = data.map((i) => i.x);
   yData = data.map((i) => i.y);
 
-  // X軸
-  const xScale = d3
-    .scaleLinear()
-    .domain([0, d3.max(xData)])
-    .range([50, 450]);
+  // 設定要給 X 軸用的scale 跟 axis
+  const xScale = d3.scaleLinear()
+                  .domain([0, d3.max(xData)])
+                  .range([20, 480]); // 寬度
 
-  //使用xScale的設定，繪製tick朝下的軸線
-  const xAxis = d3
-    .axisBottom(xScale)
-    .tickFormat(function (d) {
-      //調整標籤樣式
-      return `${d} 元`;
-    })
-    .tickPadding(15) //調整tick與標籤距離
-    .ticks(6) //調整tick數量
-    .tickSize(20); //調整ticks長短
-  // .tickValues([50, 100]) //指定想呈現的value
+  const xAxis = d3.axisBottom(xScale)
+                  .tickFormat(function (d) {
+                    //調整標籤樣式
+                    return `${d} 元`;
+                  })
 
-  //呼叫繪製x軸
-  const xAxisGroup = svg.append("g").call(xAxis);
-  //調整x軸位置
-  xAxisGroup.attr("transform", "translate(0,400)");
+  // 呼叫繪製x軸、調整x軸位置
+  const xAxisGroup = svg.append("g")
+                        .call(xAxis)
+                        .attr("transform", "translate(0,180)")
+
+  // 設定要給 Y 軸用的 scale 跟 axis
+  const yScale = d3.scaleLinear()
+                  .domain([0, d3.max(yData)])
+                  .range([20, 180]); // 高度
+
+  const yAxis = d3.axisLeft(yScale)
+                  .ticks(5)
+
+  // 呼叫繪製y軸、調整y軸位置
+  const yAxisGroup = svg.append("g")
+                        .call(yAxis)
+                        .attr("transform", "translate(20,0)")
+  }
+
+  XYAxis()
+
+
 </script>
 
   </div>
