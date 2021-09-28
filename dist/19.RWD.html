@@ -139,10 +139,14 @@
 <script>
   // 固定
   function simpleChart(){
+    const width = 500,
+          height = 400,
+          margin = 20,
+          bandWidth = 20 
     const svg = d3.select('.simpleChart')
                   .append('svg')
-                  .attr('width', '500')
-                  .attr('height', '400')
+                  .attr('width', width)
+                  .attr('height', height)
     //data
     const data = [{x:100, y:20}, {x:18, y:30}, {x:90, y:250}]
 
@@ -151,12 +155,13 @@
     yData = data.map((i) => i.y);
 
     // 設定要給 X 軸用的 scale 跟 axis
-    const xScale = d3.scaleBand()
-                    .domain(xData)
-                    .range([20, 480]) // 寬度
-                    .padding(0.5)
+    const xScale = d3.scaleLinear()
+                    .domain([0, d3.max(xData)+20])
+                    .range([margin, width - margin]); // 寬度
 
     const xAxis = d3.axisBottom(xScale)
+                    .ticks(5)
+                    // .tickValues(xData)
                     .tickFormat(function (d) {
                       //調整標籤樣式
                       return `${d} 元`;
@@ -165,12 +170,12 @@
     // 呼叫繪製x軸、調整x軸位置
     const xAxisGroup = svg.append("g")
                           .call(xAxis)
-                          .attr("transform", "translate(0,380)")
+                          .attr("transform", `translate(0,${height - margin})`)
 
     // 設定要給 Y 軸用的 scale 跟 axis
     const yScale = d3.scaleLinear()
                     .domain([0, d3.max(yData)])
-                    .range([380, 20]); // 數值要顛倒，才會從低往高排
+                    .range([height - margin, margin]); // 數值要顛倒，才會從低往高排
 
     const yAxis = d3.axisLeft(yScale)
                     .ticks(5)
@@ -179,15 +184,15 @@
     const yAxisGroup = svg.append("g")
                           .call(yAxis)
                           .attr("transform", "translate(25,0)")
-                          
+                     
     // 開始建立長條圖
     svg.selectAll("rect")
        .data(data)
        .join("rect")
-       .attr("x", d => xScale(d.x))
+       .attr("x", d => xScale(d.x) - (bandWidth/2)) // 讓長條圖在刻度線中間
        .attr("y", d => yScale(d.y))
-       .attr("width", xScale.bandwidth())
-       .attr("height", d => 380 - yScale(d.y))
+       .attr("width", bandWidth)
+       .attr("height", d => (height - margin) - yScale(d.y))
        .attr("fill", "#69b3a2")
   }
   simpleChart()
