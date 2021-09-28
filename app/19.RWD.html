@@ -7,32 +7,94 @@ current: index
 
 <style>
 
-.chartContainer{
+.RWDChart{
     width: 80%;
-    height: 200px;
+    min-width: 300px;
     margin: auto;
 }
 </style>
 
-<div class="chartContainer"></div>
+<h1 class="text-center fw-bold">Responsive Charts 響應式圖表</h1>
+
+<h4 class="mt-3">1. 固定寬高的圖表</h4>
+<div class="simpleChart"></div>
+
+<h4 class="mt-3">2. 響應式圖表</h4>
+<div class="RWDChart"></div>
 
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script>
+  // 固定
+  function simpleChart(){
+    const svg = d3.select('.simpleChart')
+                  .append('svg')
+                  .attr('width', '500')
+                  .attr('height', '400')
+    //data
+    const data = [{x:100, y:20}, {x:18, y:30}, {x:90, y:250}]
 
-  const rwd = ()=>{
-    // 先刪除原本的svg.charts，再重新渲染計算過寬度的svg
-    d3.select("svg").remove();
+    // map 資料集
+    xData = data.map((i) => i.x);
+    yData = data.map((i) => i.y);
 
-    // RWD 的svg 
-    const svgWidth = d3.select('.chartContainer').style('width'),
-        svgHeight = d3.select('.chartContainer').style('height')
-    d3.select('.chartContainer')
+    // 設定要給 X 軸用的 scale 跟 axis
+    const xScale = d3.scaleBand()
+                    .domain(xData)
+                    .range([20, 480]) // 寬度
+                    .padding(0.5)
+
+    const xAxis = d3.axisBottom(xScale)
+                    .tickFormat(function (d) {
+                      //調整標籤樣式
+                      return `${d} 元`;
+                    })
+
+    // 呼叫繪製x軸、調整x軸位置
+    const xAxisGroup = svg.append("g")
+                          .call(xAxis)
+                          .attr("transform", "translate(0,380)")
+
+    // 設定要給 Y 軸用的 scale 跟 axis
+    const yScale = d3.scaleLinear()
+                    .domain([0, d3.max(yData)])
+                    .range([380, 20]); // 數值要顛倒，才會從低往高排
+
+    const yAxis = d3.axisLeft(yScale)
+                    .ticks(5)
+
+    // 呼叫繪製y軸、調整y軸位置
+    const yAxisGroup = svg.append("g")
+                          .call(yAxis)
+                          .attr("transform", "translate(25,0)")
+                          
+    // 開始建立長條圖
+    svg.selectAll("rect")
+       .data(data)
+       .join("rect")
+       .attr("x", d => xScale(d.x))
+       .attr("y", d => yScale(d.y))
+       .attr("width", xScale.bandwidth())
+       .attr("height", d => 380 - yScale(d.y))
+       .attr("fill", "#69b3a2")
+  }
+  simpleChart()
+
+  // RWD
+  function RWDChart(){
+    // 刪除原本的svg.charts，重新渲染改變寬度的svg
+    d3.select('.RWDChart svg').remove();
+
+    // RWD 的svg 寬高
+    const svgWidth = parseInt(d3.select('.RWDChart').style('width')),
+          svgHeight = svgWidth*0.8
+
+    d3.select('.RWDChart')
         .append('svg')
         .attr('width', svgWidth)
         .attr('height', svgHeight);
-    }
-  
-  rwd()
-  d3.select(window).on('resize', rwd);
+  }
+
+  RWDChart()
+  d3.select(window).on('resize', RWDChart);
 
 </script>
