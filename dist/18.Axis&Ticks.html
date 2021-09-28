@@ -119,11 +119,38 @@
   <div class="container py-3">
     
 <style></style>
+<div class="demo1"></div>
 
-<div></div>
+<div class="demo2"></div>
+
+<div class="demo3"></div>
 
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script>
+  function axisDemo1(){
+    // 軸線建立
+    d3.select('.demo1')
+      .append('svg')
+      .attr("width", 500)
+      .attr("height", 200)
+      .append('g')
+
+    const scale = d3.scaleLinear()
+                    .domain([0, 100])
+                    .range([0, 500]);
+
+    let axis = d3.axisBottom(scale);
+    d3.select('svg g')
+      .call(axis);
+
+  }
+  axisDemo1()
+
+
+
+
+
+
   // 要取資料要把data.json檔放到dist資料夾內，不然抓不到
   async function getData() {
     dataGet = await d3.json("./data.json");
@@ -132,7 +159,7 @@
   getData();
 
   // svg
-  const svg = d3.select(".container").append("svg");
+  const svg = d3.select(".demo3").append("svg");
   svg.attr("width", 500).attr("height", 500);
 
   //data

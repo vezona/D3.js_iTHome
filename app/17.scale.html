@@ -56,7 +56,7 @@ colorScale(0);   // returns "rgb(255, 255, 0)"
 colorScale(5);   // returns "rgb(255, 128, 0)"
 colorScale(10);  // returns "rgb(255, 0, 0)"
 
-// 
+// sequentialScale
 let sequentialScale = d3.scaleSequential()
   .domain([0, 100])
   .interpolator(d3.interpolateRainbow);
@@ -73,6 +73,7 @@ let pointScale = d3.scalePoint()
   .domain(['狗', '貓', '天竺鼠', '烏龜', '海豚']) // 共有五條長條圖
   .range([0, 200]); // 整張圖表的範圍
 console.log(pointScale('海豚'))
+console.log('step',pointScale.step())
 
 
 //現在我有兩筆資料
