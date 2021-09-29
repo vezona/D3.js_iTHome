@@ -119,11 +119,10 @@
   <div class="container py-3">
     
 <style>
-    .chartContainer {
+    .scatter1, scatter2 {
         margin: auto;
         width: 80%;
         min-width: 200px;
-        height: 500px;
         margin: auto;
     }
     .axis path,
@@ -141,11 +140,18 @@
 </style>
 
 <h2 class="text-center fw-bold">散點圖</h2>
-<div class="chartContainer m-auto"></div>
+
+<h4>散點圖1</h4>
+<div class="scatter1 m-auto"></div>
+
+<h4>散點圖2</h4>
+<div class="scatter2 m-auto"></div>
 
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script>
-    let w = parseInt(d3.select(".chartContainer").style("width")),
+
+  function scatter1(){
+    let w = parseInt(d3.select(".scatter1").style("width")),
         h = w*0.8,
         margin = {
             top: 40,
@@ -155,7 +161,7 @@
         },
         radius = 5;
 
-    let svg = d3.select(".chartContainer").append("svg").attr('width', w).attr('height', h);
+    let svg = d3.select(".scatter1").append("svg").attr('width', w).attr('height', h);
     console.log(w, h)
 
     let dataset = [
@@ -297,6 +303,32 @@
             .attr('fill', 'black')
             .attr('r', radius)
     }
+  }
+  scatter1()
+
+  // 圖表2
+  // 先取資料
+  async function getData(){
+    let dataGet;
+
+    const cors = "https://secret-ocean-49799.herokuapp.com/";
+    const url = 'https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_dataset/2_TwoNum.csv'
+
+    dataGet = await d3.csv(`${cors}${url}`);
+    scatter2(dataGet)
+  }
+  getData()
+  
+  // 建立圖表
+  function scatter2(data){
+    const svgWidth = parseInt(d3.select('.scatter2').style('width')),
+          svgHeight = svgWidth
+    d3.select('.scatter2')
+      .append('svg')
+      .attr('width', svgWidth)
+      .attr('height', svgHeight)
+
+  }
 </script>
 
   </div>
