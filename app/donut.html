@@ -6,19 +6,25 @@ current: index
 ---
 
 <style>
-.chartContainer {
+.basicDonut {
     margin: auto;
     width: 80%;
     min-width: 200px;
-    height: 500px;
     margin: auto;
+    text-align:center
 }
 </style>
 <h2 class="text-center fw-bold">甜甜圈圖</h2>
-<div class="chartContainer"></div>
+
+<h4 class="mt-5 text-center">基礎甜甜圈圖</h4>
+<div class="basicDonut"></div>
+
+<h4 class="mt-5 text-center">進階甜甜圈圖</h4>
 
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script>
+
+  function basicDonut(){
     // Data to be added in the pie chart
     const data = [
         { "value": 1, "property": "p1" },
@@ -30,10 +36,10 @@ current: index
     ]
 
     // Selecting SVG using d3.select()
-    const svg = d3.select(".chartContainer")
+    const svg = d3.select(".basicDonut")
                 .append('svg')
-                .attr('width', 500)
-                .attr('height', 500);
+                .attr('width', 300)
+                .attr('height', 300);
 
     // Creating Pie generator
     const pie = d3.pie()
@@ -70,5 +76,9 @@ current: index
         .text(function (d) {
             return d.value;
         });
+  }
+
+  basicDonut()
+
 
 </script>

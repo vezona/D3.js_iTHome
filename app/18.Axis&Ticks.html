@@ -230,7 +230,7 @@ g.dashed line {
   // 設定要給 Y 軸用的 scale 跟 axis
   const yScale = d3.scaleLinear()
                   .domain([0, d3.max(yData)])
-                  .range([20, 180]); // 高度
+                  .range([180, 20]); // 高度
 
   const yAxis = d3.axisLeft(yScale)
                   .ticks(5)

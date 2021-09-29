@@ -82,13 +82,13 @@
               <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                 <li><a class="dropdown-item" href="./17.scale.html">比例尺與範圍 Scale & Domain/Range</a></li>
                 <li><a class="dropdown-item" href="./18.Axis&Ticks.html">軸線與刻度 Axis & Ticks</a></li>
-                <li><a class="dropdown-item" href="./pie.html">圓餅圖</a></li>
-                <li><a class="dropdown-item" href="./scatter.html">散點圖</a></li>
-                <li><a class="dropdown-item" href="#">長條圖</a></li>
-                <li><a class="dropdown-item" href="#">複數長條圖</a></li>
-                <li><a class="dropdown-item" href="./stack.html">長條堆疊圖</a></li>
-                <li><a class="dropdown-item" href="#">折線圖</a></li>
-                <li><a class="dropdown-item" href="#">多線折線圖</a></li>
+                <li><a class="dropdown-item" href="./20.pie.html">圓餅圖</a></li>
+                <li><a class="dropdown-item" href="./21.scatter.html">散點圖</a></li>
+                <li><a class="dropdown-item" href="./22.barChart.html">長條圖</a></li>
+                <li><a class="dropdown-item" href="./23.MultiBarChart.html">複數長條圖</a></li>
+                <li><a class="dropdown-item" href="./24.stackedBarChart.html">長條堆疊圖</a></li>
+                <li><a class="dropdown-item" href="./25.lineChart.html">折線圖</a></li>
+                <li><a class="dropdown-item" href="./26.multipleLineChart.html">多線折線圖</a></li>
               </ul>
             </li>
             <li class="nav-item dropdown">
@@ -343,7 +343,7 @@ g.dashed line {
   // 設定要給 Y 軸用的 scale 跟 axis
   const yScale = d3.scaleLinear()
                   .domain([0, d3.max(yData)])
-                  .range([20, 180]); // 高度
+                  .range([180, 20]); // 高度
 
   const yAxis = d3.axisLeft(yScale)
                   .ticks(5)

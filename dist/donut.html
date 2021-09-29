@@ -82,13 +82,13 @@
               <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                 <li><a class="dropdown-item" href="./17.scale.html">比例尺與範圍 Scale & Domain/Range</a></li>
                 <li><a class="dropdown-item" href="./18.Axis&Ticks.html">軸線與刻度 Axis & Ticks</a></li>
-                <li><a class="dropdown-item" href="./pie.html">圓餅圖</a></li>
-                <li><a class="dropdown-item" href="./scatter.html">散點圖</a></li>
-                <li><a class="dropdown-item" href="#">長條圖</a></li>
-                <li><a class="dropdown-item" href="#">複數長條圖</a></li>
-                <li><a class="dropdown-item" href="./stack.html">長條堆疊圖</a></li>
-                <li><a class="dropdown-item" href="#">折線圖</a></li>
-                <li><a class="dropdown-item" href="#">多線折線圖</a></li>
+                <li><a class="dropdown-item" href="./20.pie.html">圓餅圖</a></li>
+                <li><a class="dropdown-item" href="./21.scatter.html">散點圖</a></li>
+                <li><a class="dropdown-item" href="./22.barChart.html">長條圖</a></li>
+                <li><a class="dropdown-item" href="./23.MultiBarChart.html">複數長條圖</a></li>
+                <li><a class="dropdown-item" href="./24.stackedBarChart.html">長條堆疊圖</a></li>
+                <li><a class="dropdown-item" href="./25.lineChart.html">折線圖</a></li>
+                <li><a class="dropdown-item" href="./26.multipleLineChart.html">多線折線圖</a></li>
               </ul>
             </li>
             <li class="nav-item dropdown">
@@ -119,19 +119,25 @@
   <div class="container py-3">
     
 <style>
-.chartContainer {
+.basicDonut {
     margin: auto;
     width: 80%;
     min-width: 200px;
-    height: 500px;
     margin: auto;
+    text-align:center
 }
 </style>
 <h2 class="text-center fw-bold">甜甜圈圖</h2>
-<div class="chartContainer"></div>
+
+<h4 class="mt-5 text-center">基礎甜甜圈圖</h4>
+<div class="basicDonut"></div>
+
+<h4 class="mt-5 text-center">進階甜甜圈圖</h4>
 
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script>
+
+  function basicDonut(){
     // Data to be added in the pie chart
     const data = [
         { "value": 1, "property": "p1" },
@@ -143,10 +149,10 @@
     ]
 
     // Selecting SVG using d3.select()
-    const svg = d3.select(".chartContainer")
+    const svg = d3.select(".basicDonut")
                 .append('svg')
-                .attr('width', 500)
-                .attr('height', 500);
+                .attr('width', 300)
+                .attr('height', 300);
 
     // Creating Pie generator
     const pie = d3.pie()
@@ -183,6 +189,10 @@
         .text(function (d) {
             return d.value;
         });
+  }
+
+  basicDonut()
+
 
 </script>
 

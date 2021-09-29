@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>圖表RWD</title>
+  <link rel="stylesheet" href="./assets/style/all.css">
+  <!-- BS 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous">
+  <!-- axios -->
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+  <!-- Google Tag Manager -->
+  <!-- <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-NRH8BJ3');</script> -->
+    <!-- End Google Tag Manager -->
+</head>
+
+<body>
+    <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NRH8BJ3"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    
+  <header class="header">
+    <nav class="navbar navbar-expand-lg navbar-light">
+      <div class="container-fluid">
+        <a class="navbar-brand ms-3 pt-lg-2 active" href="./#">D3.js v7</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-around" id="navbarNav">
+          <ul class="navbar-nav w-100 justify-content-around">
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                基礎觀念
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="./2.d3_intro.html">D3介紹</a></li>
+                <li><a class="dropdown-item" href="./3.svg.html">svg</a></li>
+              </ul>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                D3繪圖原理
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="./4.selection.html">Selection</a></li>
+                <li><a class="dropdown-item" href="./5.data_binding1.html">Data-Binding：data & datum</a></li>
+                <li><a class="dropdown-item" href="./6.data_binding2.html">Data-Binding：enter/update/exit</a></li>
+                <li><a class="dropdown-item" href="./7.fetches.html">不同格式檔資料匯入的 API </a></li>
+                <li><a class="dropdown-item" href="./8.organizeDataAPI.html">資料整理常用 API</a></li>
+                <li><a class="dropdown-item" href="./9.helperFunctions.html">繪製形狀的 Helper Functions</a></li>
+              </ul>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                動畫與互動事件
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="./10.transition.html">動畫</a></li>
+                <li><a class="dropdown-item" href="./11.mouseEvent.html">滑鼠事件</a></li>
+                <li><a class="dropdown-item" href="./12.toolTips.html">Tooltips</a></li>
+                <li><a class="dropdown-item" href="./13.drag.html">拖曳 drag</a></li>
+                <li><a class="dropdown-item" href="./14.force.html">原力 Force</a></li>
+                <li><a class="dropdown-item" href="./15.zoom.html">縮放 Zoom</a></li>
+                <li><a class="dropdown-item" href="./16.brush.html">刷子 Brush</a></li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" href="./19.RWD.html">圖表RWD</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                基礎圖表與互動
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="./17.scale.html">比例尺與範圍 Scale & Domain/Range</a></li>
+                <li><a class="dropdown-item" href="./18.Axis&Ticks.html">軸線與刻度 Axis & Ticks</a></li>
+                <li><a class="dropdown-item" href="./20.pie.html">圓餅圖</a></li>
+                <li><a class="dropdown-item" href="./21.scatter.html">散點圖</a></li>
+                <li><a class="dropdown-item" href="./22.barChart.html">長條圖</a></li>
+                <li><a class="dropdown-item" href="./23.MultiBarChart.html">複數長條圖</a></li>
+                <li><a class="dropdown-item" href="./24.stackedBarChart.html">長條堆疊圖</a></li>
+                <li><a class="dropdown-item" href="./25.lineChart.html">折線圖</a></li>
+                <li><a class="dropdown-item" href="./26.multipleLineChart.html">多線折線圖</a></li>
+              </ul>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                進階圖表與互動
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="./donut.html">甜甜圈圖</a></li>
+                <li><a class="dropdown-item" href="#">氣泡圖</a></li>
+                <li><a class="dropdown-item" href="#">熱圖</a></li>
+                <li><a class="dropdown-item" href="#">文字雲</a></li>
+                <li><a class="dropdown-item" href="#">合併圖表(長條+折線)</a></li>
+                <li><a class="dropdown-item" href="#">階層圖</a></li>
+                <li><a class="dropdown-item" href="#">甘特圖</a></li>
+                <li><a class="dropdown-item" href="#">樹狀圖</a></li>
+                <li><a class="dropdown-item" href="#">地圖</a></li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" href="#">推薦資源</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <div class="container py-3">
+    
+<style>
+
+.chart{
+    width: 80%;
+    min-width: 300px;
+    margin: auto;
+}
+</style>
+
+<h1 class="text-center fw-bold">Stacked Bar Chart 堆積長條圖</h1>
+
+<h4 class="mt-3"></h4>
+<div class="chart"></div>
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+  // RWD
+  function chart(){
+    // 刪除原本的svg.charts，重新渲染改變寬度的svg
+    d3.select('.chart svg').remove();
+
+    // RWD 的svg 寬高
+    const rwdSvgWidth = parseInt(d3.select('.chart').style('width')),
+          rwdSvgHeight = rwdSvgWidth*0.8,
+          margin = 30,
+          bandWidth = 20 
+
+    const svg = d3.select('.chart')
+                  .append('svg')
+                  .attr('width', rwdSvgWidth)
+                  .attr('height', rwdSvgHeight);
+
+    //data
+    const data = [{x:100, y:20}, {x:18, y:30}, {x:90, y:250}]
+
+    // map 資料集
+    xData = data.map((i) => i.x);
+    yData = data.map((i) => i.y);
+
+    // 設定要給 X 軸用的 scale 跟 axis
+    const xScale = d3.scaleLinear()
+                    .domain([0, d3.max(xData)+20])
+                    .range([margin, rwdSvgWidth - margin]); // 寬度
+
+    // rwd X軸的刻度
+    let tickNumber = window.innerWidth > 450 ? null : 5;
+    const xAxis = d3.axisBottom(xScale)
+                    .ticks(tickNumber)
+                    // .tickValues(xData)
+                    .tickFormat(function (d) {
+                      //調整標籤樣式
+                      return `${d} 元`;
+                    })
+
+    // 呼叫繪製x軸、調整x軸位置
+    const xAxisGroup = svg.append("g")
+                          .call(xAxis)
+                          .attr("transform", `translate(0,${rwdSvgHeight - margin})`)
+
+    // 設定要給 Y 軸用的 scale 跟 axis
+    const yScale = d3.scaleLinear()
+                    .domain([0, d3.max(yData)])
+                    .range([rwdSvgHeight - margin, margin]); // 數值要顛倒，才會從低往高排
+
+    const yAxis = d3.axisLeft(yScale)
+                    .ticks(5)
+
+    // 呼叫繪製y軸、調整y軸位置
+    const yAxisGroup = svg.append("g")
+                          .call(yAxis)
+                          .attr("transform", `translate(${margin},0)`)
+                    
+    // 開始建立長條圖
+    svg.selectAll("rect")
+      .data(data)
+      .join("rect")
+      .attr("x", d => xScale(d.x) - (bandWidth/2)) // 讓長條圖在刻度線中間
+      .attr("y", d => yScale(d.y))
+      .attr("width", bandWidth)
+      .attr("height", d => (rwdSvgHeight - margin) - yScale(d.y))
+      .attr("fill", "#69b3a2")
+  }
+
+  chart()
+  d3.select(window).on('resize', chart);
+
+
+</script>
+
+  </div>
+
+  <footer class="footer">&copy 2021.09 金筠婷 D3作品集
+  </footer>
+  <script src="./assets/js/vendors.js"></script>
+  <script src="./assets/js/all.js"></script>
+  <!-- BS 5 -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8" crossorigin="anonymous"></script>
+
+</body>
+
+</html>

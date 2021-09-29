@@ -23,24 +23,32 @@ polyline{
 }
 </style>
 <h2 class="text-center fw-bold">圓餅圖</h2>
+<h4 class="text-center mt-5">金金的帳本</h4>
 <div class="chartContainer"></div>
+<div>
+  <button type="button" class="btn btn-primary January">1月</button>
+  <button type="button" class="btn btn-primary Feburary">2月</button>
+</div>
 
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script>
-
   // Data
-  // const data = [{city:'台北', data:30},{city:'新北', data:45},
-  //           {city:'台中', data:9},{city:'嘉義', data:67},{city:'台南', data:22}]; 
+  let data = [{item:'交通', data:30},{item:'房租', data:45},
+            {item:'其他', data:9},{item:'吃飯', data:67},{item:'娛樂', data:22}]; 
 
-  // 台灣各縣市用電資料  https://www.taipower.com.tw/tc/page.aspx?mid=5554
-  let data = []
-  async function getData() {
-    dataGet = await d3.csv('./data/202107_Electric.csv');
-    console.log(dataGet);
-    data = dataGet
+  // 切換一二月資料
+  d3.select('.Feburary').on('click', function(){
+    data = [{item:'交通', data:50},{item:'房租', data:65},
+            {item:'其他', data:39},{item:'吃飯', data:17},{item:'娛樂', data:72}];  
     drawPie()
-  };
-  getData();
+  })
+
+  d3.select('.January').on('click', function(){
+    data = [{item:'交通', data:30},{item:'房租', data:45},
+            {item:'其他', data:9},{item:'吃飯', data:67},{item:'娛樂', data:22}];   
+    drawPie()
+  })
+         
 
 
   // 開始畫圓餅圖 
@@ -72,21 +80,28 @@ polyline{
     const radius = Math.min(svgWidth, svgHeight) / 2 - margin;
 
     // 設定顏色
+    // const color = d3.scaleOrdinal()
+    //     .range(["#4BEFCF","#2c9af7","#F96262", '#910842', '#b054e5']);
     const color = d3.scaleOrdinal()
-        .range(["#4BEFCF","#2c9af7","#F96262", '#910842', '#b054e5']);
+                    .domain(data.map(d=>d.item))
+                    .range(d3.schemeSet3.reverse());
 
     // 換算每個資料在圓餅圖上的大小:
-    const piechart = d3.pie().value(d => {
-              return parseInt(d['A.售電量(度)'].split(',').join('')) > 200000000
-              });
+    const piechart = d3.pie().value(d => d.data);
 
     // innerRadius 跟 outerRadius 決定圓餅內圈外圈的大小 radius
-    const arc = d3.arc().innerRadius(0).outerRadius(radius),
+    const arc = d3.arc().innerRadius(0).outerRadius(radius).padAngle(.02),
           outerArc = d3.arc()
                        .outerRadius(radius * 0.9)
                        .innerRadius(radius * 0.9),
           data_ready = piechart(data)
 
+    // 計算每塊資料的占比%
+    // 先用 d3.sum 加總全部資料，再將資料一一除上總數
+    const total = d3.sum(data, d => d.data)
+    data.forEach(d=>{
+      d.percentage = Math.round((d.data/total)*100)
+    })
     // 建立pie
    const cutePie = svg.select('.slices')
         .selectAll('g')
@@ -95,10 +110,11 @@ polyline{
         .append('g')
         .attr('class', 'arc')
 
+
     cutePie.append('path')
         .attr('d', arc)
         .attr('fill', color)
-        .attr("stroke", "black")
+        .attr("stroke", "#fff")
         .style("stroke-width", "2px")
         .style("opacity", 1);
     
@@ -106,19 +122,14 @@ polyline{
     // 控制文字的位置
     const arcText = d3.arc()
                       .innerRadius(radius)
-                      .outerRadius(radius)
+                      .outerRadius(radius - 10)
 
-    const cityText = cutePie.append('text')
+    const itemText = cutePie.append('text')
                             .attr('transform', d => `translate(${arcText.centroid(d)})`)
-                            .text(d => {
-                              if(parseInt(d.data['A.售電量(度)'].split(',').join('')) > 200000000){
-                                return d.data['縣市']
-                              }
-                            })
+                            .text(d => d.data.item + d.data.percentage + '%')
                             .style('text-anchor', 'middle')
-                            .attr('z-index', 2)
                             .style('font-size', 16)
-                            .style('fill', 'black')
+                            .style('fill', 'black')       
     
     // 滑鼠互動 mouseover、mouseleave
     d3.selectAll('.arc path')
@@ -127,19 +138,19 @@ polyline{
          d3.select(this)
            .transition()
            .duration(500)
-           .style("opacity", "0.5")
+           .style("filter", "drop-shadow(2px 4px 6px black)")
            .style('transform', 'scale(1.1)')
       })
       .on('mouseleave', function(){
         d3.select(this)
           .transition()
           .duration(500)
-          .style('opacity', '1')
+          .style("filter", "drop-shadow(0 0 0 black)")
           .style('transform', 'scale(1)')
       })
   };
 
-  // drawPie()
+  drawPie()
 
   // RWD
   d3.select(window).on("resize", drawPie);
