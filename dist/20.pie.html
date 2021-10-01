@@ -161,8 +161,6 @@ polyline{
             {item:'其他', data:9},{item:'吃飯', data:67},{item:'娛樂', data:22}];   
     drawPie()
   })
-         
-
 
   // 開始畫圓餅圖 
   const drawPie = () => {
@@ -189,21 +187,29 @@ polyline{
     svg.append("g")
       .attr("class", "lines");
 
-    // 圓餅圖的圓弧大小是區域的一半
+    // 設定顏色
+    const color = d3.scaleOrdinal()
+        .range(["#4BEFCF","#0bbc17","#F96262", '#ffbe32', '#e271fc']);
+    // const color = d3.scaleOrdinal()
+    //                 .domain(data.map(d=>d.item))
+    //                 .range(d3.schemeSet3.reverse());
+
+    // radius 用來設定半徑，圓餅圖的圓弧大小是區域的一半
     const radius = Math.min(svgWidth, svgHeight) / 2 - margin;
 
-    // 設定顏色
-    // const color = d3.scaleOrdinal()
-    //     .range(["#4BEFCF","#2c9af7","#F96262", '#910842', '#b054e5']);
-    const color = d3.scaleOrdinal()
-                    .domain(data.map(d=>d.item))
-                    .range(d3.schemeSet3.reverse());
-
-    // 換算每個資料在圓餅圖上的大小:
-    const piechart = d3.pie().value(d => d.data);
+    // 設定每個資料在圓餅圖上:
+    const piechart = d3.pie()
+                       .value(d => d.data)
+                       .sort(function(a,b){
+                         console.log(a,b) // 固定圓餅圖的項目排序
+                         return d3.ascending(a.key, b.key)
+                       });
 
     // innerRadius 跟 outerRadius 決定圓餅內圈外圈的大小 radius
-    const arc = d3.arc().innerRadius(0).outerRadius(radius).padAngle(.02),
+    const arc = d3.arc()
+                  .innerRadius(0)
+                  .outerRadius(radius)
+                  .padAngle(.02),
           outerArc = d3.arc()
                        .outerRadius(radius * 0.9)
                        .innerRadius(radius * 0.9),
@@ -217,19 +223,18 @@ polyline{
     })
     // 建立pie
    const cutePie = svg.select('.slices')
-        .selectAll('g')
-        .data(data_ready)
-        .enter()
-        .append('g')
-        .attr('class', 'arc')
-
-
-    cutePie.append('path')
-        .attr('d', arc)
-        .attr('fill', color)
-        .attr("stroke", "#fff")
-        .style("stroke-width", "2px")
-        .style("opacity", 1);
+            .selectAll('g')
+            .data(data_ready)
+            .enter()
+            .append('g')
+            .attr('class', 'arc')
+    
+        cutePie.append('path')
+            .attr('d', arc)
+            .attr('fill', color)
+            .attr("stroke", "#fff")
+            .style("stroke-width", "2px")
+            .style("opacity", 1);
     
     // 加上每個區塊的標示
     // 控制文字的位置

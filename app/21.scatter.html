@@ -6,23 +6,21 @@ current: index
 ---
 
 <style>
-    .scatter1, scatter2 {
-        margin: auto;
-        width: 80%;
-        min-width: 200px;
-        margin: auto;
+    .scatter1, .scatter2 {
+      margin: auto;
+      width: 80%;
+      min-width: 300px;
+      margin: auto;
     }
     .axis path,
     .axis line {
-        fill: none;
-        stroke: black;
-        shape-rendering: crispEdges;
-        /* Round any decimal pixels so it'll render nicely */
+      fill: none;
+      stroke: black;
+      shape-rendering: crispEdges;
     }
 
-    /* Can use CSS3 Transitions, but not for everything (e.g. change radius size) */
     circle:hover {
-        cursor: pointer;
+      cursor: pointer;
     }
 </style>
 
@@ -36,19 +34,89 @@ current: index
 
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script>
+  // 散點圖一
+  // 先取資料
+  async function getData(){
+    let dataGet;
 
+    const cors = "https://secret-ocean-49799.herokuapp.com/";
+    const url = 'https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_dataset/2_TwoNum.csv'
+
+    dataGet = await d3.csv(`${cors}${url}`);
+    scatter2(dataGet)
+  }
+  getData()
+  
+  // 建立圖表
+  function scatter2(data){
+    // RWD 清除原本的圖型
+    d3.select(".scatter1").select('svg').remove()
+
+    // 建立 svg
+    const svgWidth = parseInt(d3.select('.scatter1').style('width')),
+          svgHeight = svgWidth
+          margin = 50
+    const svg = d3.select('.scatter1')
+      .append('svg')
+      .attr('width', svgWidth)
+      .attr('height', svgHeight)
+
+    // 建立X軸線
+    const xScale = d3.scaleLinear()
+           .domain([0,4000])
+           .range([0, (svgWidth - margin*2)])
+
+    const xAxis = d3.axisBottom(xScale)
+                    
+
+    svg.append('g')
+       .attr('transform', `translate(${margin}, ${svgHeight - margin/2})`)
+       .call(xAxis)
+
+    // 建立Y軸線
+    console.log(data)
+    const yScale = d3.scaleLinear()
+           .domain([0,500000])
+           .range([(svgHeight - margin), 0])
+
+    const yAxis = d3.axisLeft(yScale)    
+                    .tickFormat(d=>'$'+d) 
+
+    svg.append('g')
+       .attr('transform', `translate(${margin}, ${margin/2})`)
+       .call(yAxis)
+
+    // 加上點點
+    svg.append('g')
+       .selectAll('dot')
+       .data(data)
+       .enter()
+         .append('circle')
+         .attr('cx', d => xScale(d.GrLivArea))
+         .attr('cy', d => yScale(d.SalePrice))
+         .attr('r', 1.5)
+         .style('fill', d => {
+           return d.SalePrice > 129000? 'pink':'#69b3a2'
+         })
+  }
+
+  // 散點圖二
   function scatter1(){
-    let w = parseInt(d3.select(".scatter1").style("width")),
+    // RWD 清除原本的圖型
+    d3.select(".scatter2").select('svg').remove()
+
+    // 建立svg
+    let w = parseInt(d3.select(".scatter2").style("width")),
         h = w*0.8,
         margin = {
             top: 40,
             right: 20,
             bottom: 20,
             left: 40
-        },
+            },
         radius = 5;
 
-    let svg = d3.select(".scatter1").append("svg").attr('width', w).attr('height', h);
+    let svg = d3.select(".scatter2").append("svg").attr('width', w).attr('height', h);
     console.log(w, h)
 
     let dataset = [
@@ -112,12 +180,10 @@ current: index
     const yAxis = d3.axisLeft()
         .scale(yScale)
 
-
     const yAxisLine = svg.append('g')
         .attr('class', 'yAxis')
         .attr('transform', `translate(${margin.left}, 0)`)
         .call(yAxis)
-
 
     svg.selectAll("circle")
         .data(dataset)
@@ -134,38 +200,7 @@ current: index
         .on("mouseover", handleMouseOver)
         .on("mouseout", handleMouseOut);
 
-    // 滑鼠click的時候增加一個點
-    svg.on("click", function () {
-        let coords = d3.pointer(event, this);
-
-        // Normally we go from data to pixels, but here we're doing pixels to data
-        let newData = {
-          // Takes the pixel number to convert to number
-            x: Math.round(xScale.invert(coords[0])),
-            y: Math.round(yScale.invert(coords[1]))
-        };
-
-        // Push data to our array
-        dataset.push(newData);
-
-        // For new circle, go through the update process
-        svg.selectAll("circle")
-            .data(dataset)
-            .enter()
-            .append("circle")
-            .attr('cx', function (d) {
-                return xScale(d.x);
-            })
-            .attr('cy', function (d) {
-                return yScale(d.y);
-            })
-            .attr('r', 5)
-            .attr('fill', '#000')
-            .on("mouseover", handleMouseOver)
-            .on("mouseout", handleMouseOut);
-    })
-
-    // 建立 mouseover 事件
+    //  mouseover 時點點變色+tooltip
     function handleMouseOver(d, i) {
         // 選定this的元素，改變hover過去的顏色跟形狀
         d3.select(this)
@@ -183,37 +218,52 @@ current: index
             .text([`x:${d.x}, y:${d.y}`])
     }
 
-      // 建立 mouseleave 事件
+    // mouseleave 時變回原樣
     function handleMouseOut(d, i) {
         d3.selectAll('.hoverTextInfo').remove()
         d3.select(this)
             .attr('fill', 'black')
             .attr('r', radius)
     }
+
+    // 滑鼠click的時候增加一個點
+    svg.on("click", function () {
+    let coords = d3.pointer(event, this);
+
+    // Normally we go from data to pixels, but here we're doing pixels to data
+    let newData = {
+      // Takes the pixel number to convert to number
+        x: Math.round(xScale.invert(coords[0])),
+        y: Math.round(yScale.invert(coords[1]))
+    };
+
+    // Push data to our array
+    dataset.push(newData);
+
+    // For new circle, go through the update process
+    svg.selectAll("circle")
+        .data(dataset)
+        .enter()
+        .append("circle")
+        .attr('cx', function (d) {
+            return xScale(d.x);
+        })
+        .attr('cy', function (d) {
+            return yScale(d.y);
+        })
+        .attr('r', 5)
+        .attr('fill', '#000')
+        .on("mouseover", handleMouseOver)
+        .on("mouseout", handleMouseOut);
+    })
   }
   scatter1()
 
-  // 圖表2
-  // 先取資料
-  async function getData(){
-    let dataGet;
+    // RWD
+    d3.select(window).on("resize", function(){
+      scatter1()
+      scatter2()
+    });
 
-    const cors = "https://secret-ocean-49799.herokuapp.com/";
-    const url = 'https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_dataset/2_TwoNum.csv'
 
-    dataGet = await d3.csv(`${cors}${url}`);
-    scatter2(dataGet)
-  }
-  getData()
-  
-  // 建立圖表
-  function scatter2(data){
-    const svgWidth = parseInt(d3.select('.scatter2').style('width')),
-          svgHeight = svgWidth
-    d3.select('.scatter2')
-      .append('svg')
-      .attr('width', svgWidth)
-      .attr('height', svgHeight)
-
-  }
 </script>
