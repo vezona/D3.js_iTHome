@@ -50,12 +50,12 @@ current: index
 
     // map 資料集
     xData = data.map((i) => i['縣市']);
-    yData = data.map((i) => parseInt(i['A.售電量(度)']));
+    yData = data.map((i) => parseInt(i['A.售電量(度)'].split(',').join('')));
 
     // 設定要給 X 軸用的 scale 跟 axis
     const xScale = d3.scaleBand()
                     .domain(xData)
-                    .range([margin, rwdSvgWidth - margin]) // 寬度
+                    .range([margin*2, rwdSvgWidth - margin/2]) // 寬度
                     .padding(0.2)
 
     const xAxis = d3.axisBottom(xScale)
@@ -81,19 +81,33 @@ current: index
     // 呼叫繪製y軸、調整y軸位置
     const yAxisGroup = svg.append("g")
                           .call(yAxis)
-                          .attr("transform", `translate(${margin},0)`)
+                          .attr("transform", `translate(${margin*2},0)`)
                     
     // 開始建立長條圖
     svg.selectAll("rect")
       .data(data)
       .join("rect")
       .attr("x", d => xScale(d['縣市'])) // 讓長條圖在刻度線中間
-      .attr("y", d => yScale(parseInt(d['A.售電量(度)'])))
+      .attr("y", d => yScale(parseInt(d['A.售電量(度)'].split(',').join(''))))
       .attr("width", xScale.bandwidth())
       .attr("height", d => {
-          return (rwdSvgHeight - margin) - yScale(parseInt(d['A.售電量(度)']))
+          return (rwdSvgHeight - margin) - yScale(parseInt(d['A.售電量(度)'].split(',').join('')))
         })
       .attr("fill", "#69b3a2")
+      .attr('cursor', 'pointer')
+      .on("mouseover", handleMouseOver)
+      .on("mouseleave", handleMouseLeave)
+
+    function handleMouseOver(d, i){
+      console.log(d.target.__data__)
+      d3.select(this)
+        .attr('fill', 'red')
+    }
+
+    function handleMouseLeave(){
+      d3.select(this)
+        .attr('fill', '#69b3a2')
+    }
   }
 
   drawBarChart()

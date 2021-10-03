@@ -43,12 +43,12 @@ current: index
     const url = 'https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_dataset/2_TwoNum.csv'
 
     dataGet = await d3.csv(`${cors}${url}`);
-    scatter2(dataGet)
+    scatter1(dataGet)
   }
   getData()
   
   // 建立圖表
-  function scatter2(data){
+  function scatter1(data){
     // RWD 清除原本的圖型
     d3.select(".scatter1").select('svg').remove()
 
@@ -101,7 +101,7 @@ current: index
   }
 
   // 散點圖二
-  function scatter1(){
+  function scatter2(){
     // RWD 清除原本的圖型
     d3.select(".scatter2").select('svg').remove()
 
@@ -156,18 +156,12 @@ current: index
           y: 31 }
     ];
 
+    // 建立Ｘ比例尺與軸線
     const xScale = d3.scaleLinear()
         .domain([0, d3.max(dataset, function (d) {
             return d.x + 10;
         })])
         .range([margin.left, w - margin.right]);
-
-    const yScale = d3.scaleLinear()
-        .domain([0, d3.max(dataset, function (d) {
-            return d.y + 10;
-        })])
-        .range([margin.top, h - margin.bottom])
-
 
     const xAxis = d3.axisTop()
         .scale(xScale)
@@ -176,6 +170,13 @@ current: index
         .attr('class', 'xAxis')
         .attr('transform', `translate(0, ${margin.top})`)
         .call(xAxis)
+    
+    // 建立Ｙ比例尺與軸線
+    const yScale = d3.scaleLinear()
+    .domain([0, d3.max(dataset, function (d) {
+        return d.y + 10;
+    })])
+    .range([margin.top, h - margin.bottom])
 
     const yAxis = d3.axisLeft()
         .scale(yScale)
@@ -185,6 +186,7 @@ current: index
         .attr('transform', `translate(${margin.left}, 0)`)
         .call(yAxis)
 
+    // 資料綁定上circle
     svg.selectAll("circle")
         .data(dataset)
         .enter()
@@ -206,7 +208,6 @@ current: index
         d3.select(this)
             .attr('fill', 'orange')
             .attr('r', radius * 2);
-        console.log(d.x, d.y)
 
         // 加上tooltips
         let pt = d3.pointer(event, this)
@@ -230,17 +231,16 @@ current: index
     svg.on("click", function () {
     let coords = d3.pointer(event, this);
 
-    // Normally we go from data to pixels, but here we're doing pixels to data
     let newData = {
-      // Takes the pixel number to convert to number
+      // 把XY座標軸轉換成資料
         x: Math.round(xScale.invert(coords[0])),
         y: Math.round(yScale.invert(coords[1]))
     };
 
-    // Push data to our array
+    // 將增加的資料座標推入原本的data
     dataset.push(newData);
 
-    // For new circle, go through the update process
+    // 將新的資料綁定上circle、綁定 mouseover/mouseleave 方法
     svg.selectAll("circle")
         .data(dataset)
         .enter()
@@ -257,7 +257,7 @@ current: index
         .on("mouseout", handleMouseOut);
     })
   }
-  scatter1()
+  scatter2()
 
     // RWD
     d3.select(window).on("resize", function(){
