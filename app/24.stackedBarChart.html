@@ -6,9 +6,8 @@ current: index
 ---
 
 <style>
-
 .chart{
-    width: 80%;
+    width: 100%;
     min-width: 300px;
     margin: auto;
 }
@@ -16,80 +15,137 @@ current: index
 
 <h1 class="text-center fw-bold">Stacked Bar Chart 堆積長條圖</h1>
 
-<h4 class="mt-3"></h4>
+<h4 class="mt-3">臺南市勞動人口-依年齡別區分</h4>
 <div class="chart"></div>
 
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script>
+  // 台南勞動人口資料  https://data.gov.tw/dataset/140152
+  let data = []
+  async function getData() {
+    // 取資料
+    dataGet = await d3.csv('./data/tainan_labor_force_population.csv')
+    data = dataGet
+    console.log(data)
+    drawBarChart()
+  };
+  getData()
+
+
   // RWD
-  function chart(){
+  function drawBarChart(){
     // 刪除原本的svg.charts，重新渲染改變寬度的svg
     d3.select('.chart svg').remove();
 
     // RWD 的svg 寬高
     const rwdSvgWidth = parseInt(d3.select('.chart').style('width')),
-          rwdSvgHeight = rwdSvgWidth*0.8,
-          margin = 30,
-          bandWidth = 20 
+          rwdSvgHeight = rwdSvgWidth,
+          margin = 20,
+          marginBottom = 100
 
     const svg = d3.select('.chart')
                   .append('svg')
                   .attr('width', rwdSvgWidth)
                   .attr('height', rwdSvgHeight);
 
-    //data
-    const data = [{x:100, y:20}, {x:18, y:30}, {x:90, y:250}]
-
     // map 資料集
-    xData = data.map((i) => i.x);
-    yData = data.map((i) => i.y);
+    const xData = data.map((i) => i['年度']);
+    const subgroups =  Object.keys(data[0]).slice(1)
 
     // 設定要給 X 軸用的 scale 跟 axis
-    const xScale = d3.scaleLinear()
-                    .domain([0, d3.max(xData)+20])
-                    .range([margin, rwdSvgWidth - margin]); // 寬度
+    const xScale = d3.scaleBand()
+                    .domain(xData)
+                    .range([margin*2, rwdSvgWidth - margin]) // 寬度
+                    .padding(0.2)
 
-    // rwd X軸的刻度
-    let tickNumber = window.innerWidth > 450 ? null : 5;
     const xAxis = d3.axisBottom(xScale)
-                    .ticks(tickNumber)
-                    // .tickValues(xData)
-                    .tickFormat(function (d) {
-                      //調整標籤樣式
-                      return `${d} 元`;
-                    })
 
     // 呼叫繪製x軸、調整x軸位置
     const xAxisGroup = svg.append("g")
                           .call(xAxis)
-                          .attr("transform", `translate(0,${rwdSvgHeight - margin})`)
+                          .attr("transform", `translate(0,${rwdSvgHeight - marginBottom})`)
 
     // 設定要給 Y 軸用的 scale 跟 axis
     const yScale = d3.scaleLinear()
-                    .domain([0, d3.max(yData)])
-                    .range([rwdSvgHeight - margin, margin]); // 數值要顛倒，才會從低往高排
+                    .domain([0, 1200])
+                    .range([rwdSvgHeight - marginBottom, margin]) // 數值要顛倒，才會從低往高排
+                    .nice() // 補上終點值
 
     const yAxis = d3.axisLeft(yScale)
                     .ticks(5)
+                    .tickSize(3)
 
     // 呼叫繪製y軸、調整y軸位置
     const yAxisGroup = svg.append("g")
                           .call(yAxis)
-                          .attr("transform", `translate(${margin},0)`)
-                    
+                          .attr("transform", `translate(${margin*2},0)`)
+    
+    // 用 d3.stack() 把資料堆疊起來
+    const stackedData = d3.stack()
+                          .keys(subgroups)(data)     
+    // console.log(stackedData)                 
+
+    // 設定不同 subgorup bar的顏色
+    const color = d3.scaleOrdinal()
+      .domain(subgroups)
+      .range(['#e41a1c','#377eb8','#4daf4a', '#ffda6b'])   
+      
+      
     // 開始建立長條圖
-    svg.selectAll("rect")
-      .data(data)
-      .join("rect")
-      .attr("x", d => xScale(d.x) - (bandWidth/2)) // 讓長條圖在刻度線中間
-      .attr("y", d => yScale(d.y))
-      .attr("width", bandWidth)
-      .attr("height", d => (rwdSvgHeight - margin) - yScale(d.y))
-      .attr("fill", "#69b3a2")
+    const bar = svg.append('g')
+                   .selectAll('g')
+                   .data(stackedData)
+                   .join('g')
+                      .attr('fill',  d => color(d.key))
+                   .selectAll('rect')
+                   .data(d=>d)
+                   .join('rect')
+                   .attr("x", d => xScale(d.data['年度']))
+                   .attr("y", d => yScale(d[1]))
+                   .attr("height", d => yScale(d[0]) - yScale(d[1]))
+                   .attr("width",xScale.bandwidth())
+                   .style('cursor', 'pointer')
+                   .on("mouseover", handleMouseOver)
+                   .on("mouseleave", handleMouseLeave)
+
+    function handleMouseOver(d, i){
+      // console.log(d)
+      // console.log(d.target.__data__)
+      d3.select(this)
+        .style('opacity', '0.5')
+    }
+
+    function handleMouseLeave(){
+      d3.select(this)
+        .style('opacity', '1')
+    }
+
+    // 加上辨識標籤
+  const tagsWrap =  svg.append('g')
+       .selectAll('g')
+       .attr('class', 'tags')
+       .data(subgroups)
+       .enter()
+       .append('g')
+      
+  tagsWrap.append('rect')
+       .attr('x', (d,i)=> (i+1)*marginBottom*1.3)
+       .attr('y', rwdSvgHeight-marginBottom/2)
+       .attr('width', 20)
+       .attr('height', 20)
+       .attr('fill', d => color(d))
+
+  tagsWrap.append('text')
+          .attr('x', (d,i)=> (i+1)*marginBottom*1.3)
+          .attr('y', rwdSvgHeight-10)
+          .style('fill', '#000')
+          .style('font-size', '12px')
+          .style('font-weight', 'bold')
+          .style("text-anchor", 'middle')
+          .text(d=>d)
   }
 
-  chart()
-  d3.select(window).on('resize', chart);
+  d3.select(window).on('resize', drawBarChart);
 
 
 </script>

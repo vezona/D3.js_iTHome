@@ -15,20 +15,39 @@ current: index
 
 <h1 class="text-center fw-bold">Bar Chart 長條圖</h1>
 
-<h4 class="mt-3"></h4>
+<h4 class="mt-3">台灣各縣市每月住宅售電</h4>
 <div class="chart"></div>
+<div class="btnWrap">
+  <button class="btn btn-primary July">2021 7月</button>
+  <button class="btn btn-primary August">2021 8月</button>
+</div>
 
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script>
   // 台灣各縣市用電資料  https://www.taipower.com.tw/tc/page.aspx?mid=5554
+  // 資料變換
+  let url = './data/202107_Electric.csv'
+  d3.select('.July')
+    .on('click', function(){
+      url = './data/202107_Electric.csv'
+      getData()
+    })
+  d3.select('.August')
+    .on('click', function(){
+      url = './data/202108_Electric.csv'
+      getData()
+    })
+
   let data = []
   async function getData() {
-    dataGet = await d3.csv('./data/202107_Electric.csv');
-    console.log(dataGet);
+    // 取資料
+    dataGet = await d3.csv(url)
+    console.log(dataGet)
     data = dataGet
     drawBarChart()
   };
-  getData();
+  getData()
+
 
   // RWD
   function drawBarChart(){
@@ -84,33 +103,47 @@ current: index
                           .attr("transform", `translate(${margin*2},0)`)
                     
     // 開始建立長條圖
-    svg.selectAll("rect")
-      .data(data)
-      .join("rect")
-      .attr("x", d => xScale(d['縣市'])) // 讓長條圖在刻度線中間
-      .attr("y", d => yScale(parseInt(d['A.售電量(度)'].split(',').join(''))))
-      .attr("width", xScale.bandwidth())
-      .attr("height", d => {
-          return (rwdSvgHeight - margin) - yScale(parseInt(d['A.售電量(度)'].split(',').join('')))
-        })
-      .attr("fill", "#69b3a2")
-      .attr('cursor', 'pointer')
-      .on("mouseover", handleMouseOver)
-      .on("mouseleave", handleMouseLeave)
+    const bar = svg.selectAll("rect")
+                  .data(data)
+                  .join("rect")
+                  .attr("x", d => xScale(d['縣市'])) // 讓長條圖在刻度線中間
+                  .attr("y", d => yScale(parseInt(d['A.售電量(度)'].split(',').join(''))))
+                  .attr("width", xScale.bandwidth())
+                  .attr("height", d => {
+                      return (rwdSvgHeight - margin) - yScale(parseInt(d['A.售電量(度)'].split(',').join('')))
+                    })
+                  .attr("fill", "#69b3a2")
+                  .attr('cursor', 'pointer')
+                  .on("mouseover", handleMouseOver)
+                  .on("mouseleave", handleMouseLeave)
 
     function handleMouseOver(d, i){
-      console.log(d.target.__data__)
+      // console.log(d)
+      // console.log(d.target.__data__)
       d3.select(this)
         .attr('fill', 'red')
+      
+      // 加上文字標籤
+      svg.append('text')
+         .attr('class', 'infoText')
+         .attr('y', yScale(parseInt(d.target.__data__['A.售電量(度)'].split(',').join('')))-20)
+         .attr("x", xScale(d.target.__data__['縣市']) + 50)
+         .style('fill', '#000')
+         .style('font-size', '18px')
+         .style('font-weight', 'bold')
+         .style("text-anchor", 'middle')
+         .text(d.target.__data__['A.售電量(度)'] + '度');
     }
 
     function handleMouseLeave(){
       d3.select(this)
         .attr('fill', '#69b3a2')
+
+      // 移除文字標籤
+      svg.select('.infoText').remove()
     }
   }
 
-  drawBarChart()
   d3.select(window).on('resize', drawBarChart);
 
 
