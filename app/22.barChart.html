@@ -64,9 +64,6 @@ current: index
                   .attr('width', rwdSvgWidth)
                   .attr('height', rwdSvgHeight);
 
-    //data
-    // const data = [{x:100, y:20}, {x:18, y:30}, {x:90, y:250}]
-
     // map 資料集
     xData = data.map((i) => i['縣市']);
     yData = data.map((i) => parseInt(i['A.售電量(度)'].split(',').join('')));
