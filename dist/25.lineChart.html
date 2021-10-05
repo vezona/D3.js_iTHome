@@ -96,15 +96,15 @@
                 進階圖表與互動
               </a>
               <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <li><a class="dropdown-item" href="./donut.html">甜甜圈圖</a></li>
+                <li><a class="dropdown-item" href="./27.donut.html">甜甜圈圖</a></li>
                 <li><a class="dropdown-item" href="#">氣泡圖</a></li>
-                <li><a class="dropdown-item" href="#">熱圖</a></li>
-                <li><a class="dropdown-item" href="#">文字雲</a></li>
                 <li><a class="dropdown-item" href="#">合併圖表(長條+折線)</a></li>
+                <li><a class="dropdown-item" href="#">樹狀圖</a></li>
                 <li><a class="dropdown-item" href="#">階層圖</a></li>
                 <li><a class="dropdown-item" href="#">甘特圖</a></li>
-                <li><a class="dropdown-item" href="#">樹狀圖</a></li>
+                <li><a class="dropdown-item" href="#">熱圖</a></li>
                 <li><a class="dropdown-item" href="#">地圖</a></li>
+                <li><a class="dropdown-item" href="#">文字雲</a></li>
               </ul>
             </li>
             <li class="nav-item">
@@ -175,7 +175,7 @@
                     .range([margin, rwdSvgWidth - margin]); // 寬度
 
     // rwd X軸的刻度
-    let tickNumber = window.innerWidth > 450 ? null : 5;
+    let tickNumber = window.innerWidth > 900 ? xData.length/2 : 8;
     const xAxis = d3.axisBottom(xScale)
                     .ticks(tickNumber)
                     .tickFormat(d=>d+'週')
@@ -196,8 +196,8 @@
     // 呼叫繪製y軸、調整y軸位置
     const yAxisGroup = svg.append("g")
                           .call(yAxis)
-                          .attr("transform", `translate(${margin},0)`)
-                    
+                          .attr("transform", `translate(${margin},0)`)                  
+
     // 開始建立折線圖
     // 設定折線圖相關資料
     const lineChart = d3.line()
@@ -205,14 +205,75 @@
               .y((d) => yScale(parseInt(d['確定病例數'])))
               // .defined((d) => d.pinPrice > 0)
               .curve(d3.curveLinear); //決定曲線線條
-
+    
     svg.append('path')
       .data(data)
       .attr("d", lineChart(data))
       .attr("fill", "none")
       .attr("stroke", "steelblue")
       .attr("stroke-width", 1.5)
-      
+
+    // 使用 d3.bisector() 找到滑鼠的 X 軸 index 值
+    const bisect = d3.bisector(d=>d['發病年週']).left;
+    
+    // 建立沿著折線滑動的原點
+    const focus = svg.append('g')
+                     .append('circle')
+                     .style("fill", "none")
+                     .attr("stroke", "black")
+                     .attr('r', 8.5)
+                     .style("opacity", 0)
+
+    // 建立滑動的資料標籤
+    const focusText = svg.append('g')
+                        .append('text')
+                        .style("opacity", 0)
+                        .attr("text-anchor", "left")
+                        .attr("alignment-baseline", "middle")
+    
+    // 建立一個覆蓋svg的方形
+    svg
+    .append('rect')
+    .style("fill", "none")
+    .style("pointer-events", "all")
+    .attr('width', rwdSvgWidth - margin)
+    .attr('height', rwdSvgHeight - margin)
+    .style('cursor', 'pointer')
+    .on('mouseover', mouseover)
+    .on('mousemove', mousemove)
+    .on('mouseout', mouseout);  
+    
+    function mouseover(){
+      focus.style("opacity", 1)
+      focusText.style("opacity",1)
+    }
+
+    function mousemove(){
+      // 把目前X的位置用xScale去換算
+      const x0 = xScale.invert(d3.pointer(event, this)[0]) 
+      // 由於我的X軸資料是擷取過的，這邊要整理並補零
+      const fixedX0 = parseInt(x0).toString().padStart(2,'0')
+      // 接著把擷取掉的2021補回來，因為data是帶入原本的資料
+      let i = bisect(data, '2021'+ fixedX0)
+      selectedData = data[i]
+
+      // 圓點
+      focus
+      // 換算到X軸位置時，一樣使用擷取過的資料，才能準確換算到正確位置
+      .attr("cx", xScale(selectedData['發病年週'].substring(4,6)))
+      .attr("cy", yScale(selectedData['確定病例數']))
+
+      focusText
+      .html('確診人數：' + selectedData['確定病例數'])
+      .attr("x", xScale(selectedData['發病年週'].substring(4,6))+15)
+      .attr("y", yScale(selectedData['確定病例數']))
+
+    }
+
+    function mouseout(){
+      focus.style("opacity", 0)
+      focusText.style("opacity", 0)
+    }
   }
 
   d3.select(window).on('resize', drawChart);

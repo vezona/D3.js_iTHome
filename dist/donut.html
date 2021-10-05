@@ -119,13 +119,38 @@
   <div class="container py-3">
     
 <style>
-.basicDonut {
-    margin: auto;
-    width: 80%;
-    min-width: 200px;
-    margin: auto;
-    text-align:center
-}
+    .basicDonut {
+        margin: auto;
+        width: 80%;
+        min-width: 200px;
+        margin: auto;
+        text-align:center
+    }
+
+    /*加陰影 */
+    .advancedDonut svg {
+        filter: drop-shadow( 0px 6px 6px rgba(0,0,0,.25) );
+        }
+
+    /*資料軸線*/
+    .advancedDonut polyline {
+        opacity: .3;
+        stroke: black;
+        stroke-width: 2px;
+        fill: none;
+    }
+
+    /* 字體加粗*/
+    .labelName tspan {
+        font-style: normal;
+        font-weight: 700;
+    }
+
+    /* 字形 */
+    .labelName {
+        font-size: 0.9em;
+        font-style: italic;
+    }
 </style>
 <h2 class="text-center fw-bold">甜甜圈圖</h2>
 
@@ -133,6 +158,7 @@
 <div class="basicDonut"></div>
 
 <h4 class="mt-5 text-center">進階甜甜圈圖</h4>
+<div class="advancedDonut"></div>
 
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script>
@@ -192,6 +218,101 @@
   }
 
   basicDonut()
+
+  const drawPie = () => {
+
+    // RWD 的svg 寬高
+    const svgWidth = parseInt(d3.select('.basicDonut').style('width')),
+          svgHeight = svgWidth*0.8,
+          margin = 60
+
+    var svg = d3.select(".advancedDonut").append("svg")
+      .attr("width", svgWidth)
+      .attr("height", svgHeight)
+      .append("g");
+
+    // 圓餅、線段、標籤
+    svg.append("g")
+			.attr("class", "slices");
+    svg.append("g")
+      .attr("class", "labels");
+    svg.append("g")
+      .attr("class", "lines");
+
+    var width = svgWidth-margin*2;
+    var height = svgHeight-margin*2;
+    // radius設定圓餅圖的圓弧大小，是區域的一半
+    var radius = Math.min(width, height)/2;
+    
+    // 設定顏色
+    const color = d3.scaleOrdinal()
+                    .range(["#4BEFCF","#2c9af7","#F96262", '#910842', '#b054e5']);
+    
+    var data = [{city:'台北', data:30},{city:'新北', data:45},
+            {city:'台中', data:9},{city:'嘉義', data:67},{city:'台南', data:22}]    
+    
+
+    
+    var pie = d3.pie().sort(null).value(d => d.data);
+    var arc = d3.arc().innerRadius(radius*0.3).outerRadius(radius*0.6);
+    
+    var outerArc = d3.arc()
+                .outerRadius(radius * 0.9)
+                .innerRadius(radius * 0.9);
+     
+    svg.attr("transform", "translate(" + svgWidth / 2 + "," + svgHeight / 2 + ")");
+    
+    svg.selectAll('path')
+        .data(pie(data))
+        .enter()
+        .append('path')
+        .attr('d', arc)
+        .attr('fill', (d,i)=> color(i));
+
+    svg.append('g').classed('labels',true);
+    svg.append('g').classed('lines',true);
+     
+
+    var polyline = svg.select('.lines')
+                .selectAll('polyline')
+                .data(pie(data))
+                .enter()
+                .append('polyline')
+                .attr('points', function(d) {
+                    // see label transform function for explanations of these three lines.
+                    var pos = outerArc.centroid(d);
+                    pos[0] = radius * 0.95 * (midAngle(d) < Math.PI ? 1 : -1);
+                    return [arc.centroid(d), outerArc.centroid(d), pos]
+                });
+	
+    var label = svg.select('.labels').selectAll('text')
+                .data(pie(data))
+            .enter().append('text')
+                .attr('dy', '.35em')
+                .html(function(d) {
+                        return `${d.data.city}：${d.data.data}萬度`
+                })
+                .attr('transform', function(d) {
+                    var pos = outerArc.centroid(d);
+                    pos[0] = radius * 0.95 * (midAngle(d) < Math.PI ? 1 : -1);
+                    return 'translate(' + pos + ')';
+                })
+                .style('text-anchor', function(d) {
+                    return (midAngle(d)) < Math.PI ? 'start' : 'end';
+                });
+    
+     svg.append('text')
+                        .attr('class', 'toolCircle')
+                        .attr('dy', 0) // hard-coded. can adjust this to adjust text vertical alignment in tooltip
+                        .html('用電量') // add text to the circle.
+                        .style('font-size', '.9em')
+                        .style('text-anchor', 'middle');
+    
+    function midAngle(d) { return d.startAngle + (d.endAngle - d.startAngle) / 2; } 
+
+    }
+
+    drawPie();
 
 
 </script>

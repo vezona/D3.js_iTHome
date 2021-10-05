@@ -1,50 +1,121 @@
-<!DOCTYPE html>
-<head>
-  <meta charset="utf-8">
-  <script src="https://d3js.org/d3.v7.min.js"></script>
-  <style>
-    /* Add shadow effect to chart. If you don't like it, get rid of it. */
-    svg {
-        filter: drop-shadow( 0px 6px 6px rgba(0,0,0,.25) );
-     }
+---
+title: donut
+layout: ./app/layout.ejs
+engine: ejs
+current: index
+---
 
-    /*Styling for the lines connecting the labels to the slices*/
-    polyline {
+<style>
+    .basicDonut {
+        margin: auto;
+        width: 80%;
+        min-width: 200px;
+        margin: auto;
+        text-align:center
+    }
+
+    /*加陰影 */
+    .advancedDonut svg {
+        filter: drop-shadow( 0px 6px 6px rgba(0,0,0,.25) );
+        }
+
+    /*資料軸線*/
+    .advancedDonut polyline {
         opacity: .3;
         stroke: black;
         stroke-width: 2px;
         fill: none;
     }
 
-    /* Make the percentage on the text labels bold*/
+    /* 字體加粗*/
     .labelName tspan {
         font-style: normal;
         font-weight: 700;
     }
 
-    /* In biology we generally italicise species names. */
+    /* 字形 */
     .labelName {
         font-size: 0.9em;
         font-style: italic;
     }
 </style>
-</head>
+<h2 class="text-center fw-bold">甜甜圈圖</h2>
 
-<body> 
-  <script>
-  // 撈資料
-    // let data = []
-    // async function getData() {
-    //     dataGet = await d3.csv('./data/202107_Electric.csv');
-    //     data = dataGet
-        // drawPie()
-    // };
-    // getData();
+<h4 class="mt-5 text-center">基礎甜甜圈圖</h4>
+<div class="basicDonut"></div>
 
-    const drawPie = () => {
-    var svg = d3.select("body").append("svg")
-      .attr("width", 960)
-      .attr("height", 500)
+<h4 class="mt-5 text-center">進階甜甜圈圖</h4>
+<div class="advancedDonut"></div>
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+
+  function basicDonut(){
+    // Data to be added in the pie chart
+    const data = [
+        { "value": 1, "property": "p1" },
+        { "value": 2, "property": "p2" },
+        { "value": 3, "property": "p3" },
+        { "value": 4, "property": "p4" },
+        { "value": 5, "property": "p5" },
+        { "value": 6, "property": "p6" }
+    ]
+
+    // Selecting SVG using d3.select()
+    const svg = d3.select(".basicDonut")
+                .append('svg')
+                .attr('width', 300)
+                .attr('height', 300);
+
+    // Creating Pie generator
+    const pie = d3.pie()
+        // Use of pie.value() Function
+        .value((d) => { return d.value })
+        (data);
+
+    // Creating arc
+    const arc = d3.arc()
+        .innerRadius(50)
+        .outerRadius(100);
+
+    const g = svg.append("g")
+        .attr("transform", "translate(150, 120)");
+
+    // Grouping different arcs
+    const arcs = g.selectAll("arc")
+        .data(pie)
+        .enter()
+        .append("g");
+
+    // Appending path 
+    arcs.append("path")
+        .attr("fill", (data, i) => {
+            return d3.schemeSet2[i];
+        })
+        .attr("d", arc);
+
+    arcs.append("text")
+        .attr("transform", (d) => {
+            return "translate(" +
+                arc.centroid(d) + ")";
+        })
+        .text(function (d) {
+            return d.value;
+        });
+  }
+
+  basicDonut()
+
+  const drawPie = () => {
+
+    // RWD 的svg 寬高
+    const svgWidth = parseInt(d3.select('.basicDonut').style('width')),
+          svgHeight = svgWidth*0.8,
+          margin = 60
+
+    var svg = d3.select(".advancedDonut").append("svg")
+      .attr("width", svgWidth)
+      .attr("height", svgHeight)
       .append("g");
 
     // 圓餅、線段、標籤
@@ -55,8 +126,8 @@
     svg.append("g")
       .attr("class", "lines");
 
-    var width = 500;
-    var height = 400;
+    var width = svgWidth-margin*2;
+    var height = svgHeight-margin*2;
     // radius設定圓餅圖的圓弧大小，是區域的一半
     var radius = Math.min(width, height)/2;
     
@@ -72,18 +143,19 @@
     var pie = d3.pie().sort(null).value(d => d.data);
     var arc = d3.arc().innerRadius(radius*0.3).outerRadius(radius*0.6);
     
-     var outerArc = d3.arc()
+    var outerArc = d3.arc()
                 .outerRadius(radius * 0.9)
                 .innerRadius(radius * 0.9);
      
-    svg.attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+    svg.attr("transform", "translate(" + svgWidth / 2 + "," + svgHeight / 2 + ")");
     
     svg.selectAll('path')
-    .data(pie(data))
-    .enter()
-    .append('path')
-  	.attr('d', arc)
-    .attr('fill', (d,i)=> color(i));
+        .data(pie(data))
+        .enter()
+        .append('path')
+        .attr('d', arc)
+        .attr('fill', (d,i)=> color(i));
+
     svg.append('g').classed('labels',true);
     svg.append('g').classed('lines',true);
      
@@ -128,7 +200,6 @@
     }
 
     drawPie();
-    
-    
-  </script> 
-</body>
+
+
+</script>

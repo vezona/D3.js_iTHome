@@ -51,6 +51,7 @@ current: index
     // map 資料集
     const xData = data.map((i) => i['年度']);
     const subgroups =  Object.keys(data[0]).slice(1)
+    console.log(subgroups)
 
     // 設定要給 X 軸用的 scale 跟 axis
     const xScale = d3.scaleBand()
@@ -80,7 +81,7 @@ current: index
                           .call(yAxis)
                           .attr("transform", `translate(${margin*2},0)`)
     
-    // 第二條X軸，用來設定多條bar的位置
+    // 第二條X軸的比例尺，用來設定多條bar的位置
     const xSubgroup = d3.scaleBand()
                         .domain(subgroups)
                         .range([0, xScale.bandwidth()])
@@ -89,7 +90,11 @@ current: index
     // 設定不同 subgorup bar的顏色
     const color = d3.scaleOrdinal()
       .domain(subgroups)
-      .range(['#e41a1c','#377eb8','#4daf4a', '#ffda6b'])   
+      .range(['#ff2d85','#4a4ae0','#4daf4a', '#f29909'])   
+    
+    // const color = d3.scaleOrdinal()
+    //                 .domain(data.map(d=>d.item))
+    //                 .range(d3.schemeSet1);
       
       
     // 開始建立長條圖
@@ -155,6 +160,7 @@ current: index
        .data(subgroups)
        .enter()
        .append('g')
+       .attr('transform', "translate(-70,0)")
       
   tagsWrap.append('rect')
        .attr('x', (d,i)=> (i+1)*marginBottom*1.3)

@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>滑鼠事件</title>
+  <title>donut</title>
   <link rel="stylesheet" href="./assets/style/all.css">
   <!-- BS 5 -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous">
@@ -119,110 +119,200 @@
   <div class="container py-3">
     
 <style>
-  .chartContainer {
-    margin: auto;
-    width: 80%;
-    min-width: 200px;
-    margin: auto;
-}
+    .basicDonut {
+        margin: auto;
+        width: 80%;
+        min-width: 200px;
+        margin: auto;
+        text-align:center
+    }
+
+    /*加陰影 */
+    .advancedDonut svg {
+        filter: drop-shadow( 0px 6px 6px rgba(0,0,0,.25) );
+        }
+
+    /*資料軸線*/
+    .advancedDonut polyline {
+        opacity: .3;
+        stroke: black;
+        stroke-width: 2px;
+        fill: none;
+    }
+
+    /* 字體加粗*/
+    .labelName tspan {
+        font-style: normal;
+        font-weight: 700;
+    }
+
+    /* 字形 */
+    .labelName {
+        font-size: 0.9em;
+        font-style: italic;
+    }
 </style>
-<h2 class="text-center fw-bold">D3.js 事件</h2>
-<h5 class="mt-3">1. selection.on(事件)：click</h5>
-<svg class="event"></svg>
+<h2 class="text-center fw-bold">甜甜圈圖</h2>
 
+<h4 class="mt-5 text-center">基礎甜甜圈圖</h4>
+<div class="basicDonut"></div>
 
-<h5 class="mt-3">2.Hover：改變顏色與位置 (mouseover / mouseleave)</h5>
-<div class="chartContainer">
-    <div class="box1">
-        <p>aa</p>
-        <p>aa</p>
-        <p>aa</p>
-        <p>aa</p>
-    </div>
-</div>
-
-<h5 class="mt-5">3. pointer()找出目前滑鼠所在 X Y 軸座標</h5>
-<div class="position"></div>
-
-<h5 class="mt-5">4.結合範例</h5>
-<div class="combined"></div>
+<h4 class="mt-5 text-center">進階甜甜圈圖</h4>
+<div class="advancedDonut"></div>
 
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script>
-    // rect 
-    d3.select('.event')
-      .append('rect')
-      .attr('class', 'rect')
-      .attr('width', 30)
-      .attr('height', 30)
-      .attr('fill', 'blue')
-      .attr('cursor', 'pointer')
-    
-    // 加上事件
-    d3.select('.rect')
-      .on('click', function(){
-          d3.select(this)
-            .transition()
-            .attr('fill', 'green')
-            .attr('transform', 'translate(250, 0)')
-    })
 
+  function basicDonut(){
+    // Data to be added in the pie chart
+    const data = [
+        { "value": 1, "property": "p1" },
+        { "value": 2, "property": "p2" },
+        { "value": 3, "property": "p3" },
+        { "value": 4, "property": "p4" },
+        { "value": 5, "property": "p5" },
+        { "value": 6, "property": "p6" }
+    ]
 
-    // hover (mouseover / mouseleave)
-    d3.selectAll('p')
-        .on('mouseover', function () {
-            d3.select(this)
-              .style("color", "red")
-              .transition()
-              .style('cursor', 'pointer')
-              .style("transform", "translate(50px)");
+    // Selecting SVG using d3.select()
+    const svg = d3.select(".basicDonut")
+                .append('svg')
+                .attr('width', 300)
+                .attr('height', 300);
+
+    // Creating Pie generator
+    const pie = d3.pie()
+        // Use of pie.value() Function
+        .value((d) => { return d.value })
+        (data);
+
+    // Creating arc
+    const arc = d3.arc()
+        .innerRadius(50)
+        .outerRadius(100);
+
+    const g = svg.append("g")
+        .attr("transform", "translate(150, 120)");
+
+    // Grouping different arcs
+    const arcs = g.selectAll("arc")
+        .data(pie)
+        .enter()
+        .append("g");
+
+    // Appending path 
+    arcs.append("path")
+        .attr("fill", (data, i) => {
+            return d3.schemeSet2[i];
         })
-        .on("mouseleave", function () {
-            d3.select(this).style("color", "black")
-                .transition().style("transform", "translate(0)");
+        .attr("d", arc);
+
+    arcs.append("text")
+        .attr("transform", (d) => {
+            return "translate(" +
+                arc.centroid(d) + ")";
+        })
+        .text(function (d) {
+            return d.value;
         });
+  }
 
+  basicDonut()
 
-    // pointer()、XY 軸座標
-    const svg = d3.select('.position').append('svg');
-    svg.attr('width', 500)
-        .attr('height', 300);
+  const drawPie = () => {
 
-    //pointer()、tooltip
-    let txt = svg.append("text");
-    svg.on('mousemove', function () {
-            //d3.pointer 會回傳陣列[X,Y]
-            let pt = d3.pointer(event, svg.node())
-            txt.attr('x', pt[0]) //取[x]
-                .attr('y', pt[1]) //取[Y]
-                .text(`X：${parseInt(pt[0])} | Y：${parseInt(pt[1])}`)
-            console.log(pt)
-        });
+    // RWD 的svg 寬高
+    const svgWidth = parseInt(d3.select('.basicDonut').style('width')),
+          svgHeight = svgWidth*0.8,
+          margin = 60
 
-    // 結合畫面、事件、座標軸
-    const data = [130, 210, 90, 250]
-    const combined = d3.select('.combined')
-                      .append('svg')
-                      .attr('width', 500)
-                      .attr('height', 300);
-    const dots = combined.selectAll('circle')
-                         .data(data)
-                         .enter()
-                         .append('circle')
-                         .attr('cx', d=>d)
-                         .attr('cy', (d,i)=>(i+1)*60)
-                         .attr('r', '15')
-                         .attr('fill', 'blue')
-                         .attr('cursor', 'pointer')
-    dots.on('mouseover', function(){
-        let pt = d3.pointer(event, event.target)
-        d3.select(this)
-          .attr('fill', 'red')
-          .transition()
-          .attr('cx', pt[0]+100)
+    var svg = d3.select(".advancedDonut").append("svg")
+      .attr("width", svgWidth)
+      .attr("height", svgHeight)
+      .append("g");
 
-    });
+    // 圓餅、線段、標籤
+    svg.append("g")
+			.attr("class", "slices");
+    svg.append("g")
+      .attr("class", "labels");
+    svg.append("g")
+      .attr("class", "lines");
+
+    var width = svgWidth-margin*2;
+    var height = svgHeight-margin*2;
+    // radius設定圓餅圖的圓弧大小，是區域的一半
+    var radius = Math.min(width, height)/2;
     
+    // 設定顏色
+    const color = d3.scaleOrdinal()
+                    .range(["#4BEFCF","#2c9af7","#F96262", '#910842', '#b054e5']);
+    
+    var data = [{city:'台北', data:30},{city:'新北', data:45},
+            {city:'台中', data:9},{city:'嘉義', data:67},{city:'台南', data:22}]    
+    
+
+    
+    var pie = d3.pie().sort(null).value(d => d.data);
+    var arc = d3.arc().innerRadius(radius*0.3).outerRadius(radius*0.6);
+    
+    var outerArc = d3.arc()
+                .outerRadius(radius * 0.9)
+                .innerRadius(radius * 0.9);
+     
+    svg.attr("transform", "translate(" + svgWidth / 2 + "," + svgHeight / 2 + ")");
+    
+    svg.selectAll('path')
+        .data(pie(data))
+        .enter()
+        .append('path')
+        .attr('d', arc)
+        .attr('fill', (d,i)=> color(i));
+
+    svg.append('g').classed('labels',true);
+    svg.append('g').classed('lines',true);
+     
+
+    var polyline = svg.select('.lines')
+                .selectAll('polyline')
+                .data(pie(data))
+                .enter()
+                .append('polyline')
+                .attr('points', function(d) {
+                    // see label transform function for explanations of these three lines.
+                    var pos = outerArc.centroid(d);
+                    pos[0] = radius * 0.95 * (midAngle(d) < Math.PI ? 1 : -1);
+                    return [arc.centroid(d), outerArc.centroid(d), pos]
+                });
+	
+    var label = svg.select('.labels').selectAll('text')
+                .data(pie(data))
+            .enter().append('text')
+                .attr('dy', '.35em')
+                .html(function(d) {
+                        return `${d.data.city}：${d.data.data}萬度`
+                })
+                .attr('transform', function(d) {
+                    var pos = outerArc.centroid(d);
+                    pos[0] = radius * 0.95 * (midAngle(d) < Math.PI ? 1 : -1);
+                    return 'translate(' + pos + ')';
+                })
+                .style('text-anchor', function(d) {
+                    return (midAngle(d)) < Math.PI ? 'start' : 'end';
+                });
+    
+     svg.append('text')
+                        .attr('class', 'toolCircle')
+                        .attr('dy', 0) // hard-coded. can adjust this to adjust text vertical alignment in tooltip
+                        .html('用電量') // add text to the circle.
+                        .style('font-size', '.9em')
+                        .style('text-anchor', 'middle');
+    
+    function midAngle(d) { return d.startAngle + (d.endAngle - d.startAngle) / 2; } 
+
+    }
+
+    drawPie();
 
 
 </script>

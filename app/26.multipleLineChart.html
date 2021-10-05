@@ -8,56 +8,71 @@ current: index
 <style>
 
 .chart{
-    width: 80%;
+    width: 100%;
     min-width: 300px;
     margin: auto;
 }
 </style>
 
-<h1 class="text-center fw-bold">Mulitiple Line Chart 複數折線圖</h1>
+<h1 class="text-center fw-bold">Multiple Line Chart 複數折線圖</h1>
 
-<h4 class="mt-3"></h4>
+<h4 class="mt-3">不同年代常用的女孩英文名 </h4>
 <div class="chart"></div>
 
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script>
+const datas = [0, 1, 2, 3];
+
+const index = d3.bisect(datas, 0.18546);
+
+console.log(index); // 3
+
+  // https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_dataset/5_OneCatSevNumOrdered.csv
+
+  let data = []
+  async function getData() {
+    // 取資料
+    dataGet = await d3.csv('https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_dataset/5_OneCatSevNumOrdered.csv')
+    console.log(dataGet)
+    data = dataGet
+    drawChart()
+  };
+  getData()
+
   // RWD
-  function chart(){
+  function drawChart(){
     // 刪除原本的svg.charts，重新渲染改變寬度的svg
     d3.select('.chart svg').remove();
 
     // RWD 的svg 寬高
     const rwdSvgWidth = parseInt(d3.select('.chart').style('width')),
           rwdSvgHeight = rwdSvgWidth*0.8,
-          margin = 30,
-          bandWidth = 20 
+          margin = 60
 
     const svg = d3.select('.chart')
                   .append('svg')
                   .attr('width', rwdSvgWidth)
                   .attr('height', rwdSvgHeight);
 
-    //data
-    const data = [{x:100, y:20}, {x:18, y:30}, {x:90, y:250}]
 
     // map 資料集
-    xData = data.map((i) => i.x);
-    yData = data.map((i) => i.y);
+    // 把資料按照 name 分組
+    const sumName = d3.group(data, d => d.name);
+    const xData = data.map((i) => i.year);
+    console.log(sumName)
+
 
     // 設定要給 X 軸用的 scale 跟 axis
     const xScale = d3.scaleLinear()
-                    .domain([0, d3.max(xData)+20])
-                    .range([margin, rwdSvgWidth - margin]); // 寬度
+                    .domain(d3.extent(xData))
+                    .range([margin, rwdSvgWidth - margin]) // 寬度
+                    .nice()
 
     // rwd X軸的刻度
-    let tickNumber = window.innerWidth > 450 ? null : 5;
+    let tickNumber = window.innerWidth > 900 ? xData.length/2 : 8;
     const xAxis = d3.axisBottom(xScale)
                     .ticks(tickNumber)
-                    // .tickValues(xData)
-                    .tickFormat(function (d) {
-                      //調整標籤樣式
-                      return `${d} 元`;
-                    })
+                    .tickFormat(d => d + '年')
 
     // 呼叫繪製x軸、調整x軸位置
     const xAxisGroup = svg.append("g")
@@ -66,30 +81,46 @@ current: index
 
     // 設定要給 Y 軸用的 scale 跟 axis
     const yScale = d3.scaleLinear()
-                    .domain([0, d3.max(yData)])
-                    .range([rwdSvgHeight - margin, margin]); // 數值要顛倒，才會從低往高排
+                    .domain(d3.extent(data, d => +d.n))
+                    .range([rwdSvgHeight - margin, margin]) // 數值要顛倒，才會從低往高排
+                    .nice()
 
     const yAxis = d3.axisLeft(yScale)
-                    .ticks(5)
+
+    // 設定顏色
+    const color = d3.scaleOrdinal()
+      .range(['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00','#ffff33','#a65628','#f781bf','#999999'])
 
     // 呼叫繪製y軸、調整y軸位置
     const yAxisGroup = svg.append("g")
                           .call(yAxis)
-                          .attr("transform", `translate(${margin},0)`)
-                    
-    // 開始建立長條圖
-    svg.selectAll("rect")
-      .data(data)
-      .join("rect")
-      .attr("x", d => xScale(d.x) - (bandWidth/2)) // 讓長條圖在刻度線中間
-      .attr("y", d => yScale(d.y))
-      .attr("width", bandWidth)
-      .attr("height", d => (rwdSvgHeight - margin) - yScale(d.y))
-      .attr("fill", "#69b3a2")
+                          .attr("transform", `translate(${margin},0)`)                  
+
+    // 開始建立折線圖
+    // 設定折線圖相關資料
+    // const lineChart = d3.line()
+    //           .x((d) => xScale(d.year))
+    //           .y((d) => yScale(d.n))
+    //           // .defined((d) => d.pinPrice > 0)
+    //           .curve(d3.curveLinear); //決定曲線線條
+    
+    svg.selectAll('.line')
+      .data(sumName)
+      .join('path')
+      // .attr("d", lineChart(sumName))
+      .attr("fill", "none")
+      .attr("stroke", d=> color(d))
+      .attr("stroke-width", 1.5)
+      .attr("d", function(d){
+          return d3.line()
+            .x((d) => xScale(d.year))
+            .y((d) => yScale(d.n))
+            (d[1])
+        })
+
   }
 
-  chart()
-  d3.select(window).on('resize', chart);
+  d3.select(window).on('resize', drawChart);
 
 
 </script>
