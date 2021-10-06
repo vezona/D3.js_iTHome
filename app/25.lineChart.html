@@ -19,11 +19,11 @@ current: index
 <h4 class="mt-3">2021 COVID-19 每週感染病例數</h4>
 <div class="chart"></div>
 
+<h4 class="mt-3">進階折線圖</h4>
+<div class="definedLineChart"></div>
+
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script>
-// 疾病管制署 https://nidss.cdc.gov.tw/nndss/disease?id=19CoV
-
-
   let data = []
   async function getData() {
     // 取資料
@@ -91,7 +91,9 @@ current: index
               .x((d) => xScale(parseInt(d['發病年週'].substring(4,6))))
               .y((d) => yScale(parseInt(d['確定病例數'])))
               // .defined((d) => d.pinPrice > 0)
+              // .defined((d) => d['確定病例數'] > 15)
               .curve(d3.curveLinear); //決定曲線線條
+
     
     svg.append('path')
       .data(data)
@@ -164,6 +166,80 @@ current: index
   }
 
   d3.select(window).on('resize', drawChart);
+
+  // Defined Line Chart
+  function definedLineChart(){
+    const data = [{x:1, y:120}, 
+                  {x:2, y:355},
+                  {x:3, y:null},
+                  {x:4, y:470},
+                  {x:5, y:null},
+                  {x:6, y:90},
+                  {x:7, y:null},
+                  {x:8, y:220}
+                ]
+    const width = 600,
+          height = 500,
+          margin = 40;
+    
+    const svg = d3.select('.definedLineChart')
+                  .append('svg')
+                  .attr('width', width)
+                  .attr('height', height)
+    
+    // 整理XY資料
+    const xData = data.map(d=>d.x);
+    const yData = data.map(d=>d.y);
+
+    // X 比例尺與軸線
+    const xScale = d3.scaleLinear()
+                     .domain(d3.extent(xData))
+                     .range([margin, width - margin])
+    const xAxis = d3.axisBottom(xScale)
+                    .ticks(8)
+                    .tickFormat(d=>d + '月')
+
+    svg.append('g')
+       .call(xAxis)
+       .attr('transform', `translate(0, ${height-margin})`)
+    
+    // Y 比例尺與軸線
+    const yScale = d3.scaleLinear()
+                  .domain(d3.extent(yData))
+                  .range([height-margin, margin])
+                  .nice()
+
+    const yAxis = d3.axisLeft(yScale)
+
+    svg.append('g')
+       .call(yAxis)
+       .attr('transform', `translate(${margin}, 0)`)
+
+    const lineChart = d3.line()
+                        .x((d) => xScale(d.x))
+                        .y((d) => yScale(d.y))
+                        // .defined((d) => d.pinPrice > 0)
+                        .curve(d3.curveLinear); //決定曲線線條
+
+
+    // 建立折線
+    svg.append('g')
+       .append('path')
+       .data(data)
+       .attr("fill", "none")
+       .attr("stroke", 'green')
+       .attr("stroke-width", 1.5)
+       .attr('d', d => {
+         const line = d3.line()
+                        .x((d) => xScale(d.x))
+                        .y((d) => yScale(d.y))
+                        (data)
+         console.log(line)
+       })
+
+  }
+
+  definedLineChart()
 
 
 </script>

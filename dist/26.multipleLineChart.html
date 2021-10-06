@@ -97,8 +97,9 @@
               </a>
               <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                 <li><a class="dropdown-item" href="./27.donut.html">甜甜圈圖</a></li>
-                <li><a class="dropdown-item" href="#">氣泡圖</a></li>
+                <li><a class="dropdown-item" href="./28.bubble.html">氣泡圖</a></li>
                 <li><a class="dropdown-item" href="#">合併圖表(長條+折線)</a></li>
+                <li><a class="dropdown-item" href="#">區塊圖</a></li>
                 <li><a class="dropdown-item" href="#">樹狀圖</a></li>
                 <li><a class="dropdown-item" href="#">階層圖</a></li>
                 <li><a class="dropdown-item" href="#">甘特圖</a></li>
@@ -129,7 +130,7 @@
 
 <h1 class="text-center fw-bold">Multiple Line Chart 複數折線圖</h1>
 
-<h4 class="mt-3">不同年代常用的女孩英文名 </h4>
+<h4 class="mt-3">2017年各觀測站降雨量</h4>
 <div class="chart"></div>
 
 <script src="https://d3js.org/d3.v7.min.js"></script>
@@ -145,9 +146,10 @@ console.log(index); // 3
   let data = []
   async function getData() {
     // 取資料
-    dataGet = await d3.csv('https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_dataset/5_OneCatSevNumOrdered.csv')
-    console.log(dataGet)
-    data = dataGet
+    // dataGet = await d3.csv('https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_dataset/5_OneCatSevNumOrdered.csv')
+    dataGet = await d3.json('https://data.coa.gov.tw/Service/OpenData/TransService.aspx?UnitId=5n9c3AlEJ2DH')
+    console.log(dataGet.filter(d=>d.observeDate.substr(0,4)==='2017'))
+    data = dataGet.filter(d=>d.observeDate.substr(0,4)==='2017') // 只取2017的資料
     drawChart()
   };
   getData()
@@ -169,9 +171,15 @@ console.log(index); // 3
 
 
     // map 資料集
+    const xData = data.map((i) => i.observeDate.substr(5,6));
+    // console.log(xData)
+    const yData = data.map((i)=>{
+      let rainfall = parseFloat(i.rainfall)
+      return rainfall = rainfall || 0 // 沒有的資料換成0
+    })
+    console.log(yData)
     // 把資料按照 name 分組
-    const sumName = d3.group(data, d => d.name);
-    const xData = data.map((i) => i.year);
+    const sumName = d3.group(data, d => d.observatory);
     console.log(sumName)
 
 
@@ -182,10 +190,9 @@ console.log(index); // 3
                     .nice()
 
     // rwd X軸的刻度
-    let tickNumber = window.innerWidth > 900 ? xData.length/2 : 8;
     const xAxis = d3.axisBottom(xScale)
-                    .ticks(tickNumber)
-                    .tickFormat(d => d + '年')
+                    .ticks(8)
+                    .tickFormat(d => d + '月')
 
     // 呼叫繪製x軸、調整x軸位置
     const xAxisGroup = svg.append("g")
@@ -194,42 +201,63 @@ console.log(index); // 3
 
     // 設定要給 Y 軸用的 scale 跟 axis
     const yScale = d3.scaleLinear()
-                    .domain(d3.extent(data, d => +d.n))
+                    .domain(d3.extent(yData))
                     .range([rwdSvgHeight - margin, margin]) // 數值要顛倒，才會從低往高排
                     .nice()
 
     const yAxis = d3.axisLeft(yScale)
 
-    // 設定顏色
-    const color = d3.scaleOrdinal()
-      .range(['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00','#ffff33','#a65628','#f781bf','#999999'])
-
     // 呼叫繪製y軸、調整y軸位置
     const yAxisGroup = svg.append("g")
                           .call(yAxis)
                           .attr("transform", `translate(${margin},0)`)                  
+    
+    const color = d3.scaleOrdinal()
+                    .domain(data.map(d=>d.item))
+                    .range(d3.schemeCategory10);
+
+    // 建立浮動的資料標籤
+    const nameTag = d3.select('.chart')
+                    .append('div')
+                    .attr('class', 'nameTag')
+                    .style('position', 'absolute')
+                    .style("opacity", 0)
+                    .style("background-color", "black")
+                    .style("border-radius", "5px")
+                    .style("padding", "10px")
+                    .style("color", "white")
 
     // 開始建立折線圖
-    // 設定折線圖相關資料
-    // const lineChart = d3.line()
-    //           .x((d) => xScale(d.year))
-    //           .y((d) => yScale(d.n))
-    //           // .defined((d) => d.pinPrice > 0)
-    //           .curve(d3.curveLinear); //決定曲線線條
-    
     svg.selectAll('.line')
       .data(sumName)
       .join('path')
-      // .attr("d", lineChart(sumName))
       .attr("fill", "none")
-      .attr("stroke", d=> color(d))
+      .attr("stroke", d => color(d))
       .attr("stroke-width", 1.5)
-      .attr("d", function(d){
+      .attr("d", d => {
           return d3.line()
-            .x((d) => xScale(d.year))
-            .y((d) => yScale(d.n))
-            (d[1])
+            .x((d) => xScale(d.observeDate.substr(5,6)))
+            .y((d) => {
+              let rainfall = parseFloat(d.rainfall)
+              rainfall = rainfall || 0
+              return yScale(rainfall)
+              })
+            (d[1]) // 只取資料的部分帶入
         })
+      .style('cursor', 'pointer')
+      .on('mouseover', handleMouseover)
+    
+    // 滑鼠事件
+    function handleMouseover(d){
+      const pt = d3.pointer(event, svg.node())
+      // console.log(pt) 
+      // console.log(d.target.__data__[0])
+
+      nameTag.style("opacity",1)
+             .html(d.target.__data__[0])
+             .style('left', (pt[0]+ 100) + 'px')
+             .style('top', (pt[1]+ 140) + 'px')
+    }
 
   }
 

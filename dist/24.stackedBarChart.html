@@ -97,8 +97,9 @@
               </a>
               <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                 <li><a class="dropdown-item" href="./27.donut.html">甜甜圈圖</a></li>
-                <li><a class="dropdown-item" href="#">氣泡圖</a></li>
+                <li><a class="dropdown-item" href="./28.bubble.html">氣泡圖</a></li>
                 <li><a class="dropdown-item" href="#">合併圖表(長條+折線)</a></li>
+                <li><a class="dropdown-item" href="#">區塊圖</a></li>
                 <li><a class="dropdown-item" href="#">樹狀圖</a></li>
                 <li><a class="dropdown-item" href="#">階層圖</a></li>
                 <li><a class="dropdown-item" href="#">甘特圖</a></li>
@@ -169,7 +170,7 @@
     const xScale = d3.scaleBand()
                     .domain(xData)
                     .range([margin*2, rwdSvgWidth - margin]) // 寬度
-                    .padding(0.2)
+                    .padding(0.6)
 
     const xAxis = d3.axisBottom(xScale)
 
@@ -181,7 +182,7 @@
     // 設定要給 Y 軸用的 scale 跟 axis
     const yScale = d3.scaleLinear()
                     .domain([0, 1200])
-                    .range([rwdSvgHeight - marginBottom, margin]) // 數值要顛倒，才會從低往高排
+                    .range([rwdSvgHeight - marginBottom, margin])
                     .nice() // 補上終點值
 
     const yAxis = d3.axisLeft(yScale)
@@ -201,15 +202,15 @@
     // 設定不同 subgorup bar的顏色
     const color = d3.scaleOrdinal()
       .domain(subgroups)
-      .range(['#e41a1c','#377eb8','#4daf4a', '#ffda6b'])   
-      
+      .range(['#e41a1c','#377eb8','#4daf4a', '#ffda6b'])  
+    
       
     // 開始建立長條圖
     const bar = svg.append('g')
                    .selectAll('g')
                    .data(stackedData)
                    .join('g')
-                      .attr('fill',  d => color(d.key))
+                   .attr('fill',  d => color(d.key))
                    .selectAll('rect')
                    .data(d=>d)
                    .join('rect')
@@ -221,16 +222,34 @@
                    .on("mouseover", handleMouseOver)
                    .on("mouseleave", handleMouseLeave)
 
+    // 設定文字標籤
+    const textTag = svg.append('text')
+                      .attr('class', 'infoText')
+                      .style('fill', '#000')
+                      .style('font-size', '18px')
+                      .style('font-weight', 'bold')
+                      .style("text-anchor", 'middle')
+                      .style('opacity', '0')
+
     function handleMouseOver(d, i){
-      // console.log(d)
-      // console.log(d.target.__data__)
+      const pt = d3.pointer(event, svg.node())
+
       d3.select(this)
         .style('opacity', '0.5')
+
+      // 加上文字標籤
+      textTag
+         .style('opacity', '1')
+         .attr("x",  pt[0])
+         .attr('y', pt[1]-20)
+         .text((d.target.__data__[1] - d.target.__data__[0]) + '千人')
     }
 
     function handleMouseLeave(){
       d3.select(this)
         .style('opacity', '1')
+      
+      textTag.style('opacity', '0')
     }
 
     // 加上辨識標籤
@@ -240,6 +259,10 @@
        .data(subgroups)
        .enter()
        .append('g')
+
+  if(window.innerWidth < 780){
+    tagsWrap.attr('transform', "translate(-70,0)")
+  }
       
   tagsWrap.append('rect')
        .attr('x', (d,i)=> (i+1)*marginBottom*1.3)

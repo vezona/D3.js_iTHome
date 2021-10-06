@@ -1,0 +1,106 @@
+---
+title: 散點圖
+layout: ./app/layout.ejs
+engine: ejs
+current: index
+---
+
+<style>
+    .scatter1, .scatter2 {
+      margin: auto;
+      width: 80%;
+      min-width: 300px;
+      margin: auto;
+    }
+    .axis path,
+    .axis line {
+      fill: none;
+      stroke: black;
+      shape-rendering: crispEdges;
+    }
+
+    circle:hover {
+      cursor: pointer;
+    }
+</style>
+
+<h2 class="text-center fw-bold"> 氣泡圖 </h2>
+
+<h4>散點圖1</h4>
+<div class="scatter1 m-auto"></div>
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+//   改成使用台北市機車盜竊資料 https://data.taipei/#/dataset/detail?id=3a0e2289-a605-4eac-af30-f4af613f456d
+
+  // 散點圖一
+  // 先取資料
+  async function getData(){
+    let dataGet;
+
+    const cors = "https://secret-ocean-49799.herokuapp.com/";
+    const url = 'https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_dataset/2_TwoNum.csv'
+
+    dataGet = await d3.csv(`${cors}${url}`);
+    scatter1(dataGet)
+  }
+  getData()
+  
+  // 建立圖表
+  function scatter1(data){
+    // RWD 清除原本的圖型
+    d3.select(".scatter1").select('svg').remove()
+
+    // 建立 svg
+    const svgWidth = parseInt(d3.select('.scatter1').style('width')),
+          svgHeight = svgWidth
+          margin = 50
+    const svg = d3.select('.scatter1')
+      .append('svg')
+      .attr('width', svgWidth)
+      .attr('height', svgHeight)
+
+    // 建立X軸線
+    const xScale = d3.scaleLinear()
+           .domain([0,4000])
+           .range([0, (svgWidth - margin*2)])
+
+    const xAxis = d3.axisBottom(xScale)
+                    
+
+    svg.append('g')
+       .attr('transform', `translate(${margin}, ${svgHeight - margin/2})`)
+       .call(xAxis)
+
+    // 建立Y軸線
+    console.log(data)
+    const yScale = d3.scaleLinear()
+           .domain([0,500000])
+           .range([(svgHeight - margin), 0])
+
+    const yAxis = d3.axisLeft(yScale)    
+                    .tickFormat(d=>'$'+d) 
+
+    svg.append('g')
+       .attr('transform', `translate(${margin}, ${margin/2})`)
+       .call(yAxis)
+
+    // 加上點點
+    svg.append('g')
+       .selectAll('dot')
+       .data(data)
+       .enter()
+         .append('circle')
+         .attr('cx', d => xScale(d.GrLivArea))
+         .attr('cy', d => yScale(d.SalePrice))
+         .attr('r', 1.5)
+         .style('fill', d => {
+           return d.SalePrice > 129000? 'pink':'#69b3a2'
+         })
+  }
+
+  // RWD
+  d3.select(window).on("resize", scatter1);
+
+
+</script>

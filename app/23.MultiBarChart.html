@@ -160,7 +160,10 @@ current: index
        .data(subgroups)
        .enter()
        .append('g')
-       .attr('transform', "translate(-70,0)")
+       
+  if(window.innerWidth < 780){
+    tagsWrap.attr('transform', "translate(-70,0)")
+  }
       
   tagsWrap.append('rect')
        .attr('x', (d,i)=> (i+1)*marginBottom*1.3)

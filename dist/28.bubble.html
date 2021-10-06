@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>donut</title>
+  <title>散點圖</title>
   <link rel="stylesheet" href="./assets/style/all.css">
   <!-- BS 5 -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous">
@@ -96,15 +96,16 @@
                 進階圖表與互動
               </a>
               <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <li><a class="dropdown-item" href="./donut.html">甜甜圈圖</a></li>
-                <li><a class="dropdown-item" href="#">氣泡圖</a></li>
-                <li><a class="dropdown-item" href="#">熱圖</a></li>
-                <li><a class="dropdown-item" href="#">文字雲</a></li>
+                <li><a class="dropdown-item" href="./27.donut.html">甜甜圈圖</a></li>
+                <li><a class="dropdown-item" href="./28.bubble.html">氣泡圖</a></li>
                 <li><a class="dropdown-item" href="#">合併圖表(長條+折線)</a></li>
+                <li><a class="dropdown-item" href="#">區塊圖</a></li>
+                <li><a class="dropdown-item" href="#">樹狀圖</a></li>
                 <li><a class="dropdown-item" href="#">階層圖</a></li>
                 <li><a class="dropdown-item" href="#">甘特圖</a></li>
-                <li><a class="dropdown-item" href="#">樹狀圖</a></li>
+                <li><a class="dropdown-item" href="#">熱圖</a></li>
                 <li><a class="dropdown-item" href="#">地圖</a></li>
+                <li><a class="dropdown-item" href="#">文字雲</a></li>
               </ul>
             </li>
             <li class="nav-item">
@@ -119,200 +120,101 @@
   <div class="container py-3">
     
 <style>
-    .basicDonut {
-        margin: auto;
-        width: 80%;
-        min-width: 200px;
-        margin: auto;
-        text-align:center
+    .scatter1, .scatter2 {
+      margin: auto;
+      width: 80%;
+      min-width: 300px;
+      margin: auto;
+    }
+    .axis path,
+    .axis line {
+      fill: none;
+      stroke: black;
+      shape-rendering: crispEdges;
     }
 
-    /*加陰影 */
-    .advancedDonut svg {
-        filter: drop-shadow( 0px 6px 6px rgba(0,0,0,.25) );
-        }
-
-    /*資料軸線*/
-    .advancedDonut polyline {
-        opacity: .3;
-        stroke: black;
-        stroke-width: 2px;
-        fill: none;
-    }
-
-    /* 字體加粗*/
-    .labelName tspan {
-        font-style: normal;
-        font-weight: 700;
-    }
-
-    /* 字形 */
-    .labelName {
-        font-size: 0.9em;
-        font-style: italic;
+    circle:hover {
+      cursor: pointer;
     }
 </style>
-<h2 class="text-center fw-bold">甜甜圈圖</h2>
 
-<h4 class="mt-5 text-center">基礎甜甜圈圖</h4>
-<div class="basicDonut"></div>
+<h2 class="text-center fw-bold"> 氣泡圖 </h2>
 
-<h4 class="mt-5 text-center">進階甜甜圈圖</h4>
-<div class="advancedDonut"></div>
+<h4>散點圖1</h4>
+<div class="scatter1 m-auto"></div>
 
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script>
+//   改成使用台北市機車盜竊資料 https://data.taipei/#/dataset/detail?id=3a0e2289-a605-4eac-af30-f4af613f456d
 
-  function basicDonut(){
-    // Data to be added in the pie chart
-    const data = [
-        { "value": 1, "property": "p1" },
-        { "value": 2, "property": "p2" },
-        { "value": 3, "property": "p3" },
-        { "value": 4, "property": "p4" },
-        { "value": 5, "property": "p5" },
-        { "value": 6, "property": "p6" }
-    ]
+  // 散點圖一
+  // 先取資料
+  async function getData(){
+    let dataGet;
 
-    // Selecting SVG using d3.select()
-    const svg = d3.select(".basicDonut")
-                .append('svg')
-                .attr('width', 300)
-                .attr('height', 300);
+    const cors = "https://secret-ocean-49799.herokuapp.com/";
+    const url = 'https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_dataset/2_TwoNum.csv'
 
-    // Creating Pie generator
-    const pie = d3.pie()
-        // Use of pie.value() Function
-        .value((d) => { return d.value })
-        (data);
+    dataGet = await d3.csv(`${cors}${url}`);
+    scatter1(dataGet)
+  }
+  getData()
+  
+  // 建立圖表
+  function scatter1(data){
+    // RWD 清除原本的圖型
+    d3.select(".scatter1").select('svg').remove()
 
-    // Creating arc
-    const arc = d3.arc()
-        .innerRadius(50)
-        .outerRadius(100);
+    // 建立 svg
+    const svgWidth = parseInt(d3.select('.scatter1').style('width')),
+          svgHeight = svgWidth
+          margin = 50
+    const svg = d3.select('.scatter1')
+      .append('svg')
+      .attr('width', svgWidth)
+      .attr('height', svgHeight)
 
-    const g = svg.append("g")
-        .attr("transform", "translate(150, 120)");
+    // 建立X軸線
+    const xScale = d3.scaleLinear()
+           .domain([0,4000])
+           .range([0, (svgWidth - margin*2)])
 
-    // Grouping different arcs
-    const arcs = g.selectAll("arc")
-        .data(pie)
-        .enter()
-        .append("g");
+    const xAxis = d3.axisBottom(xScale)
+                    
 
-    // Appending path 
-    arcs.append("path")
-        .attr("fill", (data, i) => {
-            return d3.schemeSet2[i];
-        })
-        .attr("d", arc);
+    svg.append('g')
+       .attr('transform', `translate(${margin}, ${svgHeight - margin/2})`)
+       .call(xAxis)
 
-    arcs.append("text")
-        .attr("transform", (d) => {
-            return "translate(" +
-                arc.centroid(d) + ")";
-        })
-        .text(function (d) {
-            return d.value;
-        });
+    // 建立Y軸線
+    console.log(data)
+    const yScale = d3.scaleLinear()
+           .domain([0,500000])
+           .range([(svgHeight - margin), 0])
+
+    const yAxis = d3.axisLeft(yScale)    
+                    .tickFormat(d=>'$'+d) 
+
+    svg.append('g')
+       .attr('transform', `translate(${margin}, ${margin/2})`)
+       .call(yAxis)
+
+    // 加上點點
+    svg.append('g')
+       .selectAll('dot')
+       .data(data)
+       .enter()
+         .append('circle')
+         .attr('cx', d => xScale(d.GrLivArea))
+         .attr('cy', d => yScale(d.SalePrice))
+         .attr('r', 1.5)
+         .style('fill', d => {
+           return d.SalePrice > 129000? 'pink':'#69b3a2'
+         })
   }
 
-  basicDonut()
-
-  const drawPie = () => {
-
-    // RWD 的svg 寬高
-    const svgWidth = parseInt(d3.select('.basicDonut').style('width')),
-          svgHeight = svgWidth*0.8,
-          margin = 60
-
-    var svg = d3.select(".advancedDonut").append("svg")
-      .attr("width", svgWidth)
-      .attr("height", svgHeight)
-      .append("g");
-
-    // 圓餅、線段、標籤
-    svg.append("g")
-			.attr("class", "slices");
-    svg.append("g")
-      .attr("class", "labels");
-    svg.append("g")
-      .attr("class", "lines");
-
-    var width = svgWidth-margin*2;
-    var height = svgHeight-margin*2;
-    // radius設定圓餅圖的圓弧大小，是區域的一半
-    var radius = Math.min(width, height)/2;
-    
-    // 設定顏色
-    const color = d3.scaleOrdinal()
-                    .range(["#4BEFCF","#2c9af7","#F96262", '#910842', '#b054e5']);
-    
-    var data = [{city:'台北', data:30},{city:'新北', data:45},
-            {city:'台中', data:9},{city:'嘉義', data:67},{city:'台南', data:22}]    
-    
-
-    
-    var pie = d3.pie().sort(null).value(d => d.data);
-    var arc = d3.arc().innerRadius(radius*0.3).outerRadius(radius*0.6);
-    
-    var outerArc = d3.arc()
-                .outerRadius(radius * 0.9)
-                .innerRadius(radius * 0.9);
-     
-    svg.attr("transform", "translate(" + svgWidth / 2 + "," + svgHeight / 2 + ")");
-    
-    svg.selectAll('path')
-        .data(pie(data))
-        .enter()
-        .append('path')
-        .attr('d', arc)
-        .attr('fill', (d,i)=> color(i));
-
-    svg.append('g').classed('labels',true);
-    svg.append('g').classed('lines',true);
-     
-
-    var polyline = svg.select('.lines')
-                .selectAll('polyline')
-                .data(pie(data))
-                .enter()
-                .append('polyline')
-                .attr('points', function(d) {
-                    // see label transform function for explanations of these three lines.
-                    var pos = outerArc.centroid(d);
-                    pos[0] = radius * 0.95 * (midAngle(d) < Math.PI ? 1 : -1);
-                    return [arc.centroid(d), outerArc.centroid(d), pos]
-                });
-	
-    var label = svg.select('.labels').selectAll('text')
-                .data(pie(data))
-            .enter().append('text')
-                .attr('dy', '.35em')
-                .html(function(d) {
-                        return `${d.data.city}：${d.data.data}萬度`
-                })
-                .attr('transform', function(d) {
-                    var pos = outerArc.centroid(d);
-                    pos[0] = radius * 0.95 * (midAngle(d) < Math.PI ? 1 : -1);
-                    return 'translate(' + pos + ')';
-                })
-                .style('text-anchor', function(d) {
-                    return (midAngle(d)) < Math.PI ? 'start' : 'end';
-                });
-    
-     svg.append('text')
-                        .attr('class', 'toolCircle')
-                        .attr('dy', 0) // hard-coded. can adjust this to adjust text vertical alignment in tooltip
-                        .html('用電量') // add text to the circle.
-                        .style('font-size', '.9em')
-                        .style('text-anchor', 'middle');
-    
-    function midAngle(d) { return d.startAngle + (d.endAngle - d.startAngle) / 2; } 
-
-    }
-
-    drawPie();
+  // RWD
+  d3.select(window).on("resize", scatter1);
 
 
 </script>
