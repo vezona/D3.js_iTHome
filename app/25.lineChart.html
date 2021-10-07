@@ -6,7 +6,6 @@ current: index
 ---
 
 <style>
-
 .chart{
     width: 100%;
     min-width: 300px;
@@ -19,8 +18,8 @@ current: index
 <h4 class="mt-3">2021 COVID-19 每週感染病例數</h4>
 <div class="chart"></div>
 
-<h4 class="mt-3">進階折線圖</h4>
-<div class="definedLineChart"></div>
+<h4 class="mt-5">line.defined( ) 過濾資料折線圖</h4>
+<div class="definedLineChart" style="position:relative"></div>
 
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script>
@@ -28,7 +27,6 @@ current: index
   async function getData() {
     // 取資料
     dataGet = await d3.csv('./data/20201-202140-covid19.csv')
-    console.log(dataGet.filter(i=>i['發病年週']>'202101'))
     data = dataGet.filter(i=>i['發病年週']>'202101')
     drawChart()
   };
@@ -90,10 +88,6 @@ current: index
     const lineChart = d3.line()
               .x((d) => xScale(parseInt(d['發病年週'].substring(4,6))))
               .y((d) => yScale(parseInt(d['確定病例數'])))
-              // .defined((d) => d.pinPrice > 0)
-              // .defined((d) => d['確定病例數'] > 15)
-              .curve(d3.curveLinear); //決定曲線線條
-
     
     svg.append('path')
       .data(data)
@@ -105,7 +99,7 @@ current: index
     // 使用 d3.bisector() 找到滑鼠的 X 軸 index 值
     const bisect = d3.bisector(d=>d['發病年週']).left;
     
-    // 建立沿著折線滑動的原點
+    // 建立沿著折線移動的圓點點
     const focus = svg.append('g')
                      .append('circle')
                      .style("fill", "none")
@@ -113,7 +107,7 @@ current: index
                      .attr('r', 8.5)
                      .style("opacity", 0)
 
-    // 建立滑動的資料標籤
+    // 建立移動的資料標籤
     const focusText = svg.append('g')
                         .append('text')
                         .style("opacity", 0)
@@ -133,6 +127,7 @@ current: index
     .on('mouseout', mouseout);  
     
     function mouseover(){
+      console.log('over')
       focus.style("opacity", 1)
       focusText.style("opacity",1)
     }
@@ -171,15 +166,15 @@ current: index
   function definedLineChart(){
     const data = [{x:1, y:120}, 
                   {x:2, y:355},
-                  {x:3, y:null},
+                  {x:3, y:0},
                   {x:4, y:470},
-                  {x:5, y:null},
+                  {x:5, y:19},
                   {x:6, y:90},
-                  {x:7, y:null},
+                  {x:7, y:0},
                   {x:8, y:220}
                 ]
-    const width = 600,
-          height = 500,
+    const width = 500,
+          height = 400,
           margin = 40;
     
     const svg = d3.select('.definedLineChart')
@@ -206,7 +201,7 @@ current: index
     // Y 比例尺與軸線
     const yScale = d3.scaleLinear()
                   .domain(d3.extent(yData))
-                  .range([height-margin, margin])
+                  .range([height - margin, margin])
                   .nice()
 
     const yAxis = d3.axisLeft(yScale)
@@ -214,13 +209,13 @@ current: index
     svg.append('g')
        .call(yAxis)
        .attr('transform', `translate(${margin}, 0)`)
-
+    
+    // 建立折線圖 path 的 d 數值
+    // 用 line.defined 過濾掉是零的數值
     const lineChart = d3.line()
                         .x((d) => xScale(d.x))
                         .y((d) => yScale(d.y))
-                        // .defined((d) => d.pinPrice > 0)
-                        .curve(d3.curveLinear); //決定曲線線條
-
+                        .defined((d) => d.y >0)
 
     // 建立折線
     svg.append('g')
@@ -229,14 +224,79 @@ current: index
        .attr("fill", "none")
        .attr("stroke", 'green')
        .attr("stroke-width", 1.5)
-       .attr('d', d => {
-         const line = d3.line()
-                        .x((d) => xScale(d.x))
-                        .y((d) => yScale(d.y))
-                        (data)
-         console.log(line)
-       })
+       .attr('d', lineChart(data))
+    
+    // 把 d.y 大於零的資料拉出來，另外用這些資料去建立連線
+    let filteredData = data.filter(d => d.y > 0); //或是用 lineChart.defined()
 
+    // 建立 dashed 折線
+    svg.append('g')
+       .append('path')
+       .attr("fill", "none")
+       .attr("stroke", 'green')
+       .attr("stroke-width", 1.5)
+       .attr("stroke-dasharray", '4,4')
+       .attr('d',lineChart(filteredData))
+    
+    // 加上 tooltip
+    const tooltip = d3.select('.definedLineChart')
+                      .append('div')
+                      .style('position', 'absolute')
+                      .style("opacity", 0)
+                      .style("background-color", "white")
+                      .style("border", "1px solid black")
+                      .style("border-radius", "5px")
+                      .style("padding", "5px")
+    
+    // 加上圓點點
+    svg.append('g')
+       .selectAll('circle')
+       .data(filteredData)
+       .join('circle')
+       .attr('r', '5')
+       .attr('cx', d => xScale(d.x))
+       .attr('cy', d => yScale(d.y))
+       .attr('fill', 'white')
+       .attr('stroke', '#2a8e36')
+       .attr('stroke-width', '2')
+       .style('cursor', 'pointer')
+       .on('mouseover', dotsMouseover)
+       .on('mouseleave', dotsMouseleave)
+
+    function dotsMouseover(d){
+      const pt = d3.pointer(event, svg.node())
+      tooltip.style("opacity", 1)
+             .style('left', (pt[0]+20) + 'px')
+             .style('top', (pt[1]) + 'px')
+             .html(`<p>月份: ${d.target.__data__.x}月</p>`+
+                   `<span>數值: ${d.target.__data__.y}</span>`)
+
+      // 加上 X-dashed 線
+      svg.append('line')
+          .attr('class', 'dashed-X')
+          .attr('x1', xScale(d.target.__data__.x))
+          .attr('y1', margin) // yScale(d.target.__data__.y) 會截斷超過點位置的線
+          .attr('x2', xScale(d.target.__data__.x))
+          .attr('y2', height-margin) 
+          .style('stroke', 'grey')
+          .style('stroke-dasharray', '4' )
+
+      // 加上 Y-dashed 線
+      svg.append('line')
+          .attr('class', 'dashed-Y')
+          .attr('x1', margin)
+          .attr('y1', yScale(d.target.__data__.y))
+          .attr('x2', width-margin) // xScale(d.target.__data__.x) 會截斷超過點位置的線
+          .attr('y2', yScale(d.target.__data__.y))
+          .style('stroke', 'grey')
+          .style('stroke-dasharray', '4' )
+    }
+
+    function dotsMouseleave(){
+      tooltip.style('opacity', 0)
+      svg.selectAll('.dashed-X').remove()
+      svg.selectAll('.dashed-Y').remove()
+    }
   }
 
   definedLineChart()
