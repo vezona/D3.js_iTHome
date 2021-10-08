@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="chart"></div>
+    
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script>
+        const data = [{x:'107-01'},
+                      {x:'107-02'},
+                      {x:'107-03'},
+                      {x:'107-04'},
+                      {x:'107-05'},
+                      {x:'107-06'},
+                      {x:'107-07'},
+                      {x:'107-08'},
+                      {x:'107-09'}]
+        
+        // 把資料的民國年改成西元年
+        const newData = data.map(d=>{
+            let timeArray = d.x.split('-')
+            timeArray[0] =(parseInt(d.x.split('-')[0])+1911).toString() // 換算成西元年
+            // console.log(timeArray.join('-'))
+            return {x: timeArray.join('-')}
+        })
+
+        console.log(newData)
+
+        const svg = d3.select('.chart')
+                    .append('svg')
+                    .attr('width', 600)
+                    .attr('height', 500)
+
+        
+        const xData = newData.map(d=>d.x)
+        
+        // 設定 format 時間的方法
+        function parseTime(d){
+            return d3.timeParse("%Y-%m")(d)
+        }
+        
+        const xScale = d3.scaleTime()
+                         .domain(d3.extent(newData, d => parseTime(d.x)))
+                         .range([50, 500])
+                         .nice()
+
+        const xAxis = d3.axisBottom(xScale)
+
+        svg.append('g')
+           .call(xAxis)
+
+        
+                        
+    </script>
+</body>
+</html>

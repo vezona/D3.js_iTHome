@@ -121,28 +121,24 @@
     
 <style>
 
-.chart{
+.chart, .chart2{
     width: 100%;
     min-width: 300px;
     margin: auto;
+    position:relative;
 }
 </style>
 
 <h1 class="text-center fw-bold">Multiple Line Chart 複數折線圖</h1>
 
-<h4 class="mt-3">2017年各觀測站降雨量</h4>
+<h4 class="mt-3">2017年1-8月各觀測站降雨量</h4>
 <div class="chart"></div>
+
+<h4 class="mt-5">兩年內(2016-2017)每月各觀測站降雨量-TimeScale</h4>
+<div class="chart2"></div>
 
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script>
-const datas = [0, 1, 2, 3];
-
-const index = d3.bisect(datas, 0.18546);
-
-console.log(index); // 3
-
-  // https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_dataset/5_OneCatSevNumOrdered.csv
-
   let data = []
   async function getData() {
     // 取資料
@@ -177,11 +173,9 @@ console.log(index); // 3
       let rainfall = parseFloat(i.rainfall)
       return rainfall = rainfall || 0 // 沒有的資料換成0
     })
-    console.log(yData)
+    
     // 把資料按照 name 分組
     const sumName = d3.group(data, d => d.observatory);
-    console.log(sumName)
-
 
     // 設定要給 X 軸用的 scale 跟 axis
     const xScale = d3.scaleLinear()
@@ -249,19 +243,190 @@ console.log(index); // 3
     
     // 滑鼠事件
     function handleMouseover(d){
-      const pt = d3.pointer(event, svg.node())
+      const pt = d3.pointer(event, this)
       // console.log(pt) 
       // console.log(d.target.__data__[0])
 
       nameTag.style("opacity",1)
              .html(d.target.__data__[0])
-             .style('left', (pt[0]+ 100) + 'px')
-             .style('top', (pt[1]+ 140) + 'px')
+             .style('left', (pt[0]+10) + 'px')
+             .style('top', (pt[1]+ 10) + 'px')
     }
 
   }
 
-  d3.select(window).on('resize', drawChart);
+
+  // 第二張圖表 Time Scale
+  let dataTime = []
+  async function getDataTime() {
+    dataGet = await d3.json('https://data.coa.gov.tw/Service/OpenData/TransService.aspx?UnitId=5n9c3AlEJ2DH')
+    data = dataGet
+    drawTimeChart()
+  };
+  getDataTime()
+
+  // RWD
+  function drawTimeChart(){
+    // 刪除原本的svg.charts，重新渲染改變寬度的svg
+    d3.select('.chart2 svg').remove();
+
+    // RWD 的svg 寬高
+    const rwdSvgWidth = parseInt(d3.select('.chart2').style('width')),
+          rwdSvgHeight = rwdSvgWidth*0.8,
+          margin = 60
+
+    const svg = d3.select('.chart2')
+                  .append('svg')
+                  .attr('width', rwdSvgWidth)
+                  .attr('height', rwdSvgHeight);
+
+    // 設定 format 時間的方法
+    function parseTime(d){
+      return d3.timeParse("%Y-%m")(d)
+    }
+
+    // map 資料集
+    const xData = data.map((i) => i.observeDate);
+    const yData = data.map((i)=>{
+      let rainfall = parseFloat(i.rainfall)
+      return rainfall = rainfall || 0 // 沒有的資料換成0
+    })
+
+    // 把資料按照 name 分組
+    const sumName = d3.group(data, d => d.observatory);
+
+
+    // 設定要給 X 軸用的 scale 跟 axis
+    const xScale = d3.scaleTime()
+                    .domain(d3.extent(data, d => parseTime(d.observeDate)))
+                    .range([margin, rwdSvgWidth - margin]) // 寬度
+
+    // rwd X軸
+    const xAxis = d3.axisBottom(xScale)
+                    // .tickFormat(d3.timeFormat('%b')) // 只顯示縮寫月份
+   
+    const xAxisGroup = svg.append("g")
+                          .call(xAxis)
+                          .attr("transform", `translate(0,${rwdSvgHeight - margin})`)
+
+    // 設定要給 Y 軸用的 scale 跟 axis
+    const yScale = d3.scaleLinear()
+                    .domain(d3.extent(yData))
+                    .range([rwdSvgHeight - margin, margin]) // 數值要顛倒，才會從低往高排
+                    .nice()
+
+    const yAxis = d3.axisLeft(yScale)
+
+    // 呼叫繪製y軸、調整y軸位置
+    const yAxisGroup = svg.append("g")
+                          .call(yAxis)
+                          .attr("transform", `translate(${margin},0)`)                  
+    
+    const color = d3.scaleOrdinal()
+                    .domain(data.map(d=>d.item))
+                    .range(d3.schemeCategory10);
+
+    // 建立一個畫布範圍，超過此畫布的畫面都不會被渲染，這樣才能控制縮放的大小
+    const clip = svg.append("defs")
+                .append("clipPath")
+                .attr("id", "clip")
+                .append("rect")
+                .attr("x", margin)
+                .attr("y", margin)
+                .attr("width", rwdSvgWidth-margin*2)
+                .attr("height", rwdSvgHeight-margin*2)
+
+
+    // 加上brush
+    const brush = d3.brushX()
+                    .extent([[margin, margin], [rwdSvgWidth-margin, rwdSvgHeight-margin]])
+                    .on("end", updateChart)
+
+    // 開始建立折線圖
+    const line = svg.append('g')
+                    .attr("clip-path", "url(#clip)")
+    line.selectAll('.line')
+      .data(sumName)
+      .join('path')
+      .attr('class', 'line')
+      .attr("fill", "none")
+      .attr("stroke", d => color(d))
+      .attr("stroke-width", 1.5)
+      .attr("d", d => {
+          return d3.line()
+            .x((d) => xScale(parseTime(d.observeDate)))
+            .y((d) => {
+              let rainfall = parseFloat(d.rainfall)
+              rainfall = rainfall || 0
+              return yScale(rainfall)
+              })
+            (d[1]) // 只取資料的部分帶入
+        })
+    
+    // add brush
+    line.append('g')
+        .attr('class', 'brush')
+        .call(brush)
+
+    
+    // brush end function
+    function updateChart(event, d){
+      // brush 的範圍，會返還一個[x0, x1]的陣列
+      extent = event.selection
+
+      if(extent){
+        // xScale.invert 是把返還的x0跟x1變成xscale接受的數值
+        xScale.domain([xScale.invert(extent[0]), xScale.invert(extent[1]) ])
+        // 移除brush的灰色區塊
+        line.select(".brush").call(brush.move, null)
+      }
+
+      // 按照更新的domain範圍值重新渲染圖表
+      xAxisGroup.transition().duration(1000).call(d3.axisBottom(xScale))
+      line
+          .selectAll('.line')
+          .transition()
+          .duration(1000)
+          .attr("d", d => {
+            return d3.line()
+              .x((d) => xScale(parseTime(d.observeDate)))
+              .y((d) => {
+                let rainfall = parseFloat(d.rainfall)
+                rainfall = rainfall || 0
+                return yScale(rainfall)
+                })
+              (d[1]) // 只取資料的部分帶入
+          })
+      }
+
+    //雙擊 svg 縮回原本大小
+    svg.on('dblclick', function(){
+      // 回到原本的大小
+      xScale.domain(d3.extent(data, d => parseTime(d.observeDate)))
+
+      // 重新呼叫渲染軸線跟折線
+      xAxisGroup.transition().duration(1000).call(d3.axisBottom(xScale))
+      line
+          .selectAll('.line')
+          .transition()
+          .duration(1000)
+          .attr("d", d => {
+            return d3.line()
+              .x((d) => xScale(parseTime(d.observeDate)))
+              .y((d) => {
+                let rainfall = parseFloat(d.rainfall)
+                rainfall = rainfall || 0
+                return yScale(rainfall)
+                })
+              (d[1]) // 只取資料的部分帶入
+          })
+    }) 
+  }
+  
+  d3.select(window).on('resize', function(){
+    drawChart
+    drawTimeChart
+  });
 
 
 </script>
