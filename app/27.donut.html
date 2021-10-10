@@ -51,7 +51,6 @@ current: index
 <script>
 
   function basicDonut(){
-    // Data to be added in the pie chart
     const data = [
         { "value": 1, "property": "p1" },
         { "value": 2, "property": "p2" },
@@ -61,39 +60,38 @@ current: index
         { "value": 6, "property": "p6" }
     ]
 
-    // Selecting SVG using d3.select()
+    // 建立svg
     const svg = d3.select(".basicDonut")
                 .append('svg')
                 .attr('width', 300)
                 .attr('height', 300);
 
-    // Creating Pie generator
+    // 用 pie()建立圓餅圖 generator
     const pie = d3.pie()
-        // Use of pie.value() Function
         .value((d) => { return d.value })
         (data);
 
-    // Creating arc
+    // 建立圓弧
     const arc = d3.arc()
         .innerRadius(50)
         .outerRadius(100);
 
-    const g = svg.append("g")
-        .attr("transform", "translate(150, 120)");
-
-    // Grouping different arcs
-    const arcs = g.selectAll("arc")
+    // 綁定資料
+    const arcs = svg.append("g")
+        .attr("transform", "translate(150, 120)")
+        .selectAll("arc")
         .data(pie)
         .enter()
         .append("g");
 
-    // Appending path 
+    // 加上路徑 
     arcs.append("path")
         .attr("fill", (data, i) => {
             return d3.schemeSet2[i];
         })
         .attr("d", arc);
-
+    
+    // 加上內部文字標示
     arcs.append("text")
         .attr("transform", (d) => {
             return "translate(" +
@@ -107,6 +105,9 @@ current: index
   basicDonut()
 
   const drawPie = () => {
+    // 建立資料
+    const data = [{city:'台北', data:30},{city:'新北', data:45},
+            {city:'台中', data:9},{city:'嘉義', data:67},{city:'台南', data:22}]  
 
     // RWD 的svg 寬高
     const svgWidth = parseInt(d3.select('.basicDonut').style('width')),
@@ -118,35 +119,37 @@ current: index
       .attr("height", svgHeight)
       .append("g");
 
-    // 圓餅、線段、標籤
-    svg.append("g")
-			.attr("class", "slices");
-    svg.append("g")
-      .attr("class", "labels");
-    svg.append("g")
-      .attr("class", "lines");
-
-    var width = svgWidth-margin*2;
-    var height = svgHeight-margin*2;
+    
+    // 設定圖表寬高與圓弧半徑
+    const width = svgWidth-margin*2;
+    const height = svgHeight-margin*2;
     // radius設定圓餅圖的圓弧大小，是區域的一半
-    var radius = Math.min(width, height)/2;
+    const radius = Math.min(width, height)/2;
     
     // 設定顏色
     const color = d3.scaleOrdinal()
                     .range(["#4BEFCF","#2c9af7","#F96262", '#910842', '#b054e5']);
-    
-    var data = [{city:'台北', data:30},{city:'新北', data:45},
-            {city:'台中', data:9},{city:'嘉義', data:67},{city:'台南', data:22}]    
-    
+      
+    // 圓餅、線段、標籤
+    svg.append("g")
+        .attr("class", "slices");
 
+    svg.append("g")
+      .attr("class", "labels");
+
+    svg.append("g")
+      .attr("class", "lines");
     
-    var pie = d3.pie().sort(null).value(d => d.data);
-    var arc = d3.arc().innerRadius(radius*0.3).outerRadius(radius*0.6);
+    // 建立圓餅圖
+    const pie = d3.pie().sort(null).value(d => d.data);
+    const arc = d3.arc().innerRadius(radius*0.3).outerRadius(radius*0.6);
     
-    var outerArc = d3.arc()
+    // 設定弧度
+    const outerArc = d3.arc()
                 .outerRadius(radius * 0.9)
                 .innerRadius(radius * 0.9);
-     
+
+    // 建立甜甜圈圖 
     svg.attr("transform", "translate(" + svgWidth / 2 + "," + svgHeight / 2 + ")");
     
     svg.selectAll('path')
@@ -155,32 +158,33 @@ current: index
         .append('path')
         .attr('d', arc)
         .attr('fill', (d,i)=> color(i));
-
+    
+    // 建立線段跟標示
     svg.append('g').classed('labels',true);
     svg.append('g').classed('lines',true);
      
-
-    var polyline = svg.select('.lines')
+   
+    // 設定線段
+    const polyline = svg.select('.lines')
                 .selectAll('polyline')
                 .data(pie(data))
                 .enter()
                 .append('polyline')
                 .attr('points', function(d) {
-                    // see label transform function for explanations of these three lines.
-                    var pos = outerArc.centroid(d);
+                    const pos = outerArc.centroid(d);
                     pos[0] = radius * 0.95 * (midAngle(d) < Math.PI ? 1 : -1);
                     return [arc.centroid(d), outerArc.centroid(d), pos]
                 });
 	
-    var label = svg.select('.labels').selectAll('text')
+    // 設定文字標籤
+    const label = svg.select('.labels').selectAll('text')
                 .data(pie(data))
-            .enter().append('text')
+                .enter()
+                .append('text')
                 .attr('dy', '.35em')
-                .html(function(d) {
-                        return `${d.data.city}：${d.data.data}萬度`
-                })
+                .html(d => `${d.data.city}：${d.data.data}萬度`)
                 .attr('transform', function(d) {
-                    var pos = outerArc.centroid(d);
+                    const pos = outerArc.centroid(d);
                     pos[0] = radius * 0.95 * (midAngle(d) < Math.PI ? 1 : -1);
                     return 'translate(' + pos + ')';
                 })
@@ -188,12 +192,13 @@ current: index
                     return (midAngle(d)) < Math.PI ? 'start' : 'end';
                 });
     
-     svg.append('text')
-                        .attr('class', 'toolCircle')
-                        .attr('dy', 0) // hard-coded. can adjust this to adjust text vertical alignment in tooltip
-                        .html('用電量') // add text to the circle.
-                        .style('font-size', '.9em')
-                        .style('text-anchor', 'middle');
+    // 綁定文字標籤要顯示的內容
+    svg.append('text')
+        .attr('class', 'toolCircle')
+        .attr('dy', 0) 
+        .html('用電量')
+        .style('font-size', '.9em')
+        .style('text-anchor', 'middle');
     
     function midAngle(d) { return d.startAngle + (d.endAngle - d.startAngle) / 2; } 
 

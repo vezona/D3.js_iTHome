@@ -6,101 +6,158 @@ current: index
 ---
 
 <style>
-    .scatter1, .scatter2 {
-      margin: auto;
-      width: 80%;
-      min-width: 300px;
-      margin: auto;
-    }
-    .axis path,
-    .axis line {
-      fill: none;
-      stroke: black;
-      shape-rendering: crispEdges;
-    }
+  .bubbleChart{
+    margin: auto;
+    width: 80%;
+    min-width: 300px;
+    position: relative;
+  }
 
-    circle:hover {
-      cursor: pointer;
-    }
+  .bubbles {
+    stroke-width: 2px;
+    stroke: white;
+  }
+  .bubbles:hover {
+    stroke: black;
+  }
 </style>
 
 <h2 class="text-center fw-bold"> 氣泡圖 </h2>
 
-<h4>散點圖1</h4>
-<div class="scatter1 m-auto"></div>
+<h4 class="text-center mt-4">比較不同國家的平均壽命、人口數量與GDP</h4>
+<div class="bubbleChart""></div>
 
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script>
-//   改成使用台北市機車盜竊資料 https://data.taipei/#/dataset/detail?id=3a0e2289-a605-4eac-af30-f4af613f456d
-
-  // 散點圖一
   // 先取資料
+  let data = []
   async function getData(){
     let dataGet;
 
-    const cors = "https://secret-ocean-49799.herokuapp.com/";
-    const url = 'https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_dataset/2_TwoNum.csv'
+    const url = 'https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_dataset/4_ThreeNum.csv'
 
-    dataGet = await d3.csv(`${cors}${url}`);
-    scatter1(dataGet)
+    dataGet = await d3.csv(`${url}`);
+    data = dataGet
+    bubbleChart()
   }
   getData()
   
-  // 建立圖表
-  function scatter1(data){
+  // 建立氣泡圖
+  function bubbleChart(){
     // RWD 清除原本的圖型
-    d3.select(".scatter1").select('svg').remove()
+    d3.select(".bubbleChart").select('svg').remove()
 
-    // 建立 svg
-    const svgWidth = parseInt(d3.select('.scatter1').style('width')),
-          svgHeight = svgWidth
-          margin = 50
-    const svg = d3.select('.scatter1')
-      .append('svg')
-      .attr('width', svgWidth)
-      .attr('height', svgHeight)
+    // 設定svg與邊界
+    const margin = {top: 10, right: 20, bottom: 30, left: 50},
+        svgWidth = parseInt(d3.select('.bubbleChart').style('width')),
+        svgHeight = svgWidth*0.8
+        width = svgWidth - margin.left - margin.right,
+        height = svgHeight - margin.top - margin.bottom;
 
-    // 建立X軸線
-    const xScale = d3.scaleLinear()
-           .domain([0,4000])
-           .range([0, (svgWidth - margin*2)])
+    // 建立svg
+    const svg = d3.select(".bubbleChart")
+        .append("svg")
+        .attr("width", svgWidth)
+        .attr("height", svgHeight)
+        .append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const xAxis = d3.axisBottom(xScale)
-                    
+    // 整理ＸＹ軸資料、Z的人口數量資料
+    const xData = data.map((i) => parseInt(i.gdpPercap))
+    const yData = data.map((i) => i.lifeExp)
+    const zData = data.map((i) => i.pop)
 
-    svg.append('g')
-       .attr('transform', `translate(${margin}, ${svgHeight - margin/2})`)
-       .call(xAxis)
+    // 建立Ｘ比例尺與軸線
+    const x = d3.scaleLinear()
+      .domain([0, d3.max(xData)])
+      .range([ 0, width ])
+      .nice()
 
-    // 建立Y軸線
-    console.log(data)
-    const yScale = d3.scaleLinear()
-           .domain([0,500000])
-           .range([(svgHeight - margin), 0])
+    const xAxis = d3.axisBottom(x)
+                    .tickFormat(d=> '$'+ d)
 
-    const yAxis = d3.axisLeft(yScale)    
-                    .tickFormat(d=>'$'+d) 
+    svg.append("g")
+      .attr("transform", `translate(0, ${height})`)
+      .call(xAxis);
 
-    svg.append('g')
-       .attr('transform', `translate(${margin}, ${margin/2})`)
-       .call(yAxis)
+    // 建立Ｙ比例尺與軸線
+    const y = d3.scaleLinear()
+      .domain(d3.extent(yData))
+      .range([height, 0])
+      .nice()
+    
+    const yAxis = d3.axisLeft(y)
+                    .tickFormat(d => d+'歲')
 
-    // 加上點點
-    svg.append('g')
-       .selectAll('dot')
-       .data(data)
-       .enter()
-         .append('circle')
-         .attr('cx', d => xScale(d.GrLivArea))
-         .attr('cy', d => yScale(d.SalePrice))
-         .attr('r', 1.5)
-         .style('fill', d => {
-           return d.SalePrice > 129000? 'pink':'#69b3a2'
-         })
+    svg.append("g")
+      .call(yAxis);
+
+    // 按照人口去設定氣泡大小的比例尺
+    const z = d3.scaleLinear()
+      .domain([d3.min(zData), 1310000000])
+      .range([4, 40]);
+
+    // 設定氣泡顏色，根據不同洲來設定
+    const myColor = d3.scaleOrdinal()
+        .domain(["Asia", "Europe", "Americas", "Africa", "Oceania"])
+        .range(d3.schemeSet2);
+
+    // 建立標籤tooltips
+    const tooltip = d3.select(".bubbleChart")
+      .append("div")
+        .style("opacity", 0)
+        .attr("class", "tooltip")
+        .style("background-color", "black")
+        .style("border-radius", "5px")
+        .style("padding", "10px")
+        .style("color", "white")
+
+    // 設定顯示、移動、隱藏tooltips
+    const showTooltip = function(event, d) {
+      console.log(event)
+      // 漸漸出現
+      tooltip
+        .transition()
+        .duration(200)
+      
+      // 設定樣式與呈現文字
+      tooltip
+        .style("opacity", 1)
+        .html("Country: " + d.country)
+        .style("left", (event.x)/2 + "px")
+        .style("top", (event.y)/2+30 + "px")
+    }
+    const moveTooltip = function(event, d) {
+      tooltip
+        .style("opacity", 1)
+        .style("left", (event.x)/2 + "px")
+        .style("top", (event.y)/2+30 + "px")
+    }
+    const hideTooltip = function(event, d) {
+      tooltip
+        .transition()
+        .duration(200)
+        .style("opacity", 0)
+    }
+
+    // 綁定氣泡
+    const bubble = svg.append('g')
+      .selectAll("dot")
+      .data(data)
+      .join("circle")
+        .attr("class", "bubbles")
+        .attr("cx", d => x(d.gdpPercap))
+        .attr("cy", d => y(d.lifeExp))
+        .attr("r", d => z(d.pop))
+        .style("fill", d => myColor(d.continent))
+      .on("mouseover", showTooltip )
+      .on("mousemove", moveTooltip )
+      .on("mouseleave", hideTooltip )
+
   }
 
   // RWD
-  d3.select(window).on("resize", scatter1);
+  d3.select(window).on("resize", bubbleChart);
 
 
 </script>
