@@ -3,75 +3,75 @@
     "msg": "success",
     "list": [{
             "date": "110-5",
-            "pinPrice": 0.0000,
+            "domesticBagPrice": 0.0000,
             "dealCount": 0,
-            "nearByPinPrice": 70.4700
+            "foreignBagPrice": 70.4700
         },
         {
             "date": "110-4",
-            "pinPrice": 0.0000,
+            "domesticBagPrice": 0.0000,
             "dealCount": 0,
-            "nearByPinPrice": 87.0078
+            "foreignBagPrice": 87.0078
         },
         {
             "date": "110-3",
-            "pinPrice": 0.0000,
+            "domesticBagPrice": 0.0000,
             "dealCount": 0,
-            "nearByPinPrice": 0
+            "foreignBagPrice": 0
         },
         {
             "date": "110-2",
-            "pinPrice": 60.3050,
+            "domesticBagPrice": 60.3050,
             "dealCount": 2,
-            "nearByPinPrice": 105.2008
+            "foreignBagPrice": 105.2008
         },
         {
             "date": "110-1",
-            "pinPrice": 0,
+            "domesticBagPrice": 0,
             "dealCount": 2,
-            "nearByPinPrice": 103.5544
+            "foreignBagPrice": 103.5544
         },
         {
             "date": "109-12",
-            "pinPrice": 58.7133,
+            "domesticBagPrice": 58.7133,
             "dealCount": 3,
-            "nearByPinPrice": 100.3663
+            "foreignBagPrice": 100.3663
         },
         {
             "date": "109-11",
-            "pinPrice": 60.6288,
+            "domesticBagPrice": 60.6288,
             "dealCount": 8,
-            "nearByPinPrice": 85.5546
+            "foreignBagPrice": 85.5546
         },
         {
             "date": "109-10",
-            "pinPrice": 56.8400,
+            "domesticBagPrice": 56.8400,
             "dealCount": 4,
-            "nearByPinPrice": 94.7130
+            "foreignBagPrice": 94.7130
         },
         {
             "date": "109-9",
-            "pinPrice": 54.7029,
+            "domesticBagPrice": 54.7029,
             "dealCount": 7,
-            "nearByPinPrice": 0
+            "foreignBagPrice": 0
         },
         {
             "date": "109-8",
-            "pinPrice": 65.8500,
+            "domesticBagPrice": 65.8500,
             "dealCount": 2,
-            "nearByPinPrice": 92.0291
+            "foreignBagPrice": 92.0291
         },
         {
             "date": "109-7",
-            "pinPrice": 54.4367,
+            "domesticBagPrice": 54.4367,
             "dealCount": 3,
-            "nearByPinPrice": 80.3800
+            "foreignBagPrice": 80.3800
         },
         {
             "date": "109-6",
-            "pinPrice": 54.1520,
+            "domesticBagPrice": 54.1520,
             "dealCount": 5,
-            "nearByPinPrice": 81.9309
+            "foreignBagPrice": 81.9309
         }
     ],
     "type": "電梯大樓"
