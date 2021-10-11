@@ -1,0 +1,166 @@
+---
+title: 合併圖表
+layout: ./app/layout.ejs
+engine: ejs
+current: index
+---
+
+<style>
+.chart {
+    margin: auto;
+    width: 100%;
+    min-width: 200px;
+    margin: auto;
+  }
+
+.xAxis .tick line, .y1Axis .tick line, .y1Axis .domain, .y2Axis .domain{
+  stroke:#ccc;
+  stroke-width: 1px
+}
+</style>
+
+<h2 class="text-center fw-bold">合併圖表</h2>
+<div class="chart"></div>
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+  let data = []
+  async function getData() {
+    // 取資料
+    dataGet = await d3.csv('./data/低收入戶與補助款.csv')
+    data = dataGet.filter(d => d['年月別'].substr(0,2) === '88')
+    drawChart()
+  };
+  getData()
+  
+  function drawChart(){
+    console.log(data)
+    // 刪除原本的svg.charts，重新渲染改變寬度的svg
+    d3.select('.chart svg').remove();
+
+    // RWD 的svg 寬高
+    const svgWidth = parseInt(d3.select('.chart').style('width')),
+        svgHeight = svgWidth * 0.8,
+        marginY = 20,
+        marginX = 30
+        bandWidth = 20,
+        width = svgWidth - marginX * 2,
+        height = svgHeight - marginY * 2;
+
+    const svg = d3.select('.chart')
+                  .append('svg')
+                  .attr('width', svgWidth)
+                  .attr('height', svgHeight);
+    
+    // map 資料集
+    const xData = data.map(d => parseInt(d['年月別'].slice(3, 5)));
+    const y1Data = data.map(d => + d['低收入戶人數[人]']);
+    // 字串轉數字，如果非數字就補零
+    const y2Data = data.map(d => d = +d['低收入戶本府家庭生活補助金額[千元]'] || 0);
+    console.log(y2Data)
+    // 建立X長條圖的比例尺與軸線
+    const xBandScale = d3.scaleBand()
+                     .domain(xData)
+                     .range([marginX * 2, width])
+                     .padding(0.5)
+    
+    // 設定X軸刻度數量，畫面小於600時，刻度減半
+    const tickNumber = window.innerWidth < 600? xData.length/2 : xData.length
+    const xAxis = d3.axisBottom(xBandScale)
+                    .ticks(tickNumber)
+                    .tickSizeInner(- (height - marginY*2))
+                    .tickPadding(15)
+                    .tickSizeOuter(0)
+                    .tickFormat(d => d + '月')
+    svg.append('g')
+       .attr('class', 'xAxis')
+       .attr("transform", `translate(0, ${height})`)
+       .call(xAxis)
+
+    // 建立X折線圖的比例尺與軸線
+    const xLinearScale = d3.scaleLinear()
+                     .domain(d3.extent(xData))
+                     .range([marginX * 2, width])
+    
+    // y1軸線，繪製人數長條圖
+    const y1Scale = d3.scaleLinear()
+                     .domain([0 , d3.max(y1Data)*2])
+                     .range([height, marginY * 2])
+                     .nice()
+
+    const y1Axis = d3.axisLeft(y1Scale)
+                    .tickSizeInner(- (width - marginX*2))
+                    .tickPadding(15)
+                    .tickSizeOuter(0)
+                    .tickFormat(d => d)
+                    
+    svg.append('g')
+       .attr('class', 'y1Axis')
+       .attr("transform", `translate(${marginX*2}, 0)`)
+       .call(y1Axis)
+
+    // y2軸線，繪製金額折線圖
+    const y2Scale = d3.scaleLinear()
+                     .domain([0 , d3.max(y2Data)])
+                     .range([height, marginY * 2])
+                     .nice()
+
+    const y2Axis = d3.axisRight(y2Scale)
+                    .tickPadding(10)
+                    .tickSizeInner(0)
+                    .tickSizeOuter(0)
+                    .tickFormat(d => '$' + d)
+                    
+    svg.append('g')
+       .attr('class', 'y2Axis')
+       .attr("transform", `translate(${width}, 0)`)
+       .call(y2Axis)
+
+    // 建立人數長條圖
+    const bar = svg.append('g')
+                  .selectAll("rect")
+                  .data(data)
+                  .join("rect")
+                  .attr("x", d => xBandScale(parseInt(d['年月別'].slice(3, 5))))
+                  .attr("y", d => y1Scale(+ d['低收入戶人數[人]']))
+                  .attr("width", xBandScale.bandwidth())
+                  .attr("height", d => {
+                      return height - y1Scale(+ d['低收入戶人數[人]'])
+                    })
+                  .attr("fill", "#ccc")
+
+
+    // 補助金額折線圖
+    // 建立折線圖 path 的 d 數值
+    // 用 line.defined 過濾掉是零的數值
+    const lineChart = d3.line()
+                        .x((d) => xLinearScale(parseInt(d['年月別'].slice(3, 5))))
+                        .y((d) => y2Scale(+ d['低收入戶本府家庭生活補助金額[千元]']))
+                        .defined((d) => + d['低收入戶本府家庭生活補助金額[千元]'] >0)
+    // 建立折線
+    svg.append('g')
+       .append('path')
+       .data(data)
+       .attr("fill", "none")
+       .attr("stroke", 'orange')
+       .attr("stroke-width", 2)
+       .attr('d', lineChart(data))
+
+    // 把大於零的資料拉出來，另外用這些資料去建立連線
+    //也可以寫成 data.filter(lineChart.defined())
+    let filteredData = data.filter(d => d['低收入戶本府家庭生活補助金額[千元]'] > 0); 
+
+    // 建立 dashed 折線
+    svg.append('g')
+        .append('path')
+        .attr("fill", "none")
+        .attr("stroke", 'orange')
+        .attr("stroke-width", 1.5)
+        .attr("stroke-dasharray", '4,4')
+        .attr('d',lineChart(filteredData))
+    
+  }
+
+  d3.select(window).on('resize', drawChart);
+
+</script>

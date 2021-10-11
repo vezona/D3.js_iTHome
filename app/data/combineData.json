@@ -1,0 +1,74 @@
+[
+    {
+      "date": "110-5",
+      "pinPrice": 0.0,
+      "dealCount": 3,
+      "nearByPinPrice": 60.47
+    },
+    {
+      "date": "110-4",
+      "pinPrice": 0.0,
+      "dealCount": 2,
+      "nearByPinPrice": 105.2008
+    },
+    {
+      "date": "110-3",
+      "pinPrice": 0.0,
+      "dealCount": 0,
+      "nearByPinPrice": 0
+    },
+    {
+      "date": "110-2",
+      "pinPrice": 58.7133,
+      "dealCount": 1,
+      "nearByPinPrice": 87.0078
+    },
+    {
+      "date": "110-1",
+      "pinPrice": 0,
+      "dealCount": 1,
+      "nearByPinPrice": 103.5544
+    },
+    {
+      "date": "109-12",
+      "pinPrice": 63.3333,
+      "dealCount": 3,
+      "nearByPinPrice": 100.3663
+    },
+    {
+      "date": "109-11",
+      "pinPrice": 60.6288,
+      "dealCount": 2,
+      "nearByPinPrice": 95.2126
+    },
+    {
+      "date": "109-10",
+      "pinPrice": 86.84,
+      "dealCount": 2,
+      "nearByPinPrice": 60.3163
+    },
+    {
+      "date": "109-9",
+      "pinPrice": 70.3163,
+      "dealCount": 4,
+      "nearByPinPrice": 52.0291
+    },
+    {
+      "date": "109-8",
+      "pinPrice": 77.85,
+      "dealCount": 1,
+      "nearByPinPrice": 0
+    },
+    {
+      "date": "109-7",
+      "pinPrice": 64.4367,
+      "dealCount": 2,
+      "nearByPinPrice": 70.38
+    },
+    {
+      "date": "109-6",
+      "pinPrice": 74.152,
+      "dealCount": 4,
+      "nearByPinPrice": 61.8809
+    }
+  ]
