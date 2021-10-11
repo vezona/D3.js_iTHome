@@ -217,16 +217,24 @@
     const bar = svg.selectAll("rect")
                   .data(data)
                   .join("rect")
-                  .attr("x", d => xScale(d['縣市'])) // 讓長條圖在刻度線中間
-                  .attr("y", d => yScale(parseInt(d['A.售電量(度)'].split(',').join(''))))
-                  .attr("width", xScale.bandwidth())
-                  .attr("height", d => {
-                      return (rwdSvgHeight - margin) - yScale(parseInt(d['A.售電量(度)'].split(',').join('')))
-                    })
-                  .attr("fill", "#69b3a2")
-                  .attr('cursor', 'pointer')
-                  .on("mouseover", handleMouseOver)
-                  .on("mouseleave", handleMouseLeave)
+
+    // 加上漸增動畫，注意如果要加動畫，event 要分開寫
+    bar.attr("x", d => xScale(d['縣市'])) // 讓長條圖在刻度線中間
+      .attr('y', yScale(0))
+      .attr("width", xScale.bandwidth())
+      .transition()
+      .duration(1000)
+      .delay((d, i)=> i*100)
+      .attr("y", d => yScale(parseInt(d['A.售電量(度)'].split(',').join(''))))
+      .attr("height", d => {
+                return (rwdSvgHeight - margin) - yScale(parseInt(d['A.售電量(度)'].split(',').join('')))
+              })
+      .attr("fill", "#69b3a2")
+
+    // 加上滑鼠事件       
+    bar.attr('cursor', 'pointer')
+        .on("mouseover", handleMouseOver)
+        .on("mouseleave", handleMouseLeave)
 
     function handleMouseOver(d, i){
       // console.log(d)
