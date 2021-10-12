@@ -5,6 +5,18 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+      svg .domain {
+        stroke: #fc3;
+        stroke-width: 3px;
+      }
+
+      svg .tick line {
+        fill: none;
+        stroke: #ccc;
+        stroke-width: 1px;
+      }
+    </style>
 </head>
 <body>
     <div class="chart"></div>
@@ -30,14 +42,16 @@
         })
 
         console.log(newData)
-
+        
+        // 建立svg
         const svg = d3.select('.chart')
                     .append('svg')
                     .attr('width', 600)
                     .attr('height', 500)
 
-        
+        // 設定資料
         const xData = newData.map(d=>d.x)
+        const yData = data.map((d, index)=>index*10)
         
         // 設定 format 時間的方法
         function parseTime(d){
@@ -46,14 +60,44 @@
         
         const xScale = d3.scaleTime()
                          .domain(d3.extent(newData, d => parseTime(d.x)))
-                         .range([50, 500])
+                         .range([100, 500])
                          .nice()
 
         const xAxis = d3.axisBottom(xScale)
+                        .tickFormat(d=>{
+                            console.log(d.getMonth())
+                            return d.getMonth() + 1 + '月'
+                        })
+                        .tickSizeInner(-400)
+                        .tickSizeOuter(0)
+                        .tickPadding(20)
 
         svg.append('g')
            .call(xAxis)
+           .attr('class', 'xAxis')
+           .attr('transform', 'translate(0, 450)')
 
+        // 移動X軸刻度
+        d3.select('.xAxis')
+          .selectAll('.tick text')
+          .attr('dx', '-25')
+
+
+        // 建立Y軸
+        const yScale = d3.scaleLinear()
+                         .domain(d3.extent(yData))
+                         .range([450, 50])
+                         .nice()
+
+        const yAxis = d3.axisLeft(yScale)
+                        .tickSizeInner(-450)
+                        .tickSizeOuter(0)
+                        .tickPadding(20)
+
+        svg.append('g')
+           .call(yAxis)
+           .attr('transform', 'translate(50, 0)')
+ 
         
                         
     </script>
